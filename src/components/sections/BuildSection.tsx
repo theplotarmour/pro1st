@@ -3,7 +3,9 @@
 import Image from "next/image";
 import { useRef } from "react";
 import { ChassisShell } from "@/components/hero/ChassisShell";
-import { buildContent, explodeOffsets } from "@/data/site";
+import { buildCopy } from "@/data/editorial";
+import { explodeOffsets } from "@/data/site";
+import type { BuildUnit } from "@/lib/content/sections";
 import { clamp01, inOutCubic, outCubic } from "@/lib/format";
 import { sectionProgress, useMediaQuery, useScrollEffect } from "@/lib/motion";
 
@@ -23,7 +25,7 @@ const SLICES = 8;
  * wrong composition for a phone, so the chassis is shown assembled and the
  * copy reads as a normal block.
  */
-export function BuildSection() {
+export function BuildSection({ unit }: { unit: BuildUnit }) {
   const wrapRef = useRef<HTMLElement>(null);
   const stickyRef = useRef<HTMLDivElement>(null);
   const stageRef = useRef<HTMLDivElement>(null);
@@ -163,13 +165,13 @@ export function BuildSection() {
 
         <div className="relative z-[3] flex flex-none flex-wrap items-baseline justify-between gap-8">
           <div>
-            <div className="p1-eyebrow mb-5">{buildContent.eyebrow}</div>
+            <div className="p1-eyebrow mb-5">{buildCopy.eyebrow}</div>
             <h2 id="build-heading" className="p1-h2">
-              {buildContent.heading}
+              {buildCopy.heading}
             </h2>
           </div>
           <p className="m-0 max-w-[32ch] text-base leading-[1.6] text-[rgba(230,230,230,0.6)]">
-            {buildContent.lead}
+            {buildCopy.lead}
           </p>
         </div>
 
@@ -212,8 +214,8 @@ export function BuildSection() {
                   key={i}
                   data-p1-slice=""
                   data-i={i}
-                  src={buildContent.image}
-                  alt={i === SLICES - 1 ? buildContent.imageAlt : ""}
+                  src={unit.image?.src ?? ""}
+                  alt={i === SLICES - 1 ? (unit.image?.alt ?? "") : ""}
                   aria-hidden={i !== SLICES - 1}
                   fill
                   sizes="660px"
@@ -238,7 +240,7 @@ export function BuildSection() {
             aria-hidden="true"
             className="absolute inset-0 hidden opacity-0 transition-opacity duration-[420ms] ease-signal lg:block"
           >
-            {buildContent.callouts.map((callout) => (
+            {buildCopy.callouts.map((callout) => (
               <div
                 key={callout.text}
                 className="absolute flex items-center gap-3.5"
@@ -272,7 +274,7 @@ export function BuildSection() {
         <div className="p1-mono relative z-[3] flex flex-none items-end justify-between gap-6 text-[rgba(230,230,230,0.42)]">
           <span ref={phaseRef}>Assembly — 00%</span>
           <span className="text-[rgba(230,230,230,0.6)]">
-            {buildContent.unit}
+            {unit.unit}
           </span>
         </div>
         <div

@@ -3,8 +3,7 @@
 import Link from "next/link";
 import Image from "next/image";
 import { useRef } from "react";
-import { marqueeCategories } from "@/data/site";
-import { categorySlug } from "@/lib/format";
+import type { MarqueeItem } from "@/lib/content/sections";
 import { useAnimationFrame } from "@/lib/motion";
 
 /**
@@ -12,7 +11,7 @@ import { useAnimationFrame } from "@/lib/motion";
  * the reader's scroll — the page's own momentum, not a fixed loop.
  * Under reduced motion it becomes a normal horizontally-scrollable list.
  */
-export function CategoryMarquee() {
+export function CategoryMarquee({ items }: { items: MarqueeItem[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
   const state = useRef({ offset: 0, direction: 1, velocity: 0, lastY: 0 });
 
@@ -41,7 +40,7 @@ export function CategoryMarquee() {
   });
 
   // Doubled so the wrap-around is seamless in both directions.
-  const items = [...marqueeCategories, ...marqueeCategories];
+  const loop = [...items, ...items];
 
   return (
     <section
@@ -53,22 +52,24 @@ export function CategoryMarquee() {
         className="flex whitespace-nowrap"
         style={{ willChange: "transform" }}
       >
-        {items.map((item, index) => (
+        {loop.map((item, index) => (
           <Link
             key={`${item.label}-${index}`}
-            href={`/products?category=${categorySlug(item.label)}`}
-            aria-hidden={index >= marqueeCategories.length}
-            tabIndex={index >= marqueeCategories.length ? -1 : undefined}
+            href={`/products?category=${item.slug}`}
+            aria-hidden={index >= items.length}
+            tabIndex={index >= items.length ? -1 : undefined}
             className="inline-flex items-center gap-5 px-3.5 font-display text-xl font-medium tracking-[-0.01em] text-[rgba(230,230,230,0.82)] transition-colors duration-[120ms] ease-signal hover:text-signal"
           >
-            <Image
-              src={item.image}
-              alt=""
-              width={40}
-              height={40}
-              loading="lazy"
-              className="h-10 w-10 flex-none border border-hairline object-cover"
-            />
+            {item.image ? (
+              <Image
+                src={item.image.src}
+                alt=""
+                width={40}
+                height={40}
+                loading="lazy"
+                className="h-10 w-10 flex-none border border-hairline object-cover"
+              />
+            ) : null}
             {item.label}
             <span
               aria-hidden="true"

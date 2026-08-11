@@ -10,32 +10,54 @@ import { Manifesto } from "@/components/sections/Manifesto";
 import { OriginSection } from "@/components/sections/OriginSection";
 import { ShowroomSection } from "@/components/sections/ShowroomSection";
 import { TrustBar } from "@/components/sections/TrustBar";
-import { IMG } from "@/data/images";
+import {
+  getBuildUnit,
+  getChainNodes,
+  getCraftPanels,
+  getHeroUnit,
+  getMarqueeItems,
+  getOriginImage,
+} from "@/lib/content/sections";
 import { getFeaturedProducts, productRepository } from "@/lib/products";
 
 /**
- * The homepage is the brand experience, not a grid with a hero on top:
- * hero → build → origin → chain → arsenal → craft → manifesto → trade →
- * support → showroom.
+ * The homepage is the brand experience, and the only place the three pinned
+ * scroll sections live. Interior pages get their own compositions — repeating
+ * these here and there is what makes a multi-page site feel like one page.
+ *
+ * hero → marquee → build → origin → chain → arsenal → craft → manifesto →
+ * trade → trust → support → showroom
  */
 export default async function HomePage() {
-  const [featured, all] = await Promise.all([
+  const [
+    featured,
+    all,
+    heroImage,
+    marquee,
+    build,
+    origin,
+    chain,
+    craft,
+  ] = await Promise.all([
     getFeaturedProducts(),
     productRepository.getAll(),
+    getHeroUnit(),
+    getMarqueeItems(),
+    getBuildUnit(),
+    getOriginImage(),
+    getChainNodes(),
+    getCraftPanels(),
   ]);
 
   return (
     <>
-      <Hero
-        chassisImage={IMG.aj6}
-        chassisAlt="AJ6 professional audio mixer"
-      />
-      <CategoryMarquee />
-      <BuildSection />
-      <OriginSection />
-      <ChainSection />
+      <Hero chassisImage={heroImage} />
+      <CategoryMarquee items={marquee} />
+      {build ? <BuildSection unit={build} /> : null}
+      <OriginSection image={origin} />
+      {chain.length > 0 ? <ChainSection nodes={chain} /> : null}
       <ArsenalSection products={featured} totalCount={all.length} />
-      <CraftSection />
+      <CraftSection panels={craft} />
       <Manifesto />
       <ContactCTA />
       <TrustBar />

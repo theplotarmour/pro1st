@@ -1,6 +1,9 @@
-import { IMG } from "./images";
-
 /**
+ * Site chrome and brand constants.
+ *
+ * Product facts live in Shopify. Section editorial lives in `editorial.ts`.
+ * What remains here is navigation, contact details and standing brand copy.
+ *
  * Site-level content. Everything here is carried over from the approved
  * design source — no dates, figures or claims have been added.
  *
@@ -57,93 +60,21 @@ export const heroContent = {
   meta: "Est. 2004 · Delhi-6 · 10,000+ units shipped",
 } as const;
 
-/** Scrolling category rail under the hero. */
-export const marqueeCategories = [
-  { label: "Speakers", image: IMG.t12 },
-  { label: "Mixers", image: IMG.aj6 },
-  { label: "Amplifiers", image: IMG.mx1600 },
-  { label: "Microphones", image: IMG.beta58 },
-  { label: "Crossovers", image: IMG.d450 },
-  { label: "PA Systems", image: IMG.partybox },
-  { label: "Drivers", image: IMG.d518 },
-  { label: "Accessories", image: IMG.wire },
-] as const;
 
-export const originContent = {
-  eyebrow: "[ 02 — Origin ]",
-  heading: "From a workshop in Chandni Chowk, we move air across India.",
-  body: [
-    "Desire Electronics has traded in audio since 2004. PRO1st is the professional line: imported drivers, transformers and DSP boards mated to housings, chassis and crossovers built on our own floor at Moti Cinema Compound.",
-    "That split is deliberate. We buy the components nobody should improvise, and we build the parts that decide whether a cabinet survives a monsoon load-in. Every unit is bench-tested before it leaves the compound.",
-  ],
-  image: { src: IMG.workshop, alt: "PRO1st assembly floor, Chandni Chowk" },
-} as const;
 
+
+/**
+ * Trade figures.
+ *
+ * CONFIRM — carried over from the approved design source. The two wattage
+ * figures describe products, so they should move to Shopify metafields once
+ * specifications exist, and be read from there rather than restated here.
+ */
 export const stats = [
   { to: 20, suffix: "+", initial: "0+", label: "Years in trade" },
   { to: 10000, suffix: "+", initial: "0+", label: "Units shipped" },
   { to: 120, suffix: "W", initial: "0W", label: "Per driver" },
   { to: 1600, suffix: "W", initial: "0W", label: "Pro amp output" },
-] as const;
-
-/** The signal chain — source to subwoofer. */
-export const chainNodes = [
-  {
-    label: "Source",
-    product: "TK600 / BETA58S Microphones",
-    spec: "Dynamic · Supercardioid · XLR",
-    price: "₹850",
-    image: IMG.tk600,
-    handle: "pro-1st-tk600-dynamic-microphone",
-  },
-  {
-    label: "Mixer",
-    product: "AJ6 Voice Mixer",
-    spec: "6-channel · 99 DSP · Phantom",
-    price: "₹6,750",
-    image: IMG.aj6,
-    handle: "pro-1st-aj6-professional-audio-mixer",
-  },
-  {
-    label: "Processor",
-    product: "XTR 6.0 Feedback Eliminator",
-    spec: "1U rack · Zero screech",
-    price: "₹11,000",
-    image: IMG.xtr6,
-    handle: "pro1st-xtr-6-0-feedback-eliminator",
-  },
-  {
-    label: "Amplifier",
-    product: "MX-1600 Power Booster",
-    spec: "1600W · Pro booster",
-    price: "₹25,000",
-    image: IMG.mx1600,
-    handle: "pro1st-mx-1600-professional-power-amplifier",
-  },
-  {
-    label: "Crossover",
-    product: "D-750 / A-450 Network",
-    spec: "2-way & 3-way · 8Ω",
-    price: "₹550",
-    image: IMG.d750,
-    handle: "pro1st-d-750-hf-cross-over-network",
-  },
-  {
-    label: "Driver",
-    product: "780 TN Compression Driver",
-    spec: "120W · 8Ω · Titanium",
-    price: "₹5,500",
-    image: IMG.tn780,
-    handle: "pro-1st-780-tn-high-power-compression-driver-1",
-  },
-  {
-    label: "Cabinet",
-    product: "Party Box / T-12 Trolley",
-    spec: "Portable · Bluetooth · Wheeled",
-    price: "₹6,480",
-    image: IMG.t12,
-    handle: "pro-1st-party-box-portable-bluetooth-speaker",
-  },
 ] as const;
 
 /** MX-1600 exploded-assembly offsets — fixed per layer, never random. */
@@ -158,47 +89,6 @@ export const explodeOffsets = [
   { x: 338, y: 236, z: 246, r: 12 },
 ] as const;
 
-export const buildContent = {
-  eyebrow: "[ 01 — The build ]",
-  heading: "Eight layers. One chassis.",
-  lead: "The MX-1600, pressed and stacked in the order it leaves our floor.",
-  image: IMG.mx1600,
-  imageAlt: "MX-1600 professional power booster amplifier",
-  unit: "MX-1600 · ₹25,000",
-  callouts: [
-    { text: "Pressed steel faceplate", side: "left", top: "24%", rule: 80 },
-    { text: "Hand-biased output pairs", side: "left", top: "62%", rule: 110 },
-    { text: "Extruded heat-sink flank", side: "right", top: "33%", rule: 80 },
-    { text: "1600W · 2Ω stable", side: "right", top: "70%", rule: 110 },
-  ],
-} as const;
-
-export const craftPanels = [
-  {
-    num: "[ 01 / 03 ]",
-    imageFirst: true,
-    image: IMG.tn780,
-    imageAlt: "780 TN compression driver",
-    title: "Magnet, voice coil, titanium.",
-    body: "Compression drivers sourced from specialists, mated to housings built on our floor, so they survive humidity, road shocks and 14-hour weddings.",
-  },
-  {
-    num: "[ 02 / 03 ]",
-    imageFirst: false,
-    image: IMG.mx1600,
-    imageAlt: "MX-1600 amplifier chassis",
-    title: "1600 watts. One toggle.",
-    body: "The MX-1600 chassis is pressed, painted and assembled in Delhi. Output transistors are matched in pairs and biased by hand.",
-  },
-  {
-    num: "[ 03 / 03 ]",
-    imageFirst: true,
-    image: IMG.t12,
-    imageAlt: "T-12 trolley speaker",
-    title: "Wheels, handle, weatherproof shell.",
-    body: "A trolley speaker is a tool, not a trophy. Reinforced corners, gasket-sealed back panel, batteries that outlast the gig.",
-  },
-] as const;
 
 export const manifesto = {
   text: "We don't build for the showroom. We build for the dancefloor at 2 AM, for the wedding generator that won't quit, for the retailer who needs gear that comes back as a referral — not a complaint.",

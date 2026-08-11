@@ -40,7 +40,7 @@ function getConfig(): ShopifyConfig {
 
   if (!domain || !token) {
     throw new ShopifyError(
-      "Shopify is not configured. Set SHOPIFY_STORE_DOMAIN and SHOPIFY_STOREFRONT_PUBLIC_TOKEN, or set PRODUCT_SOURCE=mock.",
+      "Shopify is not configured. Set SHOPIFY_STORE_DOMAIN and SHOPIFY_STOREFRONT_PUBLIC_TOKEN — see .env.example.",
     );
   }
 

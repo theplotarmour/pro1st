@@ -4,12 +4,13 @@ import { useEffect, useState } from "react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { heroContent } from "@/data/site";
+import type { ProductImage } from "@/types/product";
 import { HeroChassis } from "./HeroChassis";
 import { Waveform } from "./Waveform";
 
 interface HeroProps {
-  chassisImage: string;
-  chassisAlt: string;
+  /** Product photography for the revolving chassis, resolved from Shopify. */
+  chassisImage: ProductImage | null;
 }
 
 /**
@@ -17,7 +18,7 @@ interface HeroProps {
  * copy, two CTAs. The headline waits for the preload curtain so the reveal
  * is never spent behind it.
  */
-export function Hero({ chassisImage, chassisAlt }: HeroProps) {
+export function Hero({ chassisImage }: HeroProps) {
   const [play, setPlay] = useState(false);
 
   useEffect(() => {
@@ -60,7 +61,9 @@ export function Hero({ chassisImage, chassisAlt }: HeroProps) {
         }}
       />
 
-      <HeroChassis image={chassisImage} alt={chassisAlt} />
+      {chassisImage ? (
+        <HeroChassis image={chassisImage.src} alt={chassisImage.alt} />
+      ) : null}
 
       <div className="p1-shell relative z-[2]">
         <div className="p1-mono mb-8 flex items-center gap-2.5 text-[rgba(230,230,230,0.6)]">

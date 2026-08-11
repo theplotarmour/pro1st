@@ -35,20 +35,54 @@ SIL Open Font License 1.1.
 ## Architecture
 
 ```
-UI components  →  productRepository  →  mock data | Shopify Storefront API
+UI components  →  productRepository  →  Shopify Storefront API
+                  content/sections   →  Shopify + brand editorial
 ```
 
+**There is no second data source.** The mock catalogue was removed once the
+Shopify store went live: a hardcoded price is a price that goes stale the
+moment the merchant changes it. If Shopify is unreachable, pages fail through
+the route error boundary rather than showing stale figures.
+
 - `src/types/product.ts` — the frontend `Product` abstraction.
-- `src/data/` — mock catalogue and site content. **The only place content lives.**
+- `src/data/editorial.ts` — brand voice only. Contains no product facts.
+- `src/data/site.ts` — navigation, contact details, standing brand copy.
+- `src/data/featured.ts` — curated handles, used only as a fallback until
+  products are flagged with `custom.featured` in Shopify.
+- `src/lib/content/sections.ts` — joins brand editorial to live Shopify
+  products, so section imagery, names and prices are never written down here.
 - `src/lib/products/` — the repository seam:
   - `repository.ts` — the interface every page calls.
-  - `mock-repository.ts` — current source.
-  - `shopify-repository.ts` — Phase 5 implementation (documented stub).
-  - `index.ts` — picks the source from `PRODUCT_SOURCE`.
+  - `shopify-repository.ts` — the implementation.
+  - `index.ts` — exposes the repository and merchant-controlled featuring.
 
-No component imports `src/data/products.ts` directly. Swapping to Shopify means
-implementing `shopify-repository.ts` and setting `PRODUCT_SOURCE=shopify` —
-nothing in `src/components/` changes.
+No component fetches from Shopify directly, and no component holds a product
+fact. Sections receive their data as props from server components.
+
+### Page structure
+
+Each route is its own page. The three pinned scroll sections — the exploded
+build (620vh), the signal chain (360vh) and the horizontal craft traverse
+(300vh) — live **only on the homepage**. Reusing them on interior pages was
+what made a multi-page site read as a single endless page.
+
+| Route | Composition |
+|---|---|
+| `/` | Full signature experience, all three pinned sections |
+| `/origin` | Story, trade figures, showroom, CTA |
+| `/arsenal` | Flagships + category ecosystem grid |
+| `/craft` | Craft panels as a stacked editorial column |
+
+### Logo
+
+`src/components/layout/Wordmark.tsx` is the client's real PRO1ST mark, traced
+from the supplied `Logo--.pdf` as vector paths — nine paths, no network
+request, crisp at any size. Brand colours are the artwork's own: `#2E3092`,
+`#ED1C24`, `#6D6E70`, `#F5821F`, `#00AEEF`.
+
+The mark is multi-colour artwork for a light ground, and its navy "P" sits at
+about 1.7:1 against the near-black UI. It is therefore placed on its own light
+plate — as the supplied artwork itself presents it — rather than recoloured.
 
 ### Components
 

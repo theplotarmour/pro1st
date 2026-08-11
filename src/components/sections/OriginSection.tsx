@@ -2,9 +2,13 @@ import { Container } from "@/components/ui/Container";
 import { Counter } from "@/components/ui/Counter";
 import { ParallaxMedia } from "@/components/ui/ParallaxMedia";
 import { Reveal } from "@/components/ui/Reveal";
-import { originContent, stats } from "@/data/site";
+import { originCopy } from "@/data/editorial";
+import { stats } from "@/data/site";
+import type { ProductImage } from "@/types/product";
 
 interface OriginSectionProps {
+  /** Facility imagery, resolved from Shopify. */
+  image: ProductImage | null;
   /** Homepage uses h2; the Origin page promotes it to h1. */
   as?: "h1" | "h2";
   showEyebrow?: boolean;
@@ -12,6 +16,7 @@ interface OriginSectionProps {
 
 /** Brand introduction — the story block plus the four trade figures. */
 export function OriginSection({
+  image,
   as: Heading = "h2",
   showEyebrow = true,
 }: OriginSectionProps) {
@@ -20,12 +25,12 @@ export function OriginSection({
       <div className="grid grid-cols-1 items-start gap-14 lg:grid-cols-[7fr_5fr] lg:gap-20">
         <Reveal>
           {showEyebrow ? (
-            <div className="p1-eyebrow mb-7">{originContent.eyebrow}</div>
+            <div className="p1-eyebrow mb-7">{originCopy.eyebrow}</div>
           ) : null}
           <Heading className="p1-h2 max-w-[16ch]">
-            {originContent.heading}
+            {originCopy.heading}
           </Heading>
-          {originContent.body.map((paragraph, index) => (
+          {originCopy.body.map((paragraph: string, index: number) => (
             <p
               key={index}
               className={`p1-body max-w-[58ch] ${index === 0 ? "mt-9" : "mt-5"}`}
@@ -40,10 +45,9 @@ export function OriginSection({
             aria-hidden="true"
             className="absolute -bottom-4 -right-4 left-4 top-4 border border-sig-40"
           />
-          <ParallaxMedia
-            src={originContent.image.src}
-            alt={originContent.image.alt}
-          />
+          {image ? (
+            <ParallaxMedia src={image.src} alt={image.alt} />
+          ) : null}
         </Reveal>
       </div>
 

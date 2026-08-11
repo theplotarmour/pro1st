@@ -3,7 +3,7 @@
 import Link from "next/link";
 import { useRef, useState } from "react";
 import { Media } from "@/components/ui/Media";
-import { chainNodes } from "@/data/site";
+import type { ChainNode } from "@/lib/content/sections";
 import { sectionProgress, useMediaQuery, useScrollEffect } from "@/lib/motion";
 
 /**
@@ -17,7 +17,7 @@ import { sectionProgress, useMediaQuery, useScrollEffect } from "@/lib/motion";
  * Un-pins below 1024px or under 720px tall — the spec column has a real
  * min-content height it cannot give back.
  */
-export function ChainSection() {
+export function ChainSection({ nodes }: { nodes: ChainNode[] }) {
   const wrapRef = useRef<HTMLElement>(null);
   const railRef = useRef<HTMLDivElement>(null);
   const pulseRef = useRef<HTMLDivElement>(null);
@@ -49,10 +49,10 @@ export function ChainSection() {
       }
 
       let lit = 0;
-      const nodes =
+      const nodeEls =
         nodesRef.current?.querySelectorAll<HTMLElement>("[data-p1-node]");
-      nodes?.forEach((node, i) => {
-        const threshold = (i + 0.5) / chainNodes.length;
+      nodeEls?.forEach((node, i) => {
+        const threshold = (i + 0.5) / nodes.length;
         const isLit = p >= threshold - 0.06;
         if (isLit) lit = i;
 
@@ -83,7 +83,7 @@ export function ChainSection() {
       const next = pinned ?? lit;
 
       // Scrub the stage image itself so it drifts inside its own segment.
-      const segment = 1 / chainNodes.length;
+      const segment = 1 / Math.max(1, nodes.length);
       stageRef.current
         ?.querySelectorAll<HTMLElement>("[data-p1-stage-img]")
         .forEach((image, i) => {
@@ -100,10 +100,10 @@ export function ChainSection() {
 
       if (next !== active) setActive(next);
     },
-    [unpinned, pinned, active],
+    [unpinned, pinned, active, nodes.length],
   );
 
-  const node = chainNodes[active] ?? chainNodes[0];
+  const node = nodes[active] ?? nodes[0];
   if (!node) return null;
 
   const togglePin = (index: number) =>
@@ -167,7 +167,7 @@ export function ChainSection() {
               ref={nodesRef}
               className="relative grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-7"
             >
-              {chainNodes.map((item, index) => (
+              {nodes.map((item, index) => (
                 <div
                   key={item.label}
                   data-p1-node=""
@@ -222,7 +222,7 @@ export function ChainSection() {
                     "radial-gradient(ellipse at 50% 62%, var(--sig-12), transparent 60%)",
                 }}
               />
-              {chainNodes.map((item, index) => (
+              {nodes.map((item, index) => (
                 <div
                   key={item.label}
                   data-p1-stage-img=""
@@ -232,13 +232,15 @@ export function ChainSection() {
                     willChange: "transform, opacity",
                   }}
                 >
-                  <Media
-                    src={item.image}
-                    alt={item.product}
-                    fit="contain"
-                    sizes="(max-width: 1024px) 100vw, 55vw"
-                    className="p-9"
-                  />
+                  {item.image ? (
+                    <Media
+                      src={item.image.src}
+                      alt={item.image.alt || item.product}
+                      fit="contain"
+                      sizes="(max-width: 1024px) 100vw, 55vw"
+                      className="p-9"
+                    />
+                  ) : null}
                 </div>
               ))}
               <div

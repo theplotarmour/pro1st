@@ -1,37 +1,25 @@
 import { arsenalHandles, bestSellerHandles } from "@/data/featured";
-import { isShopifyConfigured } from "@/lib/shopify/client";
 import type { Product } from "@/types/product";
-import { mockProductRepository } from "./mock-repository";
 import { shopifyProductRepository } from "./shopify-repository";
 import type { ProductRepository } from "./repository";
 
 /**
- * The one place the data source is chosen. Everything above this line is
- * presentation; everything below it is data.
+ * Shopify is the catalogue. There is no second source.
  *
- * Shopify is used whenever it is configured. `PRODUCT_SOURCE=mock` forces the
- * local catalogue, which is what makes the UI runnable with no credentials.
+ * Product facts — titles, prices, media, availability, categories — are never
+ * written down in this repository. If Shopify is unreachable the pages fail
+ * loudly through the route error boundary, which is the correct behaviour for
+ * a storefront: showing a stale hardcoded price is worse than showing nothing.
  */
-function selectRepository(): ProductRepository {
-  const forced = process.env.PRODUCT_SOURCE;
-  if (forced === "mock") return mockProductRepository;
-  if (forced === "shopify") return shopifyProductRepository;
-  return isShopifyConfigured()
-    ? shopifyProductRepository
-    : mockProductRepository;
-}
-
-export const productRepository: ProductRepository = selectRepository();
-
-export const usingShopify = () => process.env.PRODUCT_SOURCE !== "mock" && isShopifyConfigured();
+export const productRepository: ProductRepository = shopifyProductRepository;
 
 /**
  * Featured products, merchant-controlled.
  *
  * Prefers whatever the merchant has flagged with the `custom.featured`
- * metafield in Shopify. Falls back to the curated handle list only while no
- * product is flagged, so the homepage is never empty and never requires a
- * deploy to re-merchandise.
+ * metafield in Shopify. Falls back to a curated handle list only while no
+ * product is flagged, so the homepage is never empty and re-merchandising
+ * never needs a deploy.
  */
 export async function getFeaturedProducts(
   fallbackHandles: readonly string[] = bestSellerHandles,

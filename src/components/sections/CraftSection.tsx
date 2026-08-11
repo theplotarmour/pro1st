@@ -2,7 +2,7 @@
 
 import { useRef } from "react";
 import { Media } from "@/components/ui/Media";
-import { craftPanels } from "@/data/site";
+import type { CraftPanel } from "@/lib/content/sections";
 import { sectionProgress, useMediaQuery, useScrollEffect } from "@/lib/motion";
 
 /**
@@ -13,15 +13,25 @@ import { sectionProgress, useMediaQuery, useScrollEffect } from "@/lib/motion";
  * hijacking on a phone is a worse read, not a smaller one.
  */
 export function CraftSection({
+  panels,
   as: Heading = "h2",
+  layout = "pinned",
 }: {
+  panels: CraftPanel[];
   as?: "h1" | "h2";
+  /**
+   * `pinned` is the homepage's horizontal traverse. `stacked` is the same
+   * content composed as a normal editorial column — used by the Craft page,
+   * which should read as a page rather than as a second homepage.
+   */
+  layout?: "pinned" | "stacked";
 }) {
   const wrapRef = useRef<HTMLElement>(null);
   const trackRef = useRef<HTMLDivElement>(null);
   const railRef = useRef<HTMLDivElement>(null);
 
-  const unpinned = useMediaQuery("(max-width: 900px)");
+  const narrow = useMediaQuery("(max-width: 900px)");
+  const unpinned = layout === "stacked" || narrow;
 
   useScrollEffect(
     (vh) => {
@@ -83,7 +93,7 @@ export function CraftSection({
             willChange: "transform",
           }}
         >
-          {craftPanels.map((panel) => (
+          {panels.map((panel) => (
             <div
               key={panel.num}
               className="grid flex-none items-center gutter-x"
@@ -105,11 +115,13 @@ export function CraftSection({
                   className="absolute inset-0"
                   style={{ transform: "scale(1.14)", willChange: "transform" }}
                 >
-                  <Media
-                    src={panel.image}
-                    alt={panel.imageAlt}
-                    sizes="(max-width: 900px) 100vw, 50vw"
-                  />
+                  {panel.image ? (
+                    <Media
+                      src={panel.image.src}
+                      alt={panel.image.alt || panel.title}
+                      sizes="(max-width: 900px) 100vw, 50vw"
+                    />
+                  ) : null}
                 </div>
                 <div
                   aria-hidden="true"

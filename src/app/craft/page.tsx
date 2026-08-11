@@ -1,33 +1,42 @@
 import type { Metadata } from "next";
-import { BuildSection } from "@/components/sections/BuildSection";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { CraftSection } from "@/components/sections/CraftSection";
 import { TrustBar } from "@/components/sections/TrustBar";
 import { PageHeader } from "@/components/ui/PageHeader";
+import { getCraftPanels } from "@/lib/content/sections";
 
 export const metadata: Metadata = {
   title: "Craft",
   description:
-    "Imported precision, in-house backbone: how PRO1st compression drivers, amplifier chassis and cabinets are specified, assembled and tested.",
+    "Imported precision, in-house backbone: how PRO1ST compression drivers, amplifier chassis and cabinets are specified, assembled and tested.",
   alternates: { canonical: "/craft" },
   openGraph: {
     title: "Craft · PRO1ST",
     description:
-      "Imported precision, in-house backbone: how PRO1st compression drivers, amplifier chassis and cabinets are specified, assembled and tested.",
+      "Imported precision, in-house backbone: how PRO1ST compression drivers, amplifier chassis and cabinets are specified, assembled and tested.",
     url: "/craft",
   },
 };
 
-export default function CraftPage() {
+/**
+ * Craft reads as an engineering editorial.
+ *
+ * The panels are the same content as the homepage's horizontal traverse, but
+ * composed as a stacked column — and the 620vh exploded-assembly section stays
+ * on the homepage where it belongs. Two scroll-jacked sections back to back
+ * made this page nine screens of hijacked scrolling.
+ */
+export default async function CraftPage() {
+  const panels = await getCraftPanels();
+
   return (
     <>
       <PageHeader
-        eyebrow="[ 05 — Craft ]"
+        eyebrow="[ Craft ]"
         title="Imported precision. In-house backbone."
         lead="We buy the components nobody should improvise, and we build the parts that decide whether a cabinet survives a monsoon load-in."
       />
-      <CraftSection />
-      <BuildSection />
+      <CraftSection panels={panels} layout="stacked" />
       <TrustBar />
       <ContactCTA />
     </>
