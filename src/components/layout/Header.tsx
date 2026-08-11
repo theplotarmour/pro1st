@@ -9,7 +9,6 @@ import type { CategorySummary } from "@/types/product";
 import { Logo } from "./Logo";
 import { MegaMenu } from "./MegaMenu";
 import { MobileNav } from "./MobileNav";
-import { ThemeToggle } from "./ThemeToggle";
 import { CartIcon, MenuIcon, SearchIcon } from "./icons";
 
 export function Header({ categories }: { categories: CategorySummary[] }) {
@@ -121,8 +120,6 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
         </nav>
 
         <div className="ml-auto flex flex-none items-center gap-4 lg:ml-0 lg:gap-[18px]">
-          <ThemeToggle />
-
           <Link
             href="/search"
             aria-label="Search products"

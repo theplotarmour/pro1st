@@ -88,8 +88,8 @@ export function Hero({ chassisImage }: HeroProps) {
 
         <div className="mt-8 flex flex-wrap gap-3">
           <Magnetic>
-            <ButtonLink href="/arsenal" variant="primary">
-              Enter the arsenal ↓
+            <ButtonLink href="/products" variant="primary">
+              Shop the range
             </ButtonLink>
           </Magnetic>
           <Magnetic>
