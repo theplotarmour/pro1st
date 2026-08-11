@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ContactCTA } from "@/components/sections/ContactCTA";
+import { Manifesto } from "@/components/sections/Manifesto";
 import { OriginSection } from "@/components/sections/OriginSection";
 import { ShowroomSection } from "@/components/sections/ShowroomSection";
 import { TrustBar } from "@/components/sections/TrustBar";
@@ -31,6 +32,7 @@ export default async function OriginPage() {
         lead="Desire Electronics has traded in audio since 2004. PRO1ST is the professional line."
       />
       <OriginSection image={image} as="h2" showEyebrow={false} />
+      <Manifesto />
       <TrustBar />
       <ShowroomSection />
       <ContactCTA />

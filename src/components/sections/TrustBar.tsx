@@ -10,10 +10,10 @@ export function TrustBar() {
       {trustPoints.map((point) => (
         <div
           key={point}
-          className="flex items-center gap-4 border-l border-hairline gutter-x py-10"
+          className="flex items-center gap-4 border-l border-hairline gutter-x py-8"
         >
           <TargetIcon />
-          <span className="p1-mono leading-[1.5] text-body">
+          <span className="p1-mono leading-[1.5] text-muted">
             {point}
           </span>
         </div>

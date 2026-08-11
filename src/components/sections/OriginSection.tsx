@@ -21,7 +21,7 @@ export function OriginSection({
   showEyebrow = true,
 }: OriginSectionProps) {
   return (
-    <Container as="section" id="origin" className="py-24 lg:py-32">
+    <Container as="section" id="origin" className="py-28 lg:py-40">
       <div className="grid grid-cols-1 items-start gap-14 lg:grid-cols-[7fr_5fr] lg:gap-20">
         <Reveal>
           {showEyebrow ? (

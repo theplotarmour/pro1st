@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { ProductFilters } from "@/components/product/ProductFilters";
 import { ProductGrid } from "@/components/product/ProductGrid";
 import { ContactCTA } from "@/components/sections/ContactCTA";
+import { GalleryBand } from "@/components/sections/GalleryBand";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { productRepository } from "@/lib/products";
@@ -40,9 +41,10 @@ export async function generateMetadata({
 export default async function ProductsPage({ searchParams }: PageProps) {
   const { category } = await searchParams;
 
-  const [categories, all] = await Promise.all([
+  const [categories, all, gallery] = await Promise.all([
     productRepository.getCategories(),
     productRepository.getAll(),
+    productRepository.getGalleryMedia(18),
   ]);
 
   const active = categories.some((c) => c.slug === category)
@@ -86,6 +88,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
         />
       </Container>
 
+      {active ? null : <GalleryBand shots={gallery} />}
       <ContactCTA />
     </>
   );

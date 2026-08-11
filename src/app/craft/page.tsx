@@ -1,9 +1,10 @@
 import type { Metadata } from "next";
 import { ContactCTA } from "@/components/sections/ContactCTA";
+import { BuildSection } from "@/components/sections/BuildSection";
 import { CraftSection } from "@/components/sections/CraftSection";
 import { TrustBar } from "@/components/sections/TrustBar";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { getCraftPanels } from "@/lib/content/sections";
+import { getBuildUnit, getCraftPanels } from "@/lib/content/sections";
 
 export const metadata: Metadata = {
   title: "Craft",
@@ -27,7 +28,7 @@ export const metadata: Metadata = {
  * made this page nine screens of hijacked scrolling.
  */
 export default async function CraftPage() {
-  const panels = await getCraftPanels();
+  const [panels, build] = await Promise.all([getCraftPanels(), getBuildUnit()]);
 
   return (
     <>
@@ -37,6 +38,7 @@ export default async function CraftPage() {
         lead="We buy the components nobody should improvise, and we build the parts that decide whether a cabinet survives a monsoon load-in."
       />
       <CraftSection panels={panels} layout="stacked" />
+      {build ? <BuildSection unit={build} /> : null}
       <TrustBar />
       <ContactCTA />
     </>

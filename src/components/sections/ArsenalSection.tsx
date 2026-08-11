@@ -27,9 +27,9 @@ export function ArsenalSection({
     <Container
       as="section"
       id="products"
-      className="border-t border-hairline py-24 lg:py-32"
+      className="border-t border-hairline py-28 lg:py-40"
     >
-      <Reveal className="mb-14">
+      <Reveal className="mb-16 lg:mb-20">
         <SectionHeading eyebrow={eyebrow} title={title} as={as} />
       </Reveal>
 
