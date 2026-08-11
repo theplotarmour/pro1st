@@ -7,9 +7,10 @@ import {
   COLLECTION_PRODUCTS_QUERY,
   PRODUCTS_QUERY,
   PRODUCT_BY_HANDLE_QUERY,
+  PRODUCT_MEDIA_QUERY,
 } from "@/lib/shopify/queries";
 import type { CategorySummary, Product } from "@/types/product";
-import type { ProductRepository } from "./repository";
+import type { GalleryShot, ProductRepository } from "./repository";
 
 /**
  * Shopify Storefront implementation of the product repository.
@@ -205,5 +206,48 @@ export const shopifyProductRepository: ProductRepository = {
     // Fill from the same category first, then top up from the wider
     // catalogue — an empty "Pairs with" strip reads as broken.
     return [...sameCategory, ...rest].slice(0, limit);
+  },
+
+  async getGalleryMedia(limit = 24) {
+    const data = await storefront<{
+      products: {
+        nodes: {
+          handle: string;
+          title: string;
+          images: {
+            nodes: {
+              url: string;
+              altText: string | null;
+              width: number | null;
+              height: number | null;
+            }[];
+          };
+        }[];
+      };
+    }>(PRODUCT_MEDIA_QUERY, {
+      variables: { first: 100, imagesPerProduct: 6 },
+      tags: ["shopify-products"],
+    });
+
+    // Interleave by image index rather than concatenating per product, so the
+    // wall never shows six shots of the same microphone in a row.
+    const byRound: GalleryShot[][] = [];
+    for (const product of data.products.nodes) {
+      product.images.nodes.forEach((image, round) => {
+        // Skip the featured shot — it already carries the product card.
+        if (round === 0) return;
+        const shot: GalleryShot = {
+          src: image.url,
+          alt: image.altText?.trim() || product.title,
+          handle: product.handle,
+          title: product.title,
+        };
+        if (image.width) shot.width = image.width;
+        if (image.height) shot.height = image.height;
+        (byRound[round] ??= []).push(shot);
+      });
+    }
+
+    return byRound.flat().slice(0, limit);
   },
 };

@@ -1,9 +1,6 @@
 import { Container } from "@/components/ui/Container";
 import { contact } from "@/data/site";
-
-const mapsHref = `https://www.google.com/maps/search/?api=1&query=${encodeURIComponent(
-  contact.addressLines.join(" "),
-)}`;
+import { ShowroomMap } from "./ShowroomMap";
 
 interface Row {
   label: string;
@@ -78,33 +75,7 @@ export function ShowroomSection({
           </div>
         </div>
 
-        <a
-          href={mapsHref}
-          target="_blank"
-          rel="noopener noreferrer"
-          aria-label="Open the PRO1st showroom in Google Maps"
-          className="group relative block aspect-[16/9] overflow-hidden border border-hairline bg-panel"
-        >
-          <div
-            aria-hidden="true"
-            className="absolute inset-0"
-            style={{
-              backgroundImage:
-                "linear-gradient(var(--p1-hairline) 1px,transparent 1px),linear-gradient(90deg,var(--p1-hairline) 1px,transparent 1px)",
-              backgroundSize: "56px 56px",
-            }}
-          />
-          <span
-            aria-hidden="true"
-            className="absolute left-[46%] top-[44%] h-2.5 w-2.5 rounded-full bg-signal"
-            style={{
-              boxShadow: "0 0 0 10px var(--sig-12), 0 0 20px 4px var(--sig-40)",
-            }}
-          />
-          <span className="p1-mono absolute bottom-5 left-5 text-[rgba(230,230,230,0.4)] group-hover:text-signal">
-            Open in maps →
-          </span>
-        </a>
+        <ShowroomMap />
       </div>
     </Container>
   );

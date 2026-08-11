@@ -49,6 +49,12 @@ export const contact = {
   whatsappLabel: "Message us",
   whatsappHref: "https://wa.me/917290077778",
   hours: "Mon–Sat · 10:30–19:30",
+  /**
+   * CONFIRM — the exact street number does not resolve in OpenStreetMap, so
+   * this is the Moti Cinema Compound block from OSM's own geocoding, not a
+   * guess. Replace with the precise rooftop coordinates if the client has them.
+   */
+  geo: { latitude: 28.6565844, longitude: 77.2345987 },
 } as const;
 
 export const heroContent = {

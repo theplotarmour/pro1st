@@ -15,4 +15,16 @@ export interface ProductRepository {
   getCategories(): Promise<CategorySummary[]>;
   search(query: string): Promise<Product[]>;
   getRelated(handle: string, limit?: number): Promise<Product[]>;
+  /** Flattened product photography for editorial galleries. */
+  getGalleryMedia(limit?: number): Promise<GalleryShot[]>;
+}
+
+/** One photograph, with the product it belongs to. */
+export interface GalleryShot {
+  src: string;
+  alt: string;
+  width?: number;
+  height?: number;
+  handle: string;
+  title: string;
 }

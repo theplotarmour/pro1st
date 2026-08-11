@@ -232,3 +232,22 @@ export const CART_LINES_REMOVE_MUTATION = `
     }
   }
 `;
+
+/**
+ * Lightweight media query for the editorial gallery band.
+ *
+ * The catalogue carries ~5 images per product and the card fragment only ever
+ * used the first. This pulls the rest so the landing page can be built from
+ * real product photography instead of filler.
+ */
+export const PRODUCT_MEDIA_QUERY = `
+  query ProductMedia($first: Int!, $imagesPerProduct: Int!) {
+    products(first: $first, sortKey: TITLE) {
+      nodes {
+        handle
+        title
+        images(first: $imagesPerProduct) { nodes { ${IMAGE} } }
+      }
+    }
+  }
+`;
