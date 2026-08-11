@@ -31,18 +31,20 @@ export async function generateMetadata({
   // SEO copy is derived from product data, so it stays correct once the
   // Shopify catalogue replaces the mock records.
   const description =
-    product.description ??
+    product.seo?.description ??
+    product.description?.slice(0, 200) ??
     [product.title, product.category, product.specLine]
       .filter(Boolean)
       .join(" · ");
+  const title = product.seo?.title ?? product.title;
 
   return {
-    title: product.title,
+    title,
     description,
     alternates: { canonical: `/products/${product.handle}` },
     openGraph: {
       type: "website",
-      title: `${product.title} · ${site.name}`,
+      title: `${title} · ${site.name}`,
       description,
       url: `/products/${product.handle}`,
       images: product.images[0] ? [{ url: product.images[0].src }] : undefined,
@@ -97,7 +99,9 @@ export default async function ProductPage({ params }: PageProps) {
           </li>
           <li aria-hidden="true">/</li>
           <li>
-            <Link href={`/products?category=${categorySlug(product.category)}`}>
+            <Link
+              href={`/products?category=${product.categoryHandle ?? categorySlug(product.category)}`}
+            >
               {product.category}
             </Link>
           </li>
@@ -119,7 +123,14 @@ export default async function ProductPage({ params }: PageProps) {
             specifications={product.specifications}
             enquiryHref={enquiryHref}
           />
-          <ProductFeatures features={product.features} />
+          <div className="flex flex-col gap-12">
+            <ProductFeatures items={product.features} title="Features" id="features" />
+            <ProductFeatures
+              items={product.applications}
+              title="Applications"
+              id="applications"
+            />
+          </div>
         </div>
       </Container>
 

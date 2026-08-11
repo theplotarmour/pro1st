@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect } from "react";
+import { useRef } from "react";
 import { contact, primaryNav } from "@/data/site";
+import { useFocusTrap } from "@/lib/a11y/useFocusTrap";
 import type { CategorySummary } from "@/types/product";
 
 interface MobileNavProps {
@@ -17,25 +18,19 @@ interface MobileNavProps {
  * and the dealer CTA kept in reach at the bottom.
  */
 export function MobileNav({ open, onClose, categories }: MobileNavProps) {
-  useEffect(() => {
-    if (!open) return;
-    const previous = document.body.style.overflow;
-    document.body.style.overflow = "hidden";
+  const panelRef = useRef<HTMLDivElement>(null);
 
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") onClose();
-    };
-    window.addEventListener("keydown", onKey);
-
-    return () => {
-      document.body.style.overflow = previous;
-      window.removeEventListener("keydown", onKey);
-    };
-  }, [open, onClose]);
+  // Escape, scroll lock, focus trap and focus restore all live in one place.
+  useFocusTrap(panelRef, open, { onClose });
 
   return (
     <div
+      ref={panelRef}
       id="mobile-nav"
+      role="dialog"
+      aria-modal="true"
+      aria-label="Site menu"
+      tabIndex={-1}
       hidden={!open}
       className="fixed inset-0 z-[118] flex flex-col overflow-y-auto bg-ink pt-[72px] lg:hidden"
     >

@@ -71,6 +71,17 @@ export default async function RootLayout({
             crossOrigin="anonymous"
           />
         ))}
+        {/*
+          Progressive enhancement. Reveal animations start hidden and are
+          shown by JS; without JS the page would render blank. This restores
+          every animated element to its final state.
+        */}
+        <noscript>
+          <style>{`
+            [data-p1-rise] { opacity: 1 !important; transform: none !important; }
+            [data-p1-word], [data-p1-hero-word] { transform: none !important; }
+          `}</style>
+        </noscript>
       </head>
       <body>
         <CartProvider>

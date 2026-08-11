@@ -74,10 +74,10 @@ export function Hero({ chassisImage, chassisAlt }: HeroProps) {
 
         <h1 className="p1-h1">
           <span className="block overflow-hidden">
-            <span style={line(0)}>{heroContent.headlineTop}</span>
+            <span data-p1-hero-word="" style={line(0)}>{heroContent.headlineTop}</span>
           </span>
           <span className="block overflow-hidden">
-            <span style={line(1)}>
+            <span data-p1-hero-word="" style={line(1)}>
               <span className="text-signal">{heroContent.headlineAccent}</span>{" "}
               {heroContent.headlineRest}
             </span>

@@ -24,8 +24,12 @@ export function ProductCard({
   sizes = "(max-width: 640px) 50vw, (max-width: 1100px) 33vw, 25vw",
 }: ProductCardProps) {
   const image = product.images[0];
-  const status = availabilityLabel(product);
-  const flag = product.availability?.status === "preorder" ? status : null;
+  // Only flag a card when the buyer can't buy — an "In stock" badge on every
+  // tile is noise, but a sold-out one changes the decision.
+  const flag =
+    product.availability.status === "in-stock"
+      ? null
+      : availabilityLabel(product);
 
   return (
     <article className="group relative flex flex-col border-b border-hairline pb-5">

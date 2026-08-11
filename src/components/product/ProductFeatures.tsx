@@ -1,24 +1,40 @@
-/** Bullet list of client-supplied features. Absent when there are none. */
-export function ProductFeatures({ features }: { features?: string[] }) {
-  const items = (features ?? []).filter(Boolean);
-  if (items.length === 0) return null;
+interface ProductFeaturesProps {
+  items?: string[];
+  title?: string;
+  id?: string;
+}
+
+/**
+ * Bullet list of client-supplied points — features or applications.
+ * Renders nothing when the metafield is absent, rather than an empty heading.
+ */
+export function ProductFeatures({
+  items,
+  title = "Features",
+  id = "features",
+}: ProductFeaturesProps) {
+  const entries = (items ?? []).filter((item) => item.trim() !== "");
+  if (entries.length === 0) return null;
 
   return (
-    <section aria-labelledby="features-heading">
+    <section aria-labelledby={`${id}-heading`}>
       <h2
-        id="features-heading"
+        id={`${id}-heading`}
         className="p1-mono mb-6 text-[rgba(230,230,230,0.6)]"
       >
-        Features
+        {title}
       </h2>
       <ul className="m-0 list-none border-t border-hairline p-0">
-        {items.map((feature) => (
+        {entries.map((entry) => (
           <li
-            key={feature}
+            key={entry}
             className="flex gap-4 border-b border-hairline py-4 text-[15px] leading-[1.6] text-[rgba(230,230,230,0.72)]"
           >
-            <span aria-hidden="true" className="mt-2 h-1.5 w-1.5 flex-none bg-signal" />
-            {feature}
+            <span
+              aria-hidden="true"
+              className="mt-2 h-1.5 w-1.5 flex-none bg-signal"
+            />
+            {entry}
           </li>
         ))}
       </ul>

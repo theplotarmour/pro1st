@@ -80,15 +80,39 @@ components/
 | `/search` | `?q=` — server-rendered, works without JS |
 | `/cart` | Full cart |
 
+## Shopify
+
+Live store: `pro1st-2.myshopify.com` (INR, India). The catalogue is real — 25
+products with real prices, SKUs, inventory and CDN media — and is served
+through the **Storefront API 2026-07** via the existing "Pro1st Headless"
+sales channel.
+
+- **Categories are Shopify collections**, not `productType`. The site taxonomy
+  follows what the merchant curates in admin; no deploy to reorganise.
+- **Featured products** come from the `custom.featured` metafield when set,
+  falling back to the curated handles in `src/data/featured.ts`.
+- **Specs / features / applications / documents** come from `custom.*`
+  metafields only. No definitions exist yet, so those sections render their
+  designed empty states — nothing is fabricated to fill them.
+- **Cart and checkout are Shopify's.** Only the cart ID is stored here, in an
+  httpOnly cookie. This app holds no order data and never sees a payment
+  credential.
+- **Least privilege:** `quantityAvailable` / `totalInventory` are not queried;
+  they need `unauthenticated_read_product_inventory`, which the public token
+  does not carry. `availableForSale` gates purchase and needs no extra scope.
+
+Never put an Admin API token (`shpat_…`) in this application. The only Shopify
+credential it uses is the public, read-only Storefront token.
+
 ## Environment
 
 | Variable | Purpose |
 |---|---|
 | `NEXT_PUBLIC_SITE_URL` | Canonical origin for metadata and sitemap |
-| `PRODUCT_SOURCE` | `mock` (default) or `shopify` |
-| `SHOPIFY_STORE_DOMAIN` | Phase 5 |
-| `SHOPIFY_STOREFRONT_TOKEN` | Phase 5 |
-| `NEXT_PUBLIC_CHECKOUT_URL` | Enables the checkout button |
+| `PRODUCT_SOURCE` | `shopify` (default when configured) or `mock` |
+| `SHOPIFY_STORE_DOMAIN` | e.g. `pro1st-2.myshopify.com` |
+| `SHOPIFY_STOREFRONT_PUBLIC_TOKEN` | Public Storefront token (Headless channel) |
+| `SHOPIFY_API_VERSION` | Pinned to `2026-07` |
 | `NEXT_PUBLIC_NEWSLETTER_ENDPOINT` | Enables newsletter signup |
 
 Where an integration is absent the UI says so plainly rather than simulating
@@ -109,8 +133,24 @@ functions of scroll progress, so they scrub in both directions. They un-pin
 below 900–1024px — mobile gets a composed vertical layout rather than a shrunk
 desktop one. Everything respects `prefers-reduced-motion`.
 
-## Outstanding (Phase 5–6)
+## Outstanding — needs merchant action
 
-- Shopify Storefront queries + `toProduct` mapping.
-- Real product media, specifications, documents and variants.
-- Client UAT.
+These are business decisions or admin work, not code:
+
+1. **Rotate the Admin API token** that was shared in chat (`shpat_…`).
+2. **Product metadata is empty** across all 25 products: no `productType`,
+   no tags, no SEO title/description. Specs stay hidden until metafields exist.
+3. **Create metafield definitions** (`custom.specifications`, `custom.features`,
+   `custom.applications`, `custom.documents`, `custom.spec_line`) and populate
+   them — this is what lights up the spec tables.
+4. **Taxonomy**: Accessories (13) currently absorbs 4 crossover networks and
+   2 compression drivers. Deferred by the client.
+5. **XTR 6.0** title/handle conflict — title says "Power Amplifier", handle and
+   imagery say "Feedback Eliminator". Deferred by the client.
+6. **T-12 trolley speaker** is referenced in the brief but does not exist in
+   the catalogue. Not linked anywhere, to avoid a dead tile.
+7. **4 products have no SKU**: D-750, A-450, AJ6, Bluetooth Reporter Mic.
+8. **Vendor is inconsistent**: "Desire Electronics" vs "Professional Rhythm
+   Operator - PRO 1st".
+9. Payments, shipping, GST and legal policies — all merchant decisions.
+10. Client UAT.

@@ -31,6 +31,16 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
     setMobileOpen(false);
   }, [pathname]);
 
+  // Escape closes the category panel from anywhere inside it.
+  useEffect(() => {
+    if (!megaOpen) return;
+    const onKey = (event: KeyboardEvent) => {
+      if (event.key === "Escape") setMegaOpen(false);
+    };
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, [megaOpen]);
+
   const closeMega = useCallback(() => setMegaOpen(false), []);
 
   const isActive = (href: string) =>
@@ -69,10 +79,23 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
                 onMouseEnter={() => setMegaOpen(true)}
                 className="relative"
               >
+                {/*
+                  The panel opens on hover for pointers and on focus for
+                  keyboards — hover alone made the whole category menu
+                  unreachable without a mouse.
+                */}
                 <Link
                   href={item.href}
                   aria-expanded={megaOpen}
                   aria-haspopup="true"
+                  onFocus={() => setMegaOpen(true)}
+                  onKeyDown={(event) => {
+                    if (event.key === "Escape") setMegaOpen(false);
+                    if (event.key === "ArrowDown") {
+                      event.preventDefault();
+                      setMegaOpen(true);
+                    }
+                  }}
                   className="block py-1.5 hover:text-white"
                   style={{
                     color: isActive(item.href)
