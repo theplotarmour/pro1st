@@ -1,4 +1,5 @@
 @import "tailwindcss";
+@import "./fonts.css";
 
 /* ------------------------------------------------------------------ *
  * PRO1ST design tokens
@@ -29,6 +30,11 @@
 }
 
 :root {
+  /* Font stacks. The families are declared in fonts.css. */
+  --f-d: "Space Grotesk", system-ui, sans-serif;
+  --f-b: "Inter", system-ui, sans-serif;
+  --f-m: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
   --p1-signal: #ff6a00;
   --p1-black: #0d0d0f;
   --p1-steel: #2a2d33;

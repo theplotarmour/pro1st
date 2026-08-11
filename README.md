@@ -16,6 +16,22 @@ npm run build
 npm run typecheck
 ```
 
+## Fonts
+
+Space Grotesk, Inter and JetBrains Mono are **self-hosted** from
+`public/fonts` and declared in `src/app/fonts.css` — not loaded through
+`next/font/google`. The build must not depend on `fonts.gstatic.com` being
+reachable from the CI machine.
+
+All three are variable fonts, split into `latin` / `latin-ext` / `greek`
+subsets carrying `unicode-range`, so a browser fetches latin-ext (₹) or greek
+(Ω) only when those glyphs are rendered. The three latin subsets are
+preloaded in `layout.tsx`.
+
+To refresh, re-pull the subsets from the Google Fonts CSS API and regenerate
+`src/app/fonts.css` rather than hand-editing it. All three families are
+SIL Open Font License 1.1.
+
 ## Architecture
 
 ```

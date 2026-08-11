@@ -1,5 +1,4 @@
 import type { Metadata, Viewport } from "next";
-import { Inter, JetBrains_Mono, Space_Grotesk } from "next/font/google";
 import { CartDrawer } from "@/components/commerce/CartDrawer";
 import { CursorRing } from "@/components/layout/CursorRing";
 import { Footer } from "@/components/layout/Footer";
@@ -11,26 +10,16 @@ import { CartProvider } from "@/lib/cart/CartProvider";
 import { productRepository } from "@/lib/products";
 import "./globals.css";
 
-const display = Space_Grotesk({
-  subsets: ["latin"],
-  weight: ["500", "700"],
-  variable: "--f-d",
-  display: "swap",
-});
-
-const body = Inter({
-  subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--f-b",
-  display: "swap",
-});
-
-const mono = JetBrains_Mono({
-  subsets: ["latin"],
-  weight: ["400", "500"],
-  variable: "--f-m",
-  display: "swap",
-});
+/**
+ * Latin subsets are preloaded because every page uses all three families
+ * above the fold. latin-ext and greek stay lazy — their unicode-range means
+ * the browser fetches them only when a ₹ or Ω is actually rendered.
+ */
+const preloadedFonts = [
+  "/fonts/space-grotesk-latin.woff2",
+  "/fonts/inter-latin.woff2",
+  "/fonts/jetbrains-mono-latin.woff2",
+];
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -70,10 +59,19 @@ export default async function RootLayout({
   const categories = await productRepository.getCategories();
 
   return (
-    <html
-      lang="en-IN"
-      className={`${display.variable} ${body.variable} ${mono.variable}`}
-    >
+    <html lang="en-IN">
+      <head>
+        {preloadedFonts.map((href) => (
+          <link
+            key={href}
+            rel="preload"
+            href={href}
+            as="font"
+            type="font/woff2"
+            crossOrigin="anonymous"
+          />
+        ))}
+      </head>
       <body>
         <CartProvider>
           <Preloader />
