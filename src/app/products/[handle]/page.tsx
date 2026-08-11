@@ -16,9 +16,19 @@ interface PageProps {
   params: Promise<{ handle: string }>;
 }
 
+/**
+ * Prerender every product at build time. If Shopify is unreachable, return
+ * nothing and let the routes render on demand instead — `dynamicParams`
+ * defaults to true, so the catalogue still works, it just isn't prebuilt.
+ */
 export async function generateStaticParams() {
-  const products = await productRepository.getAll();
-  return products.map((product) => ({ handle: product.handle }));
+  try {
+    const products = await productRepository.getAll();
+    return products.map((product) => ({ handle: product.handle }));
+  } catch (error) {
+    console.error("[pro1st] generateStaticParams: Shopify unreachable, product pages will render on demand.", error);
+    return [];
+  }
 }
 
 export async function generateMetadata({

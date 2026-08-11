@@ -186,30 +186,24 @@ export const shopifyProductRepository: ProductRepository = {
   },
 
   async getRelated(handle, limit = 4) {
-    const product = await this.getByHandle(handle);
+    // Deliberately one source call. The previous version fetched the product,
+    // then its collection, then the whole catalogue — up to three round trips
+    // per product page, which is what made a 25-page build hammer Shopify.
+    // `getAll` is served from the client's in-process cache, so this is free.
+    const all = await fetchAllProducts();
+    const product = all.find((candidate) => candidate.handle === handle);
     if (!product) return [];
 
-    const categoryHandle = product.categoryHandle;
-    const pool = categoryHandle
-      ? await this.getByCategory(categoryHandle)
-      : await fetchAllProducts();
+    const others = all.filter((candidate) => candidate.handle !== handle);
+    const sameCategory = others.filter(
+      (candidate) => candidate.categoryHandle === product.categoryHandle,
+    );
+    const rest = others.filter(
+      (candidate) => candidate.categoryHandle !== product.categoryHandle,
+    );
 
-    const related = pool.filter((candidate) => candidate.handle !== handle);
-
-    // Top up from the wider catalogue when a category is too thin to fill
-    // the row — an empty "Pairs with" strip looks broken.
-    if (related.length < limit) {
-      const all = await fetchAllProducts();
-      for (const candidate of all) {
-        if (related.length >= limit) break;
-        if (candidate.handle === handle) continue;
-        if (related.some((existing) => existing.handle === candidate.handle)) {
-          continue;
-        }
-        related.push(candidate);
-      }
-    }
-
-    return related.slice(0, limit);
+    // Fill from the same category first, then top up from the wider
+    // catalogue — an empty "Pairs with" strip reads as broken.
+    return [...sameCategory, ...rest].slice(0, limit);
   },
 };
