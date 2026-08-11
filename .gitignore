@@ -5,3 +5,7 @@ out
 next-env.d.ts
 *.tsbuildinfo
 .DS_Store
+
+# Client source assets (catalogues, spec sheets). Large binaries do not
+# belong in git — keep them in shared storage and link them instead.
+*.pdf
