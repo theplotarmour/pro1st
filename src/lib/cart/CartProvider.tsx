@@ -7,133 +7,156 @@ import {
   useEffect,
   useMemo,
   useState,
+  useTransition,
   type ReactNode,
 } from "react";
-import type { CartLine, Product } from "@/types/product";
+import type { Cart, Product } from "@/types/product";
+import {
+  addToCartAction,
+  clearCartAction,
+  fetchCartAction,
+  removeCartLineAction,
+  updateCartLineAction,
+  type CartResult,
+} from "./actions";
 
 /**
- * Local cart — Phase 4.
+ * Client-side cart state.
  *
- * Deliberately mirrors the shape of a Shopify cart (lines, quantities,
- * subtotal, checkout handoff) so Phase 5 replaces the internals of this
- * provider and nothing else.
+ * The cart itself lives in Shopify; this provider is a view of it. Every
+ * mutation goes through a server action and the authoritative cart comes
+ * back — quantities, availability and totals are never computed here, so the
+ * UI cannot disagree with what the buyer will be charged.
  */
 
 interface CartContextValue {
-  lines: CartLine[];
+  cart: Cart | null;
+  lines: Cart["lines"];
   count: number;
   subtotal: number;
   currency: string;
+  checkoutUrl: string | null;
   isOpen: boolean;
   isReady: boolean;
-  add: (product: Product, quantity?: number) => void;
-  remove: (productId: string) => void;
-  setQuantity: (productId: string, quantity: number) => void;
+  isPending: boolean;
+  error: string | null;
+  add: (product: Product, quantity?: number, variantId?: string) => void;
+  setQuantity: (lineId: string, quantity: number) => void;
+  remove: (lineId: string) => void;
   clear: () => void;
   open: () => void;
   close: () => void;
+  dismissError: () => void;
 }
 
 const CartContext = createContext<CartContextValue | null>(null);
 
-const STORAGE_KEY = "pro1st.cart.v1";
-
-function readStorage(): CartLine[] {
-  try {
-    const raw = window.localStorage.getItem(STORAGE_KEY);
-    if (!raw) return [];
-    const parsed: unknown = JSON.parse(raw);
-    return Array.isArray(parsed) ? (parsed as CartLine[]) : [];
-  } catch {
-    return [];
-  }
-}
-
 export function CartProvider({ children }: { children: ReactNode }) {
-  const [lines, setLines] = useState<CartLine[]>([]);
+  const [cart, setCart] = useState<Cart | null>(null);
   const [isOpen, setIsOpen] = useState(false);
   const [isReady, setIsReady] = useState(false);
+  const [error, setError] = useState<string | null>(null);
+  const [isPending, startTransition] = useTransition();
 
   useEffect(() => {
-    setLines(readStorage());
-    setIsReady(true);
+    let active = true;
+    fetchCartAction()
+      .then((result) => {
+        if (!active) return;
+        setCart(result.cart);
+        if (result.error) setError(result.error);
+      })
+      .finally(() => {
+        if (active) setIsReady(true);
+      });
+    return () => {
+      active = false;
+    };
   }, []);
 
-  useEffect(() => {
-    if (!isReady) return;
-    try {
-      window.localStorage.setItem(STORAGE_KEY, JSON.stringify(lines));
-    } catch {
-      /* Storage unavailable (private mode) — the cart stays in memory. */
+  const apply = useCallback((result: CartResult) => {
+    if (result.error) {
+      setError(result.error);
+      return;
     }
-  }, [lines, isReady]);
+    setError(null);
+    setCart(result.cart);
+  }, []);
 
-  const add = useCallback((product: Product, quantity = 1) => {
-    if (typeof product.price !== "number") return;
-    const price = product.price;
+  const run = useCallback(
+    (operation: () => Promise<CartResult>) => {
+      startTransition(async () => {
+        apply(await operation());
+      });
+    },
+    [apply],
+  );
 
-    setLines((current) => {
-      const existing = current.find((line) => line.productId === product.id);
-      if (existing) {
-        return current.map((line) =>
-          line.productId === product.id
-            ? { ...line, quantity: line.quantity + quantity }
-            : line,
-        );
+  const add = useCallback(
+    (product: Product, quantity = 1, variantId?: string) => {
+      // Fall back to the first sellable variant — single-variant products
+      // still have exactly one, so this covers the whole catalogue.
+      const id =
+        variantId ??
+        product.variants.find((v) => v.availableForSale)?.id ??
+        product.variants[0]?.id;
+
+      if (!id) {
+        setError("This product can't be added to the cart yet.");
+        return;
       }
-      return [
-        ...current,
-        {
-          productId: product.id,
-          handle: product.handle,
-          title: product.title,
-          category: product.category,
-          price,
-          currency: product.currency ?? "INR",
-          image: product.images[0],
-          quantity,
-        },
-      ];
-    });
-    setIsOpen(true);
-  }, []);
 
-  const remove = useCallback((productId: string) => {
-    setLines((current) => current.filter((l) => l.productId !== productId));
-  }, []);
+      setIsOpen(true);
+      run(() => addToCartAction(id, quantity));
+    },
+    [run],
+  );
 
-  const setQuantity = useCallback((productId: string, quantity: number) => {
-    setLines((current) =>
-      quantity <= 0
-        ? current.filter((l) => l.productId !== productId)
-        : current.map((l) =>
-            l.productId === productId ? { ...l, quantity } : l,
-          ),
-    );
-  }, []);
+  const setQuantity = useCallback(
+    (lineId: string, quantity: number) =>
+      run(() => updateCartLineAction(lineId, quantity)),
+    [run],
+  );
 
-  const clear = useCallback(() => setLines([]), []);
-  const open = useCallback(() => setIsOpen(true), []);
-  const close = useCallback(() => setIsOpen(false), []);
+  const remove = useCallback(
+    (lineId: string) => run(() => removeCartLineAction(lineId)),
+    [run],
+  );
 
-  const value = useMemo<CartContextValue>(() => {
-    const count = lines.reduce((sum, l) => sum + l.quantity, 0);
-    const subtotal = lines.reduce((sum, l) => sum + l.price * l.quantity, 0);
-    return {
-      lines,
-      count,
-      subtotal,
-      currency: lines[0]?.currency ?? "INR",
+  const clear = useCallback(() => run(() => clearCartAction()), [run]);
+
+  const value = useMemo<CartContextValue>(
+    () => ({
+      cart,
+      lines: cart?.lines ?? [],
+      count: cart?.totalQuantity ?? 0,
+      subtotal: cart?.subtotal ?? 0,
+      currency: cart?.currency ?? "INR",
+      checkoutUrl: cart?.checkoutUrl ?? null,
       isOpen,
       isReady,
+      isPending,
+      error,
       add,
-      remove,
       setQuantity,
+      remove,
       clear,
-      open,
-      close,
-    };
-  }, [lines, isOpen, isReady, add, remove, setQuantity, clear, open, close]);
+      open: () => setIsOpen(true),
+      close: () => setIsOpen(false),
+      dismissError: () => setError(null),
+    }),
+    [
+      cart,
+      isOpen,
+      isReady,
+      isPending,
+      error,
+      add,
+      setQuantity,
+      remove,
+      clear,
+    ],
+  );
 
   return <CartContext.Provider value={value}>{children}</CartContext.Provider>;
 }

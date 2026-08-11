@@ -94,7 +94,7 @@ export const chainNodes = [
     spec: "Dynamic · Supercardioid · XLR",
     price: "₹850",
     image: IMG.tk600,
-    handle: "tk600",
+    handle: "pro-1st-tk600-dynamic-microphone",
   },
   {
     label: "Mixer",
@@ -102,7 +102,7 @@ export const chainNodes = [
     spec: "6-channel · 99 DSP · Phantom",
     price: "₹6,750",
     image: IMG.aj6,
-    handle: "aj6-mixer",
+    handle: "pro-1st-aj6-professional-audio-mixer",
   },
   {
     label: "Processor",
@@ -110,7 +110,7 @@ export const chainNodes = [
     spec: "1U rack · Zero screech",
     price: "₹11,000",
     image: IMG.xtr6,
-    handle: "xtr-60",
+    handle: "pro1st-xtr-6-0-feedback-eliminator",
   },
   {
     label: "Amplifier",
@@ -118,7 +118,7 @@ export const chainNodes = [
     spec: "1600W · Pro booster",
     price: "₹25,000",
     image: IMG.mx1600,
-    handle: "mx-1600",
+    handle: "pro1st-mx-1600-professional-power-amplifier",
   },
   {
     label: "Crossover",
@@ -126,7 +126,7 @@ export const chainNodes = [
     spec: "2-way & 3-way · 8Ω",
     price: "₹550",
     image: IMG.d750,
-    handle: "d-750",
+    handle: "pro1st-d-750-hf-cross-over-network",
   },
   {
     label: "Driver",
@@ -134,7 +134,7 @@ export const chainNodes = [
     spec: "120W · 8Ω · Titanium",
     price: "₹5,500",
     image: IMG.tn780,
-    handle: "780-tn",
+    handle: "pro-1st-780-tn-high-power-compression-driver-1",
   },
   {
     label: "Cabinet",
@@ -142,7 +142,7 @@ export const chainNodes = [
     spec: "Portable · Bluetooth · Wheeled",
     price: "₹6,480",
     image: IMG.t12,
-    handle: "t-12",
+    handle: "pro-1st-party-box-portable-bluetooth-speaker",
   },
 ] as const;
 

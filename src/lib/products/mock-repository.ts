@@ -3,34 +3,36 @@ import { categorySlug } from "@/lib/format";
 import type { CategorySummary, Product } from "@/types/product";
 import type { ProductRepository } from "./repository";
 
-/** Order categories the way the design's mega menu and filters present them. */
+/**
+ * Local fallback repository. Mirrors the Shopify implementation's behaviour
+ * closely enough that switching sources is not observable in the UI.
+ */
+
 const CATEGORY_ORDER = [
   "Mixers",
   "Amplifiers",
   "Speakers",
   "Microphones",
   "Processors",
-  "Drivers",
-  "Crossovers",
   "Accessories",
-] as const;
+];
 
 function byHandle(handle: string): Product | undefined {
   return products.find((p) => p.handle === handle);
 }
 
 function matches(product: Product, term: string): boolean {
-  const haystack = [
+  return [
     product.title,
     product.category,
     product.sku ?? "",
     product.specLine ?? "",
     product.description ?? "",
-    ...(product.tags ?? []),
+    ...product.tags,
   ]
     .join(" ")
-    .toLowerCase();
-  return haystack.includes(term);
+    .toLowerCase()
+    .includes(term);
 }
 
 export const mockProductRepository: ProductRepository = {
@@ -49,7 +51,9 @@ export const mockProductRepository: ProductRepository = {
   },
 
   async getByCategory(slug) {
-    return products.filter((p) => categorySlug(p.category) === slug);
+    return products.filter(
+      (p) => (p.categoryHandle ?? categorySlug(p.category)) === slug,
+    );
   },
 
   async getCategories() {
@@ -58,19 +62,23 @@ export const mockProductRepository: ProductRepository = {
       counts.set(p.category, (counts.get(p.category) ?? 0) + 1);
     }
 
-    const summaries: CategorySummary[] = [];
-    for (const name of CATEGORY_ORDER) {
-      const count = counts.get(name) ?? 0;
-      if (count === 0) continue;
-      const first = products.find((p) => p.category === name);
-      summaries.push({
-        name,
-        slug: categorySlug(name),
-        count,
-        image: first?.images[0],
+    return [...counts.entries()]
+      .map<CategorySummary>(([name, count]) => {
+        const first = products.find((p) => p.category === name);
+        return {
+          name,
+          slug: categorySlug(name),
+          count,
+          ...(first?.images[0] ? { image: first.images[0] } : {}),
+        };
+      })
+      .sort((a, b) => {
+        const ai = CATEGORY_ORDER.indexOf(a.name);
+        const bi = CATEGORY_ORDER.indexOf(b.name);
+        const ao = ai === -1 ? CATEGORY_ORDER.length : ai;
+        const bo = bi === -1 ? CATEGORY_ORDER.length : bi;
+        return ao !== bo ? ao - bo : a.name.localeCompare(b.name);
       });
-    }
-    return summaries;
   },
 
   async search(query) {

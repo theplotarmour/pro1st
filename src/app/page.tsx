@@ -11,8 +11,7 @@ import { OriginSection } from "@/components/sections/OriginSection";
 import { ShowroomSection } from "@/components/sections/ShowroomSection";
 import { TrustBar } from "@/components/sections/TrustBar";
 import { IMG } from "@/data/images";
-import { bestSellerHandles } from "@/data/products";
-import { productRepository } from "@/lib/products";
+import { getFeaturedProducts, productRepository } from "@/lib/products";
 
 /**
  * The homepage is the brand experience, not a grid with a hero on top:
@@ -21,7 +20,7 @@ import { productRepository } from "@/lib/products";
  */
 export default async function HomePage() {
   const [featured, all] = await Promise.all([
-    productRepository.getByHandles(bestSellerHandles),
+    getFeaturedProducts(),
     productRepository.getAll(),
   ]);
 

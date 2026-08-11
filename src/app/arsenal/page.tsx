@@ -3,8 +3,7 @@ import { ChainSection } from "@/components/sections/ChainSection";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { ArsenalSection } from "@/components/sections/ArsenalSection";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { arsenalHandles } from "@/data/products";
-import { productRepository } from "@/lib/products";
+import { getArsenalProducts, productRepository } from "@/lib/products";
 
 export const metadata: Metadata = {
   title: "Arsenal",
@@ -21,7 +20,7 @@ export const metadata: Metadata = {
 
 export default async function ArsenalPage() {
   const [flagship, all] = await Promise.all([
-    productRepository.getByHandles(arsenalHandles),
+    getArsenalProducts(),
     productRepository.getAll(),
   ]);
 

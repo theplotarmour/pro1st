@@ -1,8 +1,8 @@
-import type { Product, ProductCategory } from "@/types/product";
+import type { Product, ProductVariant } from "@/types/product";
 
 const DEFAULT_CURRENCY = "INR";
 
-/** ₹6,750 — Indian digit grouping, no decimals (catalogue prices are whole). */
+/** ₹6,750 — Indian digit grouping, no decimals unless the price has them. */
 export function formatPrice(
   amount: number,
   currency: string = DEFAULT_CURRENCY,
@@ -10,12 +10,12 @@ export function formatPrice(
   return new Intl.NumberFormat("en-IN", {
     style: "currency",
     currency,
-    maximumFractionDigits: 0,
+    maximumFractionDigits: Number.isInteger(amount) ? 0 : 2,
   }).format(amount);
 }
 
 /**
- * Price as shown on a card or product page. Products without a price are an
+ * Price as shown on a card or product page. A product with no price is an
  * enquiry, not a zero — never render "₹0".
  */
 export function priceLabel(product: Product): string {
@@ -23,12 +23,12 @@ export function priceLabel(product: Product): string {
   return formatPrice(product.price, product.currency);
 }
 
-export function categorySlug(category: ProductCategory | string): string {
+export function categorySlug(category: string): string {
   return category.toLowerCase().replace(/[^a-z0-9]+/g, "-");
 }
 
 export function availabilityLabel(product: Product): string | null {
-  switch (product.availability?.status) {
+  switch (product.availability.status) {
     case "in-stock":
       return "In stock";
     case "out-of-stock":
@@ -40,10 +40,27 @@ export function availabilityLabel(product: Product): string | null {
   }
 }
 
-export function isPurchasable(product: Product): boolean {
+/** The variant a buyer gets by default: first sellable, else first. */
+export function defaultVariant(product: Product): ProductVariant | undefined {
   return (
-    typeof product.price === "number" &&
-    product.availability?.status === "in-stock"
+    product.variants.find((variant) => variant.availableForSale) ??
+    product.variants[0]
+  );
+}
+
+export function isPurchasable(product: Product): boolean {
+  return product.variants.some(
+    (variant) => variant.availableForSale && typeof variant.price === "number",
+  );
+}
+
+/** True when the product has real, buyer-relevant options (not "Default Title"). */
+export function hasRealOptions(product: Product): boolean {
+  return (
+    product.options.length > 0 &&
+    product.options.some(
+      (option) => option.name !== "Title" && option.values.length > 1,
+    )
   );
 }
 
