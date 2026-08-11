@@ -1,7 +1,9 @@
 "use client";
 
 import { useEffect, useRef } from "react";
+import Link from "next/link";
 import { Media } from "@/components/ui/Media";
+import type { HeroUnit } from "@/lib/content/sections";
 import { useScrollEffect } from "@/lib/motion";
 
 /**
@@ -17,9 +19,9 @@ import { useScrollEffect } from "@/lib/motion";
  * slow drift and a slight tilt tied to scroll. Restrained, and it flatters the
  * assets that exist rather than the ones that don't.
  */
-export function HeroChassis({ image, alt }: { image: string; alt: string }) {
+export function HeroChassis({ unit }: { unit: HeroUnit }) {
   const wrapRef = useRef<HTMLDivElement>(null);
-  const frameRef = useRef<HTMLDivElement>(null);
+  const frameRef = useRef<HTMLAnchorElement>(null);
 
   useEffect(() => {
     const wrap = wrapRef.current;
@@ -56,8 +58,7 @@ export function HeroChassis({ image, alt }: { image: string; alt: string }) {
   return (
     <div
       ref={wrapRef}
-      aria-hidden="true"
-      className="pointer-events-none relative z-0 hidden w-full opacity-0 transition-opacity duration-[900ms] ease-signal min-[1100px]:block"
+      className="relative z-0 hidden w-full opacity-0 transition-opacity duration-[900ms] ease-signal min-[1100px]:block"
     >
       {/* Signal bloom behind the unit, so it sits in light rather than on a plate. */}
       <div
@@ -67,21 +68,46 @@ export function HeroChassis({ image, alt }: { image: string; alt: string }) {
             "radial-gradient(ellipse at 50% 50%, var(--sig-24), transparent 65%)",
         }}
       />
-      <div
+      <Link
+        href={`/products/${unit.handle}`}
         ref={frameRef}
-        className="relative aspect-[4/3] overflow-hidden border border-hairline bg-panel"
+        aria-label={`${unit.title} — ${unit.price}`}
+        className="group relative block aspect-[4/3] overflow-hidden border border-hairline bg-panel"
         style={{ willChange: "transform", boxShadow: "var(--shadow-float)" }}
       >
-        <Media src={image} alt={alt} fit="cover" sizes="520px" priority />
-        {/* Grounds a bright product shot into the dark surface. */}
+        {unit.image ? (
+          <Media
+            src={unit.image.src}
+            alt={unit.image.alt}
+            fit="cover"
+            sizes="560px"
+            priority
+          />
+        ) : null}
+        {/* Grounds a bright product shot and carries the label. */}
         <div
-          className="absolute inset-0"
+          className="pointer-events-none absolute inset-0"
           style={{
             background:
-              "linear-gradient(180deg, transparent 55%, color-mix(in srgb, var(--surface-base) 55%, transparent))",
+              "linear-gradient(180deg, transparent 30%, color-mix(in srgb, var(--surface-base) 72%, transparent) 62%, var(--surface-base) 100%)",
           }}
         />
-      </div>
+
+        <div className="absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 p-6">
+          <div className="min-w-0">
+            <div className="p1-mono text-soft">{unit.category}</div>
+            <div className="mt-2 truncate font-display text-[19px] font-medium text-strong">
+              {unit.title}
+            </div>
+            <div className="mt-1 font-display text-[19px] font-medium text-signal">
+              {unit.price}
+            </div>
+          </div>
+          <span className="p1-mono flex-none whitespace-nowrap border border-hairline px-3 py-2 text-ash transition-[border-color,color] duration-[160ms] ease-signal group-hover:border-signal group-hover:text-signal">
+            View →
+          </span>
+        </div>
+      </Link>
     </div>
   );
 }

@@ -4,13 +4,13 @@ import { useEffect, useState } from "react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { heroContent } from "@/data/site";
-import type { ProductImage } from "@/types/product";
+import type { HeroUnit } from "@/lib/content/sections";
 import { HeroChassis } from "./HeroChassis";
 import { Waveform } from "./Waveform";
 
 interface HeroProps {
   /** Product photography for the revolving chassis, resolved from Shopify. */
-  chassisImage: ProductImage | null;
+  chassisImage: HeroUnit | null;
 }
 
 /**
@@ -100,9 +100,7 @@ export function Hero({ chassisImage }: HeroProps) {
         </div>
         </div>
 
-        {chassisImage ? (
-          <HeroChassis image={chassisImage.src} alt={chassisImage.alt} />
-        ) : null}
+        {chassisImage ? <HeroChassis unit={chassisImage} /> : null}
       </div>
 
       <Waveform />

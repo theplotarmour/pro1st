@@ -90,23 +90,16 @@ export const shopifyProductRepository: ProductRepository = {
   async getByHandles(handles) {
     if (handles.length === 0) return [];
 
-    // One query for the whole set, then reordered to the requested order —
-    // a request per handle would be a waterfall on every page render.
-    const query = handles
-      .map((handle) => `handle:${escapeQueryTerm(handle)}`)
-      .join(" OR ");
+    // Resolved from the full catalogue rather than a `handle:` search filter.
+    // `handle:` is NOT a supported field on the Storefront products query —
+    // Shopify silently ignores unknown filter fields and returns everything,
+    // so the previous implementation handed back the first N products in the
+    // store instead of the ones asked for. That emptied the signal chain and
+    // quietly replaced the curated featured line-up with whatever sorted
+    // first. `getAll` is served from the client cache, so this costs nothing.
+    const all = await fetchAllProducts();
+    const byHandle = new Map(all.map((product) => [product.handle, product]));
 
-    const data = await storefront<{ products: { nodes: RawProduct[] } }>(
-      PRODUCTS_QUERY,
-      {
-        variables: { first: Math.min(handles.length, PAGE_SIZE), query },
-        tags: ["shopify-products"],
-      },
-    );
-
-    const byHandle = new Map(
-      data.products.nodes.map((node) => [node.handle, mapProduct(node)]),
-    );
     return handles
       .map((handle) => byHandle.get(handle))
       .filter((product): product is Product => Boolean(product));

@@ -134,10 +134,31 @@ export async function getMarqueeItems(): Promise<MarqueeItem[]> {
   }));
 }
 
-/** Hero unit — the product shown on the revolving chassis. */
-export async function getHeroUnit(): Promise<ProductImage | null> {
+export interface HeroUnit {
+  handle: string;
+  title: string;
+  price: string;
+  image: ProductImage | null;
+  category: string;
+}
+
+/**
+ * The product the hero presents.
+ *
+ * Every competitor surveyed leads with a named product a visitor can act on,
+ * not a decorative image. The hero therefore carries the unit's name, its
+ * live price and a route into the product page.
+ */
+export async function getHeroUnit(): Promise<HeroUnit | null> {
   const product = await productRepository.getByHandle(chainHandles.mixer);
-  return imageOf(product);
+  if (!product) return null;
+  return {
+    handle: product.handle,
+    title: product.title,
+    price: priceOf(product),
+    image: imageOf(product),
+    category: product.category,
+  };
 }
 
 /**
