@@ -55,7 +55,7 @@ export function ShowroomSection({
                     : {})}
                   className="p1-mono flex justify-between gap-4 border-b border-hairline py-[18px]"
                 >
-                  <span className="text-[rgba(230,230,230,0.45)]">
+                  <span className="text-soft">
                     {row.label}
                   </span>
                   <span>{row.value}</span>
@@ -65,7 +65,7 @@ export function ShowroomSection({
                   key={row.label}
                   className="p1-mono flex justify-between gap-4 border-b border-hairline py-[18px]"
                 >
-                  <span className="text-[rgba(230,230,230,0.45)]">
+                  <span className="text-soft">
                     {row.label}
                   </span>
                   <span>{row.value}</span>

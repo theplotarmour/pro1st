@@ -38,7 +38,7 @@ export function Media({
         role="img"
         aria-label={alt}
       >
-        <span className="p1-mono text-[rgba(230,230,230,0.3)]">
+        <span className="p1-mono text-faint">
           Image unavailable
         </span>
       </div>

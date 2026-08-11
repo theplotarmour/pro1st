@@ -67,7 +67,7 @@ export function GalleryBand({ shots }: { shots: GalleryShot[] }) {
                 Close up.
               </h2>
             </div>
-            <p className="m-0 max-w-[34ch] text-base leading-[1.6] text-[rgba(230,230,230,0.6)]">
+            <p className="m-0 max-w-[34ch] text-base leading-[1.6] text-muted">
               Ports, grilles, terminals and packing. The details that decide a
               reorder.
             </p>
@@ -105,7 +105,7 @@ export function GalleryBand({ shots }: { shots: GalleryShot[] }) {
                   aria-hidden="true"
                   className="absolute inset-0 bg-gradient-to-t from-[rgba(13,13,15,0.85)] via-transparent to-transparent opacity-0 transition-opacity duration-[420ms] ease-signal group-hover:opacity-100"
                 />
-                <span className="p1-mono absolute inset-x-3 bottom-3 translate-y-2 text-[10px] leading-tight text-white opacity-0 transition-[opacity,transform] duration-[420ms] ease-signal group-hover:translate-y-0 group-hover:opacity-100">
+                <span className="p1-mono absolute inset-x-3 bottom-3 translate-y-2 text-[10px] leading-tight text-strong opacity-0 transition-[opacity,transform] duration-[420ms] ease-signal group-hover:translate-y-0 group-hover:opacity-100">
                   {shot.title}
                 </span>
               </Link>

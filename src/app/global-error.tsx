@@ -31,7 +31,7 @@ export default function GlobalError({
               fontSize: 11,
               letterSpacing: "0.08em",
               textTransform: "uppercase",
-              color: "#FF6A00",
+              color: "var(--signal)",
               margin: "0 0 20px",
             }}
           >
@@ -48,7 +48,7 @@ export default function GlobalError({
           >
             Something broke.
           </h1>
-          <p style={{ lineHeight: 1.6, color: "rgba(230,230,230,0.72)" }}>
+          <p style={{ lineHeight: 1.6, color: "var(--text-body)" }}>
             The page failed to load. Reload to try again.
             {error.digest ? ` Reference ${error.digest}.` : ""}
           </p>
@@ -57,7 +57,7 @@ export default function GlobalError({
             onClick={reset}
             style={{
               marginTop: 16,
-              background: "#FF6A00",
+              background: "var(--signal)",
               color: "#0D0D0F",
               border: 0,
               padding: "16px 26px",

@@ -23,7 +23,7 @@ export default function ErrorBoundary({
   return (
     <Container as="section" className="pb-32 pt-[184px]">
       <div className="p1-eyebrow mb-6">[ Signal lost ]</div>
-      <h1 className="p1-h-xl max-w-[16ch] text-white">
+      <h1 className="p1-h-xl max-w-[16ch] text-strong">
         We couldn&apos;t load that.
       </h1>
       <p className="p1-lead mt-8 max-w-[52ch]">
@@ -31,7 +31,7 @@ export default function ErrorBoundary({
         or call us and we&apos;ll sort it out directly.
       </p>
       {error.digest ? (
-        <p className="p1-mono mt-6 text-[rgba(230,230,230,0.35)]">
+        <p className="p1-mono mt-6 text-faint">
           Reference {error.digest}
         </p>
       ) : null}

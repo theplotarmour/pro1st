@@ -103,7 +103,7 @@ export default async function ProductPage({ params }: PageProps) {
       />
 
       <Container as="nav" className="pt-[112px] lg:pt-[136px]">
-        <ol className="p1-mono m-0 flex list-none flex-wrap gap-2 p-0 text-[rgba(230,230,230,0.4)]">
+        <ol className="p1-mono m-0 flex list-none flex-wrap gap-2 p-0 text-faint">
           <li>
             <Link href="/products">Products</Link>
           </li>

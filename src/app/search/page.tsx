@@ -57,7 +57,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
         <div className="mt-14">
           {query ? (
             <>
-              <p className="p1-mono mb-10 text-[rgba(230,230,230,0.45)]">
+              <p className="p1-mono mb-10 text-soft">
                 {results.length}{" "}
                 {results.length === 1 ? "result" : "results"} for
                 &ldquo;{query}&rdquo;
@@ -68,7 +68,7 @@ export default async function SearchPage({ searchParams }: PageProps) {
               />
             </>
           ) : (
-            <p className="p1-mono text-[rgba(230,230,230,0.35)]">
+            <p className="p1-mono text-faint">
               Enter a search term to begin.
             </p>
           )}

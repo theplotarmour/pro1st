@@ -36,10 +36,10 @@ export function MegaMenu({ categories, onClose }: MegaMenuProps) {
                 />
               ) : null}
             </div>
-            <div className="font-display text-[15px] font-medium text-white">
+            <div className="font-display text-[15px] font-medium text-strong">
               {category.name}
             </div>
-            <div className="p1-mono text-[rgba(230,230,230,0.5)]">
+            <div className="p1-mono text-soft">
               {String(category.count).padStart(2, "0")}{" "}
               {category.count === 1 ? "SKU" : "SKUs"}
             </div>

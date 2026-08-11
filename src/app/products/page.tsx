@@ -74,7 +74,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
           total={all.length}
         />
 
-        <p className="p1-mono mb-10 mt-8 text-[rgba(230,230,230,0.45)]">
+        <p className="p1-mono mb-10 mt-8 text-soft">
           {products.length} {products.length === 1 ? "product" : "products"}
           {activeName ? ` in ${activeName}` : ""}
         </p>

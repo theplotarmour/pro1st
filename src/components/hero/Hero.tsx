@@ -66,7 +66,7 @@ export function Hero({ chassisImage }: HeroProps) {
       ) : null}
 
       <div className="p1-shell relative z-[2]">
-        <div className="p1-mono mb-8 flex items-center gap-2.5 text-[rgba(230,230,230,0.6)]">
+        <div className="p1-mono mb-8 flex items-center gap-2.5 text-muted">
           <span
             aria-hidden="true"
             className="h-1.5 w-1.5 rounded-full bg-signal"
@@ -105,7 +105,7 @@ export function Hero({ chassisImage }: HeroProps) {
 
       <Waveform />
 
-      <div className="p1-mono absolute bottom-10 right-[var(--gutter)] z-[2] hidden text-right text-[rgba(230,230,230,0.45)] md:block">
+      <div className="p1-mono absolute bottom-10 right-[var(--gutter)] z-[2] hidden text-right text-soft md:block">
         {heroContent.meta}
       </div>
     </section>

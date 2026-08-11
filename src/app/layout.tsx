@@ -7,6 +7,7 @@ import { Preloader } from "@/components/layout/Preloader";
 import { WhatsAppFab } from "@/components/layout/WhatsAppFab";
 import { site } from "@/data/site";
 import { CartProvider } from "@/lib/cart/CartProvider";
+import { ThemeProvider, themeInitScript } from "@/lib/theme/ThemeProvider";
 import { productRepository } from "@/lib/products";
 import "./globals.css";
 
@@ -59,8 +60,10 @@ export default async function RootLayout({
   const categories = await productRepository.getCategories();
 
   return (
-    <html lang="en-IN">
+    <html lang="en-IN" data-theme="dark" suppressHydrationWarning>
       <head>
+        {/* Stamps the theme before first paint — no flash of the wrong palette. */}
+        <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />
         {preloadedFonts.map((href) => (
           <link
             key={href}
@@ -84,6 +87,7 @@ export default async function RootLayout({
         </noscript>
       </head>
       <body>
+        <ThemeProvider>
         <CartProvider>
           <Preloader />
           <CursorRing />
@@ -93,6 +97,7 @@ export default async function RootLayout({
           <WhatsAppFab />
           <CartDrawer />
         </CartProvider>
+        </ThemeProvider>
       </body>
     </html>
   );

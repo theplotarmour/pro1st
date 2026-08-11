@@ -50,7 +50,7 @@ export function Manifesto() {
             "repeating-radial-gradient(circle at 20% 50%,rgba(255,106,0,0) 0 64px,rgba(255,106,0,1) 64px 65px),repeating-radial-gradient(circle at 84% 40%,rgba(255,106,0,0) 0 78px,rgba(255,106,0,1) 78px 79px)",
         }}
       />
-      <p className="p1-h-xl relative mx-auto max-w-[1180px] text-white">
+      <p className="p1-h-xl relative mx-auto max-w-[1180px] text-strong">
         {words.map((word, index) => (
           <span key={index}>
             <span className="inline-block overflow-hidden align-bottom">

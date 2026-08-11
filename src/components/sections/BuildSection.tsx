@@ -170,7 +170,7 @@ export function BuildSection({ unit }: { unit: BuildUnit }) {
               {buildCopy.heading}
             </h2>
           </div>
-          <p className="m-0 max-w-[32ch] text-base leading-[1.6] text-[rgba(230,230,230,0.6)]">
+          <p className="m-0 max-w-[32ch] text-base leading-[1.6] text-muted">
             {buildCopy.lead}
           </p>
         </div>
@@ -257,7 +257,7 @@ export function BuildSection({ unit }: { unit: BuildUnit }) {
                     style={{ width: callout.rule }}
                   />
                 ) : null}
-                <span className="p1-mono whitespace-nowrap text-[rgba(230,230,230,0.6)]">
+                <span className="p1-mono whitespace-nowrap text-muted">
                   {callout.text}
                 </span>
                 {callout.side === "left" ? (
@@ -273,7 +273,7 @@ export function BuildSection({ unit }: { unit: BuildUnit }) {
 
         <div className="p1-mono relative z-[3] flex flex-none items-end justify-between gap-6 text-[rgba(230,230,230,0.42)]">
           <span ref={phaseRef}>Assembly — 00%</span>
-          <span className="text-[rgba(230,230,230,0.6)]">
+          <span className="text-muted">
             {unit.unit}
           </span>
         </div>

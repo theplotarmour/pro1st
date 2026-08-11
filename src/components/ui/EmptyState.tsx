@@ -17,7 +17,7 @@ export function EmptyState({
     <div
       className={`flex flex-col items-center gap-6 border border-hairline bg-panel px-6 py-20 text-center ${className}`.trim()}
     >
-      <p className="p1-mono m-0 text-[rgba(230,230,230,0.35)]">{message}</p>
+      <p className="p1-mono m-0 text-faint">{message}</p>
       {action}
     </div>
   );

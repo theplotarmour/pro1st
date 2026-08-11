@@ -16,7 +16,7 @@ export function CartView() {
   // never flashes for someone who has items.
   if (!isReady) {
     return (
-      <p className="p1-mono text-[rgba(230,230,230,0.35)]">Loading cart…</p>
+      <p className="p1-mono text-faint">Loading cart…</p>
     );
   }
 
@@ -46,7 +46,7 @@ export function CartView() {
 
       <div className="grid grid-cols-1 items-start gap-12 lg:grid-cols-[7fr_5fr] lg:gap-20">
         <div aria-busy={isPending} style={{ opacity: isPending ? 0.6 : 1 }}>
-          <div className="p1-mono mb-2 flex items-center justify-between text-[rgba(230,230,230,0.45)]">
+          <div className="p1-mono mb-2 flex items-center justify-between text-soft">
             <span>
               {count} {count === 1 ? "item" : "items"}
             </span>
@@ -54,7 +54,7 @@ export function CartView() {
               type="button"
               onClick={clear}
               disabled={isPending}
-              className="cursor-pointer border-0 bg-transparent text-[rgba(230,230,230,0.45)] hover:text-signal disabled:opacity-40"
+              className="cursor-pointer border-0 bg-transparent text-soft hover:text-signal disabled:opacity-40"
             >
               Clear cart
             </button>
@@ -70,14 +70,14 @@ export function CartView() {
           aria-label="Order summary"
           className="border border-hairline bg-panel p-6 lg:sticky lg:top-[104px]"
         >
-          <h2 className="p1-mono mb-6 text-[rgba(230,230,230,0.6)]">Summary</h2>
-          <div className="p1-mono flex justify-between border-t border-hairline py-4 text-[rgba(230,230,230,0.6)]">
+          <h2 className="p1-mono mb-6 text-muted">Summary</h2>
+          <div className="p1-mono flex justify-between border-t border-hairline py-4 text-muted">
             <span>Subtotal</span>
             <span className="text-signal">
               {formatPrice(subtotal, currency)}
             </span>
           </div>
-          <p className="p1-mono mb-6 normal-case tracking-[0.04em] text-[rgba(230,230,230,0.4)]">
+          <p className="p1-mono mb-6 normal-case tracking-[0.04em] text-faint">
             Taxes and shipping are calculated by Shopify at checkout.
           </p>
           <CheckoutButton />

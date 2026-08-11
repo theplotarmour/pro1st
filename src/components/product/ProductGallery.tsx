@@ -35,7 +35,7 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
           />
         ) : (
           <div className="grid h-full place-items-center">
-            <span className="p1-mono text-[rgba(230,230,230,0.3)]">
+            <span className="p1-mono text-faint">
               No image supplied
             </span>
           </div>

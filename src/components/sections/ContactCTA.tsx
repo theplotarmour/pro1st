@@ -29,10 +29,10 @@ export function ContactCTA() {
       </div>
 
       <div className="border-t border-hairline bg-ink transition-transform duration-[420ms] ease-signal gutter-x py-20 lg:border-l lg:border-t-0 lg:py-24 lg:group-hover:translate-y-2 motion-reduce:transform-none">
-        <div className="p1-mono mb-6 text-[rgba(230,230,230,0.45)]">
+        <div className="p1-mono mb-6 text-soft">
           {tradeContent.systems.eyebrow}
         </div>
-        <h2 className="p1-h-xl text-white">{tradeContent.systems.heading}</h2>
+        <h2 className="p1-h-xl text-strong">{tradeContent.systems.heading}</h2>
         <p className="p1-lead mb-10 mt-7 max-w-[42ch]">
           {tradeContent.systems.body}
         </p>

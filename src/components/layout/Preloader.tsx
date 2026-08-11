@@ -108,7 +108,7 @@ export function Preloader() {
         </div>
         <div
           ref={percentRef}
-          className="font-mono text-[11px] tracking-[0.08em] text-[rgba(230,230,230,0.6)]"
+          className="font-mono text-[11px] tracking-[0.08em] text-muted"
         >
           000%
         </div>

@@ -62,7 +62,7 @@ export function NewsletterForm() {
           onChange={(event) => setEmail(event.target.value)}
           placeholder="you@company.in"
           autoComplete="email"
-          className="flex-1 border-0 bg-transparent py-1 text-[15px] text-white outline-none placeholder:text-[rgba(230,230,230,0.35)]"
+          className="flex-1 border-0 bg-transparent py-1 text-[15px] text-strong outline-none placeholder:text-faint"
         />
         <button
           type="submit"
@@ -74,7 +74,7 @@ export function NewsletterForm() {
       </div>
       <p
         aria-live="polite"
-        className="p1-mono mt-3 min-h-[1.2em] normal-case tracking-[0.04em] text-[rgba(230,230,230,0.5)]"
+        className="p1-mono mt-3 min-h-[1.2em] normal-case tracking-[0.04em] text-soft"
       >
         {message}
       </p>

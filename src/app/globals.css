@@ -1,22 +1,23 @@
 @import "tailwindcss";
 @import "./fonts.css";
 
-/* ------------------------------------------------------------------ *
- * PRO1ST design tokens
- * Ported verbatim from the approved design source. Do not re-pick
- * these values — they are the brand palette, not a starting point.
- * ------------------------------------------------------------------ */
-@theme {
-  --color-signal: #ff6a00;
-  --color-ink: #0d0d0f;
-  --color-steel: #2a2d33;
-  --color-ash: #e6e6e6;
-  --color-panel: #16171a;
-  --color-hairline: rgba(230, 230, 230, 0.1);
+@theme inline {
+  --color-signal: var(--signal);
+  --color-signal-text: var(--signal-text);
+  --color-ink: var(--surface-base);
+  --color-panel: var(--surface-panel);
+  --color-steel: var(--surface-raised);
+  --color-ash: var(--text-body);
+  --color-hairline: var(--hairline);
+  --color-strong: var(--text-strong);
+  --color-body: var(--text-body);
+  --color-muted: var(--text-muted);
+  --color-soft: var(--text-soft);
+  --color-faint: var(--text-faint);
 
-  --color-sig-12: rgba(255, 106, 0, 0.12);
-  --color-sig-24: rgba(255, 106, 0, 0.24);
-  --color-sig-40: rgba(255, 106, 0, 0.4);
+  --color-sig-12: var(--sig-12);
+  --color-sig-24: var(--sig-24);
+  --color-sig-40: var(--sig-40);
 
   --font-display: var(--f-d);
   --font-body: var(--f-b);
@@ -24,32 +25,103 @@
 
   --ease-signal: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-cut: cubic-bezier(0.7, 0, 0.84, 0);
-
-  --animate-blink: p1-blink 1.8s infinite;
-  --animate-arc: p1-arc 6s infinite;
+  --ease-glide: cubic-bezier(0.22, 0.61, 0.36, 1);
 }
 
-:root {
-  /* Font stacks. The families are declared in fonts.css. */
-  --f-d: "Space Grotesk", system-ui, sans-serif;
-  --f-b: "Inter", system-ui, sans-serif;
-  --f-m: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
 
+/* ------------------------------------------------------------------ *
+ * PRO1ST design tokens — semantic, theme-aware
+ *
+ * The palette is the approved brand palette; what changed is that colours are
+ * now referenced by ROLE rather than by literal value, so a single attribute
+ * on <html> flips the entire surface. Nothing here re-picks a brand colour.
+ *
+ * Dark is the brand's native mode and remains the default.
+ * ------------------------------------------------------------------ */
+:root {
+  /* Brand constants — identical in both themes. */
   --p1-signal: #ff6a00;
   --p1-black: #0d0d0f;
-  --p1-steel: #2a2d33;
   --p1-ash: #e6e6e6;
-  --p1-white: #ffffff;
-  --p1-panel: #16171a;
-  --p1-hairline: rgba(230, 230, 230, 0.1);
+
+  /* Surfaces */
+  --surface-base: #0d0d0f;
+  --surface-panel: #16171a;
+  --surface-raised: #2a2d33;
+  --surface-inverse: #f6f6f4;
+
+  /* Text roles, strongest to faintest */
+  --text-strong: #ffffff;
+  --text-body: rgba(230, 230, 230, 0.72);
+  --text-muted: rgba(230, 230, 230, 0.58);
+  --text-soft: rgba(230, 230, 230, 0.46);
+  --text-faint: rgba(230, 230, 230, 0.34);
+  --text-on-signal: #0d0d0f;
+
+  /* Lines */
+  --hairline: rgba(230, 230, 230, 0.1);
+  --hairline-strong: rgba(230, 230, 230, 0.2);
+
+  /* Signal — the accent, plus a text-safe variant */
+  --signal: #ff6a00;
+  --signal-text: #ff8534;
   --sig-12: rgba(255, 106, 0, 0.12);
   --sig-24: rgba(255, 106, 0, 0.24);
   --sig-40: rgba(255, 106, 0, 0.4);
+
+  /* Elevation — barely-there in dark, real in light */
+  --shadow-card: 0 1px 0 rgba(255, 255, 255, 0.03);
+  --shadow-float: 0 24px 60px -24px rgba(0, 0, 0, 0.8);
+
+  /* Legacy aliases kept so existing rules resolve. */
+  --p1-steel: var(--surface-raised);
+  --p1-white: var(--text-strong);
+  --p1-panel: var(--surface-panel);
+  --p1-hairline: var(--hairline);
+
   --e-signal: cubic-bezier(0.16, 1, 0.3, 1);
   --e-cut: cubic-bezier(0.7, 0, 0.84, 0);
+  --e-glide: cubic-bezier(0.22, 0.61, 0.36, 1);
 
   /* Horizontal page gutter — the single source of layout rhythm. */
   --gutter: 120px;
+}
+
+/*
+ * Light mode.
+ *
+ * Not an inversion — an inverted industrial UI looks like a bug. This is a
+ * warm paper ground with near-black ink, keeping the same structure, the same
+ * hairlines and the same signal orange. The accent is darkened for text use
+ * only: #FF6A00 on white is ~2.9:1, which fails WCAG for body text, so
+ * --signal-text carries a compliant variant while fills keep the brand orange.
+ */
+[data-theme="light"] {
+  --surface-base: #f4f4f1;
+  --surface-panel: #ffffff;
+  --surface-raised: #e7e7e2;
+  --surface-inverse: #0d0d0f;
+
+  --text-strong: #0d0d0f;
+  --text-body: rgba(13, 13, 15, 0.78);
+  --text-muted: rgba(13, 13, 15, 0.62);
+  --text-soft: rgba(13, 13, 15, 0.5);
+  --text-faint: rgba(13, 13, 15, 0.38);
+  --text-on-signal: #ffffff;
+
+  --hairline: rgba(13, 13, 15, 0.14);
+  --hairline-strong: rgba(13, 13, 15, 0.26);
+
+  --signal-text: #b84500;
+  --sig-12: rgba(255, 106, 0, 0.1);
+  --sig-24: rgba(255, 106, 0, 0.18);
+  --sig-40: rgba(255, 106, 0, 0.45);
+
+  --shadow-card: 0 1px 2px rgba(13, 13, 15, 0.06);
+  --shadow-float: 0 24px 60px -28px rgba(13, 13, 15, 0.28);
+
+  --p1-black: #f4f4f1;
+  --p1-ash: #0d0d0f;
 }
 
 @media (max-width: 1100px) {
@@ -186,7 +258,7 @@
     font-size: clamp(46px, 9vw, 148px);
     letter-spacing: -0.04em;
     line-height: 0.88;
-    color: #fff;
+    color: var(--text-strong);
     text-transform: uppercase;
     margin: 0;
   }
@@ -207,7 +279,7 @@
     font-size: clamp(30px, 4vw, 56px);
     letter-spacing: -0.02em;
     line-height: 1;
-    color: #fff;
+    color: var(--text-strong);
     margin: 0;
   }
 
@@ -217,7 +289,7 @@
     font-size: clamp(26px, 3vw, 44px);
     letter-spacing: -0.02em;
     line-height: 1.02;
-    color: #fff;
+    color: var(--text-strong);
     margin: 0;
   }
 
@@ -227,7 +299,7 @@
     font-size: clamp(20px, 2.4vw, 32px);
     letter-spacing: -0.01em;
     line-height: 1.15;
-    color: #fff;
+    color: var(--text-strong);
     margin: 0;
   }
 
@@ -336,7 +408,7 @@
     border: 1px solid var(--p1-hairline);
     padding: 14px 16px;
     font-size: 15px;
-    color: #fff;
+    color: var(--text-strong);
     transition: border-color 120ms var(--e-signal);
   }
   .p1-field::placeholder {
@@ -382,3 +454,48 @@
   scrollbar-width: thin;
   scrollbar-color: var(--p1-steel) transparent;
 }
+
+/* Scrim used by overlays; follows the theme so a light page dims to grey. */
+:root { --scrim: rgba(13, 13, 15, 0.6); --header-bg: rgba(13, 13, 15, 0.88); }
+[data-theme="light"] { --scrim: rgba(13, 13, 15, 0.35); --header-bg: rgba(244, 244, 241, 0.9); }
+
+/*
+ * Theme transition. Colours cross-fade so the toggle reads as a considered
+ * change of light rather than a flash. Structure never animates.
+ */
+html.p1-theme-ready body,
+html.p1-theme-ready body * {
+  transition:
+    background-color 420ms var(--e-glide),
+    border-color 420ms var(--e-glide),
+    color 320ms var(--e-glide);
+}
+@media (prefers-reduced-motion: reduce) {
+  html.p1-theme-ready body,
+  html.p1-theme-ready body * { transition: none; }
+}
+
+/*
+ * Merchant-authored policy HTML from Shopify. We style it rather than trust
+ * whatever markup the admin editor produced.
+ */
+.p1-prose { color: var(--text-body); font-size: 16px; line-height: 1.7; }
+.p1-prose h1, .p1-prose h2, .p1-prose h3, .p1-prose h4 {
+  font-family: var(--f-d);
+  color: var(--text-strong);
+  letter-spacing: -0.02em;
+  line-height: 1.2;
+  margin: 2.5em 0 0.75em;
+}
+.p1-prose h1 { font-size: clamp(26px, 3vw, 36px); }
+.p1-prose h2 { font-size: clamp(22px, 2.4vw, 28px); }
+.p1-prose h3 { font-size: 19px; }
+.p1-prose p, .p1-prose ul, .p1-prose ol { margin: 0 0 1.15em; }
+.p1-prose ul, .p1-prose ol { padding-left: 1.25em; }
+.p1-prose li { margin-bottom: 0.5em; }
+.p1-prose a { color: var(--signal-text); text-decoration: underline; text-underline-offset: 3px; }
+.p1-prose a:hover { color: var(--signal); }
+.p1-prose strong { color: var(--text-strong); font-weight: 600; }
+.p1-prose hr { border: 0; border-top: 1px solid var(--hairline); margin: 2.5em 0; }
+.p1-prose table { width: 100%; border-collapse: collapse; margin-bottom: 1.5em; }
+.p1-prose th, .p1-prose td { border: 1px solid var(--hairline); padding: 10px 12px; text-align: left; }

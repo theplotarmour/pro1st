@@ -53,10 +53,10 @@ export function CategoryGrid({
                 ) : null}
               </div>
               <div className="flex items-baseline justify-between gap-3">
-                <h3 className="m-0 font-display text-[17px] font-medium tracking-[-0.01em] text-white group-hover:text-signal">
+                <h3 className="m-0 font-display text-[17px] font-medium tracking-[-0.01em] text-strong group-hover:text-signal">
                   {category.name}
                 </h3>
-                <span className="p1-mono text-[rgba(230,230,230,0.45)]">
+                <span className="p1-mono text-soft">
                   {String(category.count).padStart(2, "0")}
                 </span>
               </div>

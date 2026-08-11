@@ -34,7 +34,7 @@ export function SectionHeading({
         </Tag>
       </div>
       {lead ? (
-        <p className="m-0 max-w-[34ch] text-base leading-[1.6] text-[rgba(230,230,230,0.6)]">
+        <p className="m-0 max-w-[34ch] text-base leading-[1.6] text-muted">
           {lead}
         </p>
       ) : null}

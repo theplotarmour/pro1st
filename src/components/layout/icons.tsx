@@ -67,14 +67,14 @@ export function TargetIcon() {
       height="24"
       viewBox="0 0 24 24"
       fill="none"
-      stroke="#FF6A00"
+      stroke="var(--signal)"
       strokeWidth="1.2"
       aria-hidden="true"
       className="flex-none"
     >
       <rect x="3.5" y="3.5" width="17" height="17" />
       <circle cx="12" cy="12" r="5" />
-      <circle cx="12" cy="12" r="1.5" fill="#FF6A00" stroke="none" />
+      <circle cx="12" cy="12" r="1.5" fill="var(--signal)" stroke="none" />
     </svg>
   );
 }

@@ -38,13 +38,13 @@ export function CartItem({ line, layout = "drawer" }: CartItemProps) {
       <div className="min-w-0">
         <Link
           href={`/products/${line.handle}`}
-          className="block font-display text-sm font-medium leading-[1.3] text-white hover:text-signal"
+          className="block font-display text-sm font-medium leading-[1.3] text-strong hover:text-signal"
         >
           {line.title}
         </Link>
 
         {line.variantTitle ? (
-          <div className="p1-mono mt-1 text-[10px] text-[rgba(230,230,230,0.5)]">
+          <div className="p1-mono mt-1 text-[10px] text-soft">
             {line.variantTitle}
           </div>
         ) : null}
@@ -56,7 +56,7 @@ export function CartItem({ line, layout = "drawer" }: CartItemProps) {
         ) : null}
 
         {layout === "drawer" ? (
-          <div className="p1-mono mt-1.5 text-[10px] tracking-[0.06em] text-[rgba(230,230,230,0.45)]">
+          <div className="p1-mono mt-1.5 text-[10px] tracking-[0.06em] text-soft">
             Qty {line.quantity}
           </div>
         ) : (
@@ -92,7 +92,7 @@ export function CartItem({ line, layout = "drawer" }: CartItemProps) {
               type="button"
               disabled={isPending}
               onClick={() => remove(line.id)}
-              className="p1-mono cursor-pointer border-0 bg-transparent text-[rgba(230,230,230,0.45)] hover:text-signal disabled:opacity-40"
+              className="p1-mono cursor-pointer border-0 bg-transparent text-soft hover:text-signal disabled:opacity-40"
             >
               Remove
             </button>
@@ -100,7 +100,7 @@ export function CartItem({ line, layout = "drawer" }: CartItemProps) {
         )}
 
         {atMax && layout === "page" ? (
-          <p className="p1-mono mt-2 normal-case tracking-[0.04em] text-[rgba(230,230,230,0.4)]">
+          <p className="p1-mono mt-2 normal-case tracking-[0.04em] text-faint">
             Only {line.quantityAvailable} in stock.
           </p>
         ) : null}

@@ -5,7 +5,7 @@ export type BadgeTone = "ash" | "signal" | "muted";
 const toneClass: Record<BadgeTone, string> = {
   ash: "bg-ash text-ink",
   signal: "bg-signal text-ink",
-  muted: "border border-hairline text-[rgba(230,230,230,0.6)]",
+  muted: "border border-hairline text-muted",
 };
 
 export function Badge({

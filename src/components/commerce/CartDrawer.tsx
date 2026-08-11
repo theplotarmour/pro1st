@@ -29,7 +29,7 @@ export function CartDrawer() {
       <div
         onClick={close}
         aria-hidden="true"
-        className="fixed inset-0 z-[140] bg-[rgba(13,13,15,0.6)] backdrop-blur-lg transition-opacity duration-[420ms] ease-signal"
+        className="fixed inset-0 z-[140] bg-[var(--scrim)] backdrop-blur-lg transition-opacity duration-[420ms] ease-signal"
         style={{
           opacity: isOpen ? 1 : 0,
           pointerEvents: isOpen ? "auto" : "none",
@@ -52,7 +52,7 @@ export function CartDrawer() {
         style={{ transform: isOpen ? "translateX(0)" : "translateX(100%)" }}
       >
         <div className="flex items-center justify-between border-b border-hairline p-6">
-          <span className="p1-mono text-[rgba(230,230,230,0.6)]">
+          <span className="p1-mono text-muted">
             Cart — {count} {count === 1 ? "item" : "items"}
           </span>
           <button
@@ -79,11 +79,11 @@ export function CartDrawer() {
           className="flex-1 overflow-y-auto px-6 py-2"
         >
           {!isReady ? (
-            <p className="p1-mono py-16 text-center text-[rgba(230,230,230,0.35)]">
+            <p className="p1-mono py-16 text-center text-faint">
               Loading cart…
             </p>
           ) : lines.length === 0 ? (
-            <p className="p1-mono py-16 text-center text-[rgba(230,230,230,0.35)]">
+            <p className="p1-mono py-16 text-center text-faint">
               Your cart is empty
             </p>
           ) : (
@@ -96,20 +96,20 @@ export function CartDrawer() {
         </div>
 
         <div className="border-t border-hairline p-6">
-          <div className="p1-mono mb-5 flex justify-between text-[rgba(230,230,230,0.6)]">
+          <div className="p1-mono mb-5 flex justify-between text-muted">
             <span>Subtotal</span>
             <span className="text-signal">
               {formatPrice(subtotal, currency)}
             </span>
           </div>
-          <p className="p1-mono mb-5 normal-case tracking-[0.04em] text-[rgba(230,230,230,0.4)]">
+          <p className="p1-mono mb-5 normal-case tracking-[0.04em] text-faint">
             Taxes and shipping are calculated at checkout.
           </p>
           <CheckoutButton />
           <Link
             href={lines.length > 0 ? "/cart" : "/products"}
             onClick={close}
-            className="p1-mono mt-4 block text-center text-[rgba(230,230,230,0.5)] hover:text-signal"
+            className="p1-mono mt-4 block text-center text-soft hover:text-signal"
           >
             {lines.length > 0 ? "View full cart" : "Browse the catalogue"}
           </Link>

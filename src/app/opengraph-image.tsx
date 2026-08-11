@@ -7,6 +7,10 @@ import { site } from "@/data/site";
  *
  * Deliberately typeface-agnostic: loading Space Grotesk here would mean a
  * network fetch during build, which is exactly what broke the first deploy.
+ *
+ * Colours are literal here on purpose. This is rendered by Satori, which has
+ * no CSS custom properties — and a social card has no theme to follow anyway,
+ * so it always uses the brand's native dark palette.
  */
 export const alt = `${site.name} — ${site.positioning}`;
 export const size = { width: 1200, height: 630 };

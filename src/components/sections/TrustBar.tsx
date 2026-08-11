@@ -13,7 +13,7 @@ export function TrustBar() {
           className="flex items-center gap-4 border-l border-hairline gutter-x py-10"
         >
           <TargetIcon />
-          <span className="p1-mono leading-[1.5] text-[rgba(230,230,230,0.7)]">
+          <span className="p1-mono leading-[1.5] text-body">
             {point}
           </span>
         </div>

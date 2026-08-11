@@ -20,7 +20,7 @@ export function ProductFeatures({
     <section aria-labelledby={`${id}-heading`}>
       <h2
         id={`${id}-heading`}
-        className="p1-mono mb-6 text-[rgba(230,230,230,0.6)]"
+        className="p1-mono mb-6 text-muted"
       >
         {title}
       </h2>
@@ -28,7 +28,7 @@ export function ProductFeatures({
         {entries.map((entry) => (
           <li
             key={entry}
-            className="flex gap-4 border-b border-hairline py-4 text-[15px] leading-[1.6] text-[rgba(230,230,230,0.72)]"
+            className="flex gap-4 border-b border-hairline py-4 text-[15px] leading-[1.6] text-body"
           >
             <span
               aria-hidden="true"

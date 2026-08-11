@@ -2,6 +2,7 @@
 
 import { useSearchParams } from "next/navigation";
 import { useState, type FormEvent } from "react";
+import { WhatsAppIcon } from "@/components/layout/icons";
 import { contact, enquiryTypes } from "@/data/site";
 
 type EnquiryValue = (typeof enquiryTypes)[number]["value"];
@@ -13,10 +14,11 @@ function isEnquiry(value: string | null): value is EnquiryValue {
 /**
  * Enquiry form.
  *
- * There is no backend and Shopify does not own contact forms, so rather than
- * post into a void the form composes a fully-populated email in the visitor's
- * own client. It genuinely works today, and swapping in a real endpoint later
- * touches only `onSubmit`.
+ * There is no backend and Shopify does not own contact forms, so the form
+ * hands the enquiry to WhatsApp with the whole thing pre-written. That is how
+ * this trade actually communicates — a dealer in Chandni Chowk replies on
+ * WhatsApp, not to a contact-form inbox — and it reaches a real person on the
+ * first tap instead of depending on a configured mail client.
  */
 export function ContactForm() {
   const params = useSearchParams();
@@ -34,22 +36,23 @@ export function ContactForm() {
     const label =
       enquiryTypes.find((t) => t.value === type)?.label ?? "Enquiry";
 
-    const bodyLines = [
-      `Enquiry type: ${label}`,
+    const lines = [
+      `*${label}* — PRO1ST`,
+      "",
       `Name: ${form.get("name")}`,
-      `Company: ${form.get("company") || "—"}`,
-      `Phone: ${form.get("phone") || "—"}`,
+      `Email: ${form.get("email")}`,
+      form.get("company") ? `Company: ${form.get("company")}` : null,
+      form.get("phone") ? `Phone: ${form.get("phone")}` : null,
       product ? `Product: ${product}` : null,
       "",
       String(form.get("message") ?? ""),
     ].filter(Boolean);
 
-    const href =
-      `mailto:${contact.email}` +
-      `?subject=${encodeURIComponent(`${label} — ${form.get("name")}`)}` +
-      `&body=${encodeURIComponent(bodyLines.join("\n"))}`;
+    // wa.me carries the whole enquiry, so the first message already contains
+    // everything needed to quote — no back-and-forth to collect basics.
+    const href = `${contact.whatsappHref}?text=${encodeURIComponent(lines.join("\n"))}`;
 
-    window.location.href = href;
+    window.open(href, "_blank", "noopener,noreferrer");
     setSent(true);
   }
 
@@ -69,7 +72,7 @@ export function ContactForm() {
                 className={`p1-mono cursor-pointer border px-4 py-2.5 transition-[border-color,color,background-color] duration-[120ms] ease-signal ${
                   isActive
                     ? "border-signal bg-signal text-ink"
-                    : "border-hairline text-[rgba(230,230,230,0.7)] hover:border-signal hover:text-signal"
+                    : "border-hairline text-body hover:border-signal hover:text-signal"
                 }`}
               >
                 {option.label}
@@ -80,7 +83,7 @@ export function ContactForm() {
       </fieldset>
 
       {product ? (
-        <p className="p1-mono m-0 normal-case tracking-[0.04em] text-[rgba(230,230,230,0.5)]">
+        <p className="p1-mono m-0 normal-case tracking-[0.04em] text-soft">
           About: {product}
         </p>
       ) : null}
@@ -152,19 +155,23 @@ export function ContactForm() {
 
       <div className="flex flex-wrap items-center gap-4">
         <button type="submit" className="p1-btn p1-btn--primary">
-          Send enquiry
+          <WhatsAppIcon />
+          Send on WhatsApp
         </button>
         <a href={contact.phoneHref} className="p1-link">
           Or call {contact.phone}
+        </a>
+        <a href={`mailto:${contact.email}`} className="p1-link">
+          Email instead
         </a>
       </div>
 
       <p
         aria-live="polite"
-        className="p1-mono m-0 min-h-[1.2em] normal-case tracking-[0.04em] text-[rgba(230,230,230,0.5)]"
+        className="p1-mono m-0 min-h-[1.2em] normal-case tracking-[0.04em] text-soft"
       >
         {sent
-          ? `Your email client should have opened. If it didn't, write to ${contact.email}.`
+          ? `WhatsApp should have opened with your enquiry ready to send. If it didn't, write to ${contact.email}.`
           : ""}
       </p>
     </form>

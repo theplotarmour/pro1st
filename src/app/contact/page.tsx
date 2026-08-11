@@ -32,7 +32,7 @@ export default function ContactPage() {
         <div className="max-w-3xl">
           <Suspense
             fallback={
-              <p className="p1-mono text-[rgba(230,230,230,0.35)]">
+              <p className="p1-mono text-faint">
                 Loading form…
               </p>
             }

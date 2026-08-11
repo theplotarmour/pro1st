@@ -37,11 +37,11 @@ export function ProductInfo({ product }: { product: Product }) {
 
   return (
     <div className="flex flex-col">
-      <div className="p1-mono flex flex-wrap items-center gap-x-4 gap-y-2 text-[rgba(230,230,230,0.45)]">
+      <div className="p1-mono flex flex-wrap items-center gap-x-4 gap-y-2 text-soft">
         {product.category ? (
           <Link
             href={categoryHref}
-            className="text-[rgba(230,230,230,0.45)] hover:text-signal"
+            className="text-soft hover:text-signal"
           >
             {product.category}
           </Link>
@@ -64,7 +64,7 @@ export function ProductInfo({ product }: { product: Product }) {
       <h1 className="p1-h3 mt-5">{product.title}</h1>
 
       {product.specLine ? (
-        <div className="p1-mono mt-5 text-[rgba(230,230,230,0.55)]">
+        <div className="p1-mono mt-5 text-muted">
           {product.specLine}
         </div>
       ) : null}
@@ -104,7 +104,7 @@ export function ProductInfo({ product }: { product: Product }) {
                       className={`p1-mono cursor-pointer border px-4 py-2.5 transition-[border-color,color,background-color] duration-[120ms] ease-signal disabled:cursor-not-allowed disabled:opacity-40 ${
                         isActive
                           ? "border-signal bg-signal text-ink"
-                          : "border-hairline text-[rgba(230,230,230,0.7)] hover:border-signal hover:text-signal"
+                          : "border-hairline text-body hover:border-signal hover:text-signal"
                       }`}
                     >
                       {value}
@@ -127,12 +127,12 @@ export function ProductInfo({ product }: { product: Product }) {
         {typeof price === "number" &&
         typeof compareAt === "number" &&
         compareAt > price ? (
-          <span className="font-mono text-sm text-[rgba(230,230,230,0.4)] line-through">
+          <span className="font-mono text-sm text-faint line-through">
             {formatPrice(compareAt, currency)}
           </span>
         ) : null}
         {typeof price !== "number" ? (
-          <span className="p1-mono text-[rgba(230,230,230,0.45)]">
+          <span className="p1-mono text-soft">
             Price on enquiry
           </span>
         ) : null}
@@ -150,7 +150,7 @@ export function ProductInfo({ product }: { product: Product }) {
 
       {product.documents && product.documents.length > 0 ? (
         <div className="mt-10 border-t border-hairline pt-6">
-          <div className="p1-mono mb-4 text-[rgba(230,230,230,0.45)]">
+          <div className="p1-mono mb-4 text-soft">
             Documents
           </div>
           <div className="flex flex-col gap-3">

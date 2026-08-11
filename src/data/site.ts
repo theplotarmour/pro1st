@@ -165,51 +165,31 @@ export const faqs = [
 
 export const footerColumns = [
   {
-    head: "Products",
-    links: [
-      { label: "Microphones", href: "/products?category=microphones" },
-      { label: "Mixers", href: "/products?category=mixers" },
-      { label: "Amplifiers", href: "/products?category=amplifiers" },
-      { label: "Speakers", href: "/products?category=speakers" },
-      { label: "Crossovers", href: "/products?category=crossovers" },
-    ],
-  },
-  {
     head: "Trade",
     links: [
       { label: "Dealer enquiry", href: "/contact?enquiry=dealer" },
       { label: "Bulk pricing", href: "/contact?enquiry=dealer" },
       { label: "Spec a system", href: "/contact?enquiry=business" },
-      { label: "Rate card", href: "/contact?enquiry=dealer" },
     ],
   },
   {
-    head: "Support",
+    head: "Explore",
     links: [
-      { label: "Warranty", href: "/contact?enquiry=general" },
-      { label: "Spec sheets", href: "/products" },
-      { label: "Shipping", href: "/contact?enquiry=general" },
-      { label: "Returns", href: "/contact?enquiry=general" },
-      { label: "Contact", href: "/contact" },
-    ],
-  },
-  {
-    head: "Company",
-    links: [
-      { label: "Origin", href: "/origin" },
-      { label: "Craft", href: "/craft" },
       { label: "Arsenal", href: "/arsenal" },
-      { label: "WhatsApp", href: contact.whatsappHref },
+      { label: "Product gallery", href: "/products" },
+      { label: "Craft", href: "/craft" },
+      { label: "Origin", href: "/origin" },
+      { label: "Search", href: "/search" },
     ],
   },
-] as const;
-
-export const legalLinks = [
-  { label: "Privacy", href: "/contact" },
-  { label: "Terms", href: "/contact" },
-  { label: "Warranty", href: "/contact" },
-  { label: "Shipping", href: "/contact" },
-  { label: "Returns", href: "/contact" },
+  {
+    head: "Contact",
+    links: [
+      { label: "Get in touch", href: "/contact" },
+      { label: "WhatsApp", href: contact.whatsappHref },
+      { label: "Showroom", href: "/origin#showroom" },
+    ],
+  },
 ] as const;
 
 export const enquiryTypes = [

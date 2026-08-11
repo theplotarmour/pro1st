@@ -24,7 +24,7 @@ export function ProductSpecs({
 
   return (
     <section aria-labelledby="specs-heading">
-      <h2 id="specs-heading" className="p1-mono mb-6 text-[rgba(230,230,230,0.6)]">
+      <h2 id="specs-heading" className="p1-mono mb-6 text-muted">
         Technical specifications
       </h2>
 
@@ -35,7 +35,7 @@ export function ProductSpecs({
               key={row.label}
               className="flex flex-wrap items-baseline justify-between gap-4 border-b border-hairline py-4"
             >
-              <dt className="p1-mono text-[rgba(230,230,230,0.45)]">
+              <dt className="p1-mono text-soft">
                 {row.label}
               </dt>
               <dd className="m-0 text-right font-mono text-[13px] text-ash">
@@ -46,7 +46,7 @@ export function ProductSpecs({
         </dl>
       ) : (
         <div className="border border-hairline bg-panel px-5 py-6">
-          <p className="p1-mono m-0 normal-case tracking-[0.04em] text-[rgba(230,230,230,0.45)]">
+          <p className="p1-mono m-0 normal-case tracking-[0.04em] text-soft">
             Published specifications aren&apos;t available for this unit yet.
           </p>
           {enquiryHref ? (

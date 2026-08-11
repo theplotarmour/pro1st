@@ -62,7 +62,7 @@ export function ShowroomMap() {
       />
 
       <div className="pointer-events-none absolute inset-x-0 bottom-0 flex items-end justify-between gap-4 bg-gradient-to-t from-[rgba(13,13,15,0.9)] to-transparent p-5">
-        <span className="p1-mono text-[rgba(230,230,230,0.55)]">
+        <span className="p1-mono text-muted">
           Moti Cinema Compound · Delhi-6
         </span>
         <a

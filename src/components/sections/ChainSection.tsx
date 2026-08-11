@@ -62,9 +62,9 @@ export function ChainSection({ nodes }: { nodes: ChainNode[] }) {
         const button = node.querySelector("button");
         if (button) {
           button.style.borderColor =
-            isLit || pinned === i ? "#FF6A00" : "rgba(230,230,230,0.10)";
+            isLit || pinned === i ? "var(--signal)" : "rgba(230,230,230,0.10)";
           button.style.backgroundColor =
-            pinned === i ? "#2A2D33" : "#16171A";
+            pinned === i ? "var(--surface-raised)" : "var(--surface-panel)";
         }
 
         node
@@ -74,9 +74,11 @@ export function ChainSection({ nodes }: { nodes: ChainNode[] }) {
               ? 0.25 + ((Math.sin(i * 2.3 + j * 1.7) + 1) / 2) * 0.75
               : 0.12;
             bar.style.transform = `scaleY(${level})`;
+            // Set imperatively per frame, so the unlit colour is resolved
+            // against the active theme rather than baked dark.
             bar.style.backgroundColor = isLit
-              ? "#FF6A00"
-              : "rgba(230,230,230,.18)";
+              ? "var(--signal)"
+              : "var(--hairline-strong)";
           });
       });
 
@@ -140,7 +142,7 @@ export function ChainSection({ nodes }: { nodes: ChainNode[] }) {
                 Source to subwoofer. One system.
               </h2>
             </div>
-            <p className="m-0 max-w-[34ch] text-base leading-[1.6] text-[rgba(230,230,230,0.6)]">
+            <p className="m-0 max-w-[34ch] text-base leading-[1.6] text-muted">
               Seven pillars of the PRO1st line, engineered to interlock.
             </p>
           </div>
@@ -179,7 +181,7 @@ export function ChainSection({ nodes }: { nodes: ChainNode[] }) {
                     aria-pressed={pinned === index}
                     className="flex cursor-pointer flex-col gap-3 border border-hairline bg-panel px-3.5 pb-3 pt-3.5 text-left transition-[border-color,background-color] duration-[420ms] ease-signal hover:bg-steel"
                   >
-                    <span className="p1-mono flex justify-between gap-2 text-[rgba(230,230,230,0.55)]">
+                    <span className="p1-mono flex justify-between gap-2 text-muted">
                       <span>{item.label}</span>
                       <span>{String(index + 1).padStart(2, "0")}</span>
                     </span>
@@ -245,7 +247,7 @@ export function ChainSection({ nodes }: { nodes: ChainNode[] }) {
               ))}
               <div
                 aria-hidden="true"
-                className="p1-mono absolute left-5 top-5 text-[rgba(230,230,230,0.4)]"
+                className="p1-mono absolute left-5 top-5 text-faint"
               >
                 Signal in <span ref={percentRef} className="text-signal">00%</span>{" "}
                 Air out
@@ -264,7 +266,7 @@ export function ChainSection({ nodes }: { nodes: ChainNode[] }) {
             >
               <div className="p1-eyebrow mb-5">{node.label}</div>
               <h3 className="p1-h3">{node.product}</h3>
-              <div className="p1-mono mt-5 text-[rgba(230,230,230,0.55)]">
+              <div className="p1-mono mt-5 text-muted">
                 {node.spec}
               </div>
               <div className="mt-7 flex items-baseline gap-5 border-t border-hairline pt-6">

@@ -14,7 +14,7 @@ export function FaqSection() {
         <div className="lg:sticky lg:top-[120px]">
           <div className="p1-eyebrow mb-6">[ Support ]</div>
           <h2 className="p1-h2">Questions we get on the phone.</h2>
-          <p className="mt-6 max-w-[38ch] text-base leading-[1.6] text-[rgba(230,230,230,0.6)]">
+          <p className="mt-6 max-w-[38ch] text-base leading-[1.6] text-muted">
             If it isn&apos;t here, call{" "}
             <a href={contact.phoneHref} className="text-ash hover:text-signal">
               {contact.phone}
@@ -42,7 +42,7 @@ export function FaqSection() {
                     aria-expanded={isOpen}
                     aria-controls={`faq-panel-${index}`}
                     id={`faq-trigger-${index}`}
-                    className="flex w-full cursor-pointer items-center justify-between gap-6 border-0 bg-transparent py-6 text-left font-display text-lg font-medium tracking-[-0.01em] text-white hover:text-signal"
+                    className="flex w-full cursor-pointer items-center justify-between gap-6 border-0 bg-transparent py-6 text-left font-display text-lg font-medium tracking-[-0.01em] text-strong hover:text-signal"
                   >
                     <span>{faq.q}</span>
                     <span
@@ -69,7 +69,7 @@ export function FaqSection() {
                   }}
                 >
                   <div className="overflow-hidden">
-                    <p className="m-0 max-w-[62ch] pb-7 pr-10 text-base leading-[1.6] text-[rgba(230,230,230,0.68)]">
+                    <p className="m-0 max-w-[62ch] pb-7 pr-10 text-base leading-[1.6] text-body">
                       {faq.a}
                     </p>
                   </div>

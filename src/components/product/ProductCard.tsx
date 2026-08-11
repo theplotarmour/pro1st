@@ -47,7 +47,7 @@ export function ProductCard({
             />
           ) : (
             <div className="grid h-full place-items-center">
-              <span className="p1-mono text-[rgba(230,230,230,0.3)]">
+              <span className="p1-mono text-faint">
                 No image
               </span>
             </div>
@@ -65,21 +65,21 @@ export function ProductCard({
         />
       </div>
 
-      <div className="p1-mono text-[rgba(230,230,230,0.45)]">
+      <div className="p1-mono text-soft">
         {product.category}
       </div>
 
-      <h3 className="m-0 mt-2.5 font-display text-[17px] font-medium leading-[1.25] tracking-[-0.01em] text-white">
+      <h3 className="m-0 mt-2.5 font-display text-[17px] font-medium leading-[1.25] tracking-[-0.01em] text-strong">
         <Link
           href={`/products/${product.handle}`}
-          className="text-white after:absolute after:inset-0 after:z-10 after:content-[''] hover:text-signal"
+          className="text-strong after:absolute after:inset-0 after:z-10 after:content-[''] hover:text-signal"
         >
           {product.title}
         </Link>
       </h3>
 
       {product.specLine ? (
-        <div className="p1-mono mt-2 translate-y-1.5 tracking-[0.06em] text-[rgba(230,230,230,0.5)] opacity-0 transition-[opacity,transform] duration-300 ease-signal group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100">
+        <div className="p1-mono mt-2 translate-y-1.5 tracking-[0.06em] text-soft opacity-0 transition-[opacity,transform] duration-300 ease-signal group-hover:translate-y-0 group-hover:opacity-100 group-focus-within:translate-y-0 group-focus-within:opacity-100">
           {product.specLine}
         </div>
       ) : null}

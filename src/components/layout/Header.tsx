@@ -9,6 +9,7 @@ import type { CategorySummary } from "@/types/product";
 import { Logo } from "./Logo";
 import { MegaMenu } from "./MegaMenu";
 import { MobileNav } from "./MobileNav";
+import { ThemeToggle } from "./ThemeToggle";
 import { CartIcon, MenuIcon, SearchIcon } from "./icons";
 
 export function Header({ categories }: { categories: CategorySummary[] }) {
@@ -59,11 +60,9 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
         className="fixed inset-x-0 top-0 z-[120] flex items-center gap-6 gutter-x border-b transition-[height,background-color,border-color,backdrop-filter] duration-[420ms] ease-signal"
         style={{
           height: condensed ? 56 : 72,
-          backgroundColor: condensed ? "rgba(13,13,15,0.88)" : "transparent",
+          backgroundColor: condensed ? "var(--header-bg)" : "transparent",
           backdropFilter: condensed ? "blur(16px)" : "none",
-          borderBottomColor: condensed
-            ? "rgba(230,230,230,0.10)"
-            : "transparent",
+          borderBottomColor: condensed ? "var(--hairline)" : "transparent",
         }}
       >
         <Logo collapsed={condensed} />
@@ -96,7 +95,7 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
                       setMegaOpen(true);
                     }
                   }}
-                  className="block py-1.5 hover:text-white"
+                  className="block py-1.5 hover:text-strong"
                   style={{
                     color: isActive(item.href)
                       ? "var(--p1-signal)"
@@ -110,7 +109,7 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
               <Link
                 key={item.href}
                 href={item.href}
-                className="py-1.5 hover:text-white"
+                className="py-1.5 hover:text-strong"
                 style={{
                   color: isActive(item.href) ? "var(--p1-signal)" : undefined,
                 }}
@@ -122,6 +121,8 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
         </nav>
 
         <div className="ml-auto flex flex-none items-center gap-4 lg:ml-0 lg:gap-[18px]">
+          <ThemeToggle />
+
           <Link
             href="/search"
             aria-label="Search products"

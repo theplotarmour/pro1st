@@ -134,7 +134,7 @@ export function CraftSection({
               </div>
 
               <div style={{ order: unpinned ? 1 : panel.imageFirst ? 2 : 1 }}>
-                <div className="p1-mono mb-5 text-[rgba(230,230,230,0.45)]">
+                <div className="p1-mono mb-5 text-soft">
                   {panel.num}
                 </div>
                 <h3 className="p1-h2">{panel.title}</h3>

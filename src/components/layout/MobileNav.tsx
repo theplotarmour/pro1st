@@ -40,7 +40,7 @@ export function MobileNav({ open, onClose, categories }: MobileNavProps) {
             key={item.href}
             href={item.href}
             onClick={onClose}
-            className="border-b border-hairline py-5 font-display text-2xl font-medium tracking-[-0.02em] text-white"
+            className="border-b border-hairline py-5 font-display text-2xl font-medium tracking-[-0.02em] text-strong"
           >
             {item.label}
           </Link>
@@ -48,7 +48,7 @@ export function MobileNav({ open, onClose, categories }: MobileNavProps) {
       </nav>
 
       <div className="gutter-x pb-8">
-        <div className="p1-mono mb-4 text-[rgba(230,230,230,0.45)]">
+        <div className="p1-mono mb-4 text-soft">
           Categories
         </div>
         <div className="grid grid-cols-2 gap-x-6 gap-y-3">
@@ -57,10 +57,10 @@ export function MobileNav({ open, onClose, categories }: MobileNavProps) {
               key={category.slug}
               href={`/products?category=${category.slug}`}
               onClick={onClose}
-              className="flex items-baseline justify-between gap-2 border-b border-hairline pb-2 text-sm text-[rgba(230,230,230,0.72)]"
+              className="flex items-baseline justify-between gap-2 border-b border-hairline pb-2 text-sm text-body"
             >
               {category.name}
-              <span className="font-mono text-[10px] text-[rgba(230,230,230,0.4)]">
+              <span className="font-mono text-[10px] text-faint">
                 {String(category.count).padStart(2, "0")}
               </span>
             </Link>

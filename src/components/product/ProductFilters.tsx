@@ -23,7 +23,7 @@ export function ProductFilters({
     `p1-mono whitespace-nowrap border px-4 py-2.5 transition-[border-color,color,background-color] duration-[120ms] ease-signal ${
       isActive
         ? "border-signal bg-signal text-ink"
-        : "border-hairline text-[rgba(230,230,230,0.7)] hover:border-signal hover:text-signal"
+        : "border-hairline text-body hover:border-signal hover:text-signal"
     }`;
 
   return (

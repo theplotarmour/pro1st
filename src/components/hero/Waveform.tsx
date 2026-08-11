@@ -55,8 +55,14 @@ export function Waveform() {
         }
         a *= compress;
         const barHeight = a * h * 0.42;
+        // Canvas has no CSS variables, so the theme is read from the DOM.
+        // Light bars on a light page would simply vanish.
         ctx.fillStyle =
-          a > 0.72 ? "rgba(255,106,0,0.9)" : "rgba(230,230,230,0.22)";
+          a > 0.72
+            ? "rgba(255,106,0,0.9)"
+            : document.documentElement.dataset.theme === "light"
+              ? "rgba(13,13,15,0.20)"
+              : "rgba(230,230,230,0.22)";
         ctx.fillRect(x, base - barHeight, 3, barHeight * 2);
       }
 

@@ -75,11 +75,11 @@ export function Counter({ to, suffix = "", initial, label }: CounterProps) {
     <div className="border-l border-hairline px-6 pt-8">
       <div
         ref={valueRef}
-        className="font-display text-[clamp(28px,4vw,56px)] font-medium leading-none tracking-[-0.02em] text-white"
+        className="font-display text-[clamp(28px,4vw,56px)] font-medium leading-none tracking-[-0.02em] text-strong"
       >
         {initial}
       </div>
-      <div className="p1-mono mt-3 text-[rgba(230,230,230,0.5)]">{label}</div>
+      <div className="p1-mono mt-3 text-soft">{label}</div>
     </div>
   );
 }
