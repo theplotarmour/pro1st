@@ -121,7 +121,7 @@ export function ChainSection({ nodes }: { nodes: ChainNode[] }) {
       ref={wrapRef}
       aria-labelledby="chain-heading"
       className="relative border-t border-hairline"
-      style={{ height: unpinned ? "auto" : "360vh" }}
+      style={{ height: unpinned ? "auto" : "260vh" }}
     >
       <div
         className="flex flex-col gutter-x"

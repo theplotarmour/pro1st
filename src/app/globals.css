@@ -255,7 +255,7 @@
   .p1-h1 {
     font-family: var(--f-d);
     font-weight: 700;
-    font-size: clamp(46px, 9vw, 148px);
+    font-size: clamp(42px, 6.6vw, 104px);
     letter-spacing: -0.04em;
     line-height: 0.88;
     color: var(--text-strong);

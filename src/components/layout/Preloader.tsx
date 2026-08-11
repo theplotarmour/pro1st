@@ -3,8 +3,12 @@
 import { useEffect, useRef, useState } from "react";
 
 /**
- * VU-meter preload curtain. Shown once per session — a returning visitor
- * navigating the site should never wait on it again.
+ * VU-meter preload curtain. Shown once per session.
+ *
+ * Kept short on purpose: the previous 1.6s curtain plus a 0.5s fade plus the
+ * 0.9s headline reveal meant roughly three seconds before a first-time visitor
+ * could read the brand name. A curtain should punctuate the entrance, not
+ * delay it.
  */
 export function Preloader() {
   const [active, setActive] = useState(false);
@@ -29,7 +33,7 @@ export function Preloader() {
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
-    const duration = reduced ? 300 : 1600;
+    const duration = reduced ? 200 : 700;
     const start = performance.now();
     const bars = Array.from(
       barsRef.current?.children ?? [],
@@ -76,7 +80,7 @@ export function Preloader() {
         setActive(false);
         // The hero holds its headline until the curtain lifts.
         window.dispatchEvent(new Event("p1:ready"));
-      }, 460);
+      }, 260);
     };
 
     frame = requestAnimationFrame(step);

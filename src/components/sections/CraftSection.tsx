@@ -63,7 +63,7 @@ export function CraftSection({
       ref={wrapRef}
       aria-labelledby="craft-heading"
       className="relative border-t border-hairline"
-      style={{ height: unpinned ? "auto" : "300vh" }}
+      style={{ height: unpinned ? "auto" : "240vh" }}
     >
       <div
         style={{

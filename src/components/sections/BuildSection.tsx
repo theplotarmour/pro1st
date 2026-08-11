@@ -138,7 +138,7 @@ export function BuildSection({ unit }: { unit: BuildUnit }) {
       ref={wrapRef}
       aria-labelledby="build-heading"
       className="relative border-t border-hairline"
-      style={{ height: unpinned ? "auto" : "620vh" }}
+      style={{ height: unpinned ? "auto" : "300vh" }}
     >
       <div
         ref={stickyRef}

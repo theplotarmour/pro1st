@@ -46,7 +46,7 @@ export function Hero({ chassisImage }: HeroProps) {
   return (
     <section
       aria-label="PRO1ST — professional audio equipment"
-      className="relative flex min-h-[640px] flex-col justify-center overflow-hidden gutter-x pt-[120px] h-svh"
+      className="relative flex min-h-[680px] flex-col justify-center overflow-hidden gutter-x pb-[30vh] pt-[112px] h-svh"
     >
       <div
         aria-hidden="true"
@@ -61,11 +61,8 @@ export function Hero({ chassisImage }: HeroProps) {
         }}
       />
 
-      {chassisImage ? (
-        <HeroChassis image={chassisImage.src} alt={chassisImage.alt} />
-      ) : null}
-
-      <div className="p1-shell relative z-[2]">
+      <div className="p1-shell relative z-[2] grid items-center gap-10 min-[1100px]:grid-cols-[minmax(0,1fr)_minmax(0,0.82fr)]">
+        <div>
         <div className="p1-mono mb-8 flex items-center gap-2.5 text-muted">
           <span
             aria-hidden="true"
@@ -87,9 +84,9 @@ export function Hero({ chassisImage }: HeroProps) {
           </span>
         </h1>
 
-        <p className="p1-lead mt-8 max-w-[52ch]">{heroContent.lead}</p>
+        <p className="p1-lead mt-7 max-w-[46ch]">{heroContent.lead}</p>
 
-        <div className="mt-10 flex flex-wrap gap-3">
+        <div className="mt-8 flex flex-wrap gap-3">
           <Magnetic>
             <ButtonLink href="/arsenal" variant="primary">
               Enter the arsenal ↓
@@ -101,6 +98,11 @@ export function Hero({ chassisImage }: HeroProps) {
             </ButtonLink>
           </Magnetic>
         </div>
+        </div>
+
+        {chassisImage ? (
+          <HeroChassis image={chassisImage.src} alt={chassisImage.alt} />
+        ) : null}
       </div>
 
       <Waveform />

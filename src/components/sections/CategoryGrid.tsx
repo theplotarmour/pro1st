@@ -34,7 +34,7 @@ export function CategoryGrid({
           </h2>
         </Reveal>
 
-        <div className="grid grid-cols-2 gap-6 md:grid-cols-3 xl:grid-cols-4">
+        <div className="grid grid-cols-2 gap-6 sm:grid-cols-3 lg:grid-cols-5">
           {categories.map((category) => (
             <Link
               key={category.slug}

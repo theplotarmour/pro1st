@@ -111,7 +111,7 @@ export function Waveform() {
     <canvas
       ref={canvasRef}
       aria-hidden="true"
-      className="pointer-events-none absolute inset-x-0 bottom-0 z-[1] block h-[34vh] w-full"
+      className="pointer-events-none absolute inset-x-0 bottom-0 z-0 block h-[32vh] w-full"
     />
   );
 }
