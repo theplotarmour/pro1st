@@ -1,0 +1,1258 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;700&family=Inter:opsz,wght@14..32,400;14..32,500;14..32,600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+:root{
+  --p1-signal:#FF6A00; --p1-black:#0D0D0F; --p1-steel:#2A2D33;
+  --p1-ash:#E6E6E6; --p1-white:#FFFFFF; --p1-panel:#16171A;
+  --p1-hairline:rgba(230,230,230,0.10);
+  --sig-12:rgba(255,106,0,0.12); --sig-24:rgba(255,106,0,0.24); --sig-40:rgba(255,106,0,0.40);
+  --f-d:'Space Grotesk',system-ui,sans-serif;
+  --f-b:'Inter',system-ui,sans-serif;
+  --f-m:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  --e-signal:cubic-bezier(0.16,1,0.3,1); --e-cut:cubic-bezier(0.7,0,0.84,0);
+  --gutter:120px;
+}
+*{box-sizing:border-box}
+html{scroll-behavior:smooth}
+body{margin:0;background:var(--p1-black);color:var(--p1-ash);font-family:var(--f-b);font-optical-sizing:auto;letter-spacing:-0.011em;-webkit-font-smoothing:antialiased;text-wrap:pretty}
+a{color:var(--p1-ash);text-decoration:none}
+a:hover{color:var(--p1-signal)}
+button,input{font:inherit;color:inherit}
+:focus-visible{outline:2px solid var(--p1-signal);outline-offset:2px}
+@keyframes p1-blink{0%,100%{opacity:1}50%{opacity:.25}}
+@keyframes p1-arc{0%,88%,100%{opacity:.35}92%{opacity:1}}
+@keyframes p1-bloom{0%{opacity:0}12%{opacity:1}100%{opacity:0}}
+@media (max-width:1100px){:root{--gutter:48px}}
+@media (max-width:760px){:root{--gutter:24px}}
+@media (prefers-reduced-motion:reduce){*{animation-duration:.001ms !important;transition-duration:.001ms !important}html{scroll-behavior:auto}}
+</style>
+</helmet>
+
+<div ref="{{ rootRef }}" style="position:relative;background:var(--p1-black);overflow-x:clip">
+
+<sc-if value="{{ loading }}" hint-placeholder-val="{{ false }}">
+<div data-p1="preloader" style="position:fixed;inset:0;z-index:200;background:var(--p1-black);display:grid;place-items:center;transition:opacity 500ms var(--e-cut)">
+  <div style="display:flex;flex-direction:column;align-items:center;gap:28px">
+    <div data-p1="vu" style="display:flex;align-items:flex-end;gap:6px;height:120px">
+      <div data-p1="vubar" style="width:10px;height:12%;background:var(--p1-signal);transform-origin:bottom"></div>
+      <div data-p1="vubar" style="width:10px;height:12%;background:var(--p1-signal);transform-origin:bottom"></div>
+      <div data-p1="vubar" style="width:10px;height:12%;background:var(--p1-signal);transform-origin:bottom"></div>
+      <div data-p1="vubar" style="width:10px;height:12%;background:var(--p1-signal);transform-origin:bottom"></div>
+      <div data-p1="vubar" style="width:10px;height:12%;background:var(--p1-signal);transform-origin:bottom"></div>
+    </div>
+    <div data-p1="pct" style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;color:rgba(230,230,230,.6)">000%</div>
+  </div>
+</div>
+</sc-if>
+
+<div data-p1="cursor-ring" aria-hidden="true" style="position:fixed;top:0;left:0;width:32px;height:32px;margin:-16px 0 0 -16px;border:1px solid var(--sig-40);border-radius:50%;pointer-events:none;z-index:190;opacity:0;display:grid;place-items:center;font-family:var(--f-m);font-size:9px;letter-spacing:0.12em;color:var(--p1-signal);transition:width 260ms var(--e-signal),height 260ms var(--e-signal),border-color 260ms var(--e-signal)"><span data-p1="cursor-label" style="opacity:0;transition:opacity 200ms">VIEW</span></div>
+<div data-p1="cursor-dot" aria-hidden="true" style="position:fixed;top:0;left:0;width:6px;height:6px;margin:-3px 0 0 -3px;background:var(--p1-signal);border-radius:50%;pointer-events:none;z-index:191;opacity:0"></div>
+
+<header data-p1="header" style="position:fixed;top:0;left:0;right:0;z-index:120;height:72px;display:flex;align-items:center;gap:24px;padding:0 var(--gutter);border-bottom:1px solid transparent;transition:height 420ms var(--e-signal),background-color 420ms var(--e-signal),border-color 420ms var(--e-signal),backdrop-filter 420ms var(--e-signal)">
+  <a href="#top" aria-label="PRO1st home" style="display:flex;align-items:center;gap:10px;flex:none">
+    <svg width="34" height="34" viewBox="0 0 40 40" fill="none" aria-hidden="true" style="flex:none">
+      <circle cx="20" cy="20" r="15" stroke="rgba(230,230,230,.45)" stroke-width="1.5" stroke-dasharray="60 34" transform="rotate(-40 20 20)"></circle>
+      <circle data-p1="arc" cx="20" cy="20" r="15" stroke="#FF6A00" stroke-width="1.5" stroke-dasharray="20 74" transform="rotate(120 20 20)" style="animation:p1-arc 6s infinite"></circle>
+      <text x="20" y="25" text-anchor="middle" font-family="'Space Grotesk',sans-serif" font-size="12" font-weight="700" fill="#E6E6E6">1</text>
+    </svg>
+    <span data-p1="wordmark" style="font-family:var(--f-d);font-weight:700;font-size:19px;letter-spacing:-0.02em;color:var(--p1-white);transition:opacity 320ms var(--e-signal),max-width 320ms var(--e-signal);overflow:hidden;white-space:nowrap">PRO<span style="color:var(--p1-signal)">·</span>1ST</span>
+  </a>
+
+  <nav aria-label="Primary" style="display:flex;gap:28px;margin:0 auto;font-family:var(--f-b);font-size:13px;font-weight:500;letter-spacing:0.02em">
+    <button type="button" onMouseEnter="{{ openMega }}" onClick="{{ toggleMega }}" style="background:none;border:0;padding:6px 0;cursor:pointer;color:var(--p1-ash);position:relative" style-hover="color:var(--p1-white)">Products
+      <span data-p1="uline" style="position:absolute;left:0;bottom:0;height:1px;width:100%;background:var(--p1-signal);transform:scaleX(0);transform-origin:left;transition:transform 120ms var(--e-signal)"></span>
+    </button>
+    <a href="#chain" style="padding:6px 0;position:relative" style-hover="color:var(--p1-white)">Collections</a>
+    <a href="#origin" style="padding:6px 0" style-hover="color:var(--p1-white)">Origin</a>
+    <a href="#faq" style="padding:6px 0" style-hover="color:var(--p1-white)">Support</a>
+    <a href="#contact" style="padding:6px 0" style-hover="color:var(--p1-white)">Contact</a>
+  </nav>
+
+  <div style="display:flex;align-items:center;gap:18px;flex:none">
+    <button type="button" aria-label="Search" style="background:none;border:0;cursor:pointer;padding:4px;display:grid;place-items:center" style-hover="color:var(--p1-signal)">
+      <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="9" cy="9" r="6"></circle><path d="M13.5 13.5 17.5 17.5"></path></svg>
+    </button>
+    <button type="button" onClick="{{ openCart }}" aria-label="Cart" style="background:none;border:0;cursor:pointer;padding:4px;position:relative;display:grid;place-items:center" style-hover="color:var(--p1-signal)">
+      <svg width="17" height="17" viewBox="0 0 20 20" fill="none" stroke="currentColor" stroke-width="1.4"><path d="M3 5h13l-1.2 9H4.2z"></path><path d="M7 5V3.5h6V5"></path></svg>
+      <span data-p1="cartbadge" style="position:absolute;top:-3px;right:-6px;min-width:15px;height:15px;padding:0 3px;background:var(--p1-signal);color:var(--p1-black);font-family:var(--f-m);font-size:9px;font-weight:500;display:grid;place-items:center">{{ cartCount }}</span>
+    </button>
+    <a href="#dealers" style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;border:1px solid var(--p1-hairline);padding:9px 16px;color:var(--p1-ash);white-space:nowrap;transition:border-color 120ms var(--e-signal),color 120ms var(--e-signal)" style-hover="border-color:var(--p1-signal);color:var(--p1-signal)">Dealer enquiry</a>
+  </div>
+</header>
+
+<sc-if value="{{ megaOpen }}" hint-placeholder-val="{{ false }}">
+<div onMouseLeave="{{ closeMega }}" style="position:fixed;top:0;left:0;right:0;z-index:119;padding:96px var(--gutter) 40px;background:rgba(13,13,15,.97);backdrop-filter:blur(16px);border-bottom:1px solid var(--p1-hairline)">
+  <div style="max-width:1440px;margin:0 auto;display:grid;grid-template-columns:repeat(6,1fr);gap:24px">
+    <sc-for list="{{ megaCols }}" as="c" hint-placeholder-count="6">
+      <a href="#products" style="display:flex;flex-direction:column;gap:12px;padding:14px;border:1px solid transparent;transition:background-color 200ms var(--e-signal),border-color 200ms var(--e-signal)" style-hover="background-color:var(--p1-panel);border-color:var(--p1-hairline)">
+        <div style="position:relative;aspect-ratio:4/3;background:var(--p1-panel);border:1px solid var(--p1-hairline);overflow:hidden">
+          <img src="{{ c.img }}" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+        </div>
+        <div style="font-family:var(--f-d);font-weight:500;font-size:15px;color:var(--p1-white)">{{ c.name }}</div>
+        <div style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;color:rgba(230,230,230,.5)">{{ c.count }}</div>
+      </a>
+    </sc-for>
+  </div>
+</div>
+</sc-if>
+
+<main id="top" style="display:block">
+
+<section aria-label="Hero" style="position:relative;min-height:640px;height:100vh;display:flex;flex-direction:column;justify-content:center;padding:120px var(--gutter) 0;overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;top:-10%;right:-8%;width:70vw;height:70vw;opacity:.055;pointer-events:none;background-image:repeating-radial-gradient(circle at 62% 34%,rgba(255,106,0,0) 0 46px,rgba(255,106,0,1) 46px 47px),repeating-radial-gradient(circle at 30% 66%,rgba(255,106,0,0) 0 58px,rgba(255,106,0,1) 58px 59px);mask-image:radial-gradient(circle at 62% 30%,#000 20%,transparent 68%)"></div>
+
+  <div data-p1="herohero" aria-hidden="true" style="position:absolute;right:calc(var(--gutter) - 48px);top:4%;width:460px;height:320px;z-index:1;opacity:0;perspective:1500px;will-change:transform">
+    <div style="position:absolute;inset:-14% -10%;background:radial-gradient(ellipse at 50% 50%,var(--sig-12),transparent 62%)"></div>
+    <div data-p1="herobox" style="position:absolute;left:50%;top:50%;width:440px;height:300px;margin:-150px 0 0 -220px;transform-style:preserve-3d;will-change:transform">
+      <div style="position:absolute;left:50%;top:0;width:78px;height:300px;margin-left:-39px;transform:translateX(-220px) rotateY(-90deg);background:linear-gradient(90deg,#101114,#2A2D33 45%,#16171A);border:1px solid var(--p1-hairline);backface-visibility:hidden"><div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(230,230,230,.09) 0 1px,transparent 1px 8px)"></div></div>
+      <div style="position:absolute;left:50%;top:0;width:78px;height:300px;margin-left:-39px;transform:translateX(220px) rotateY(90deg);background:linear-gradient(90deg,#16171A,#2A2D33 55%,#101114);border:1px solid var(--p1-hairline);backface-visibility:hidden"><div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(230,230,230,.09) 0 1px,transparent 1px 8px)"></div></div>
+      <div style="position:absolute;left:0;top:50%;width:440px;height:78px;margin-top:-39px;transform:translateY(-150px) rotateX(90deg);background:#16171A;border:1px solid var(--p1-hairline);backface-visibility:hidden"><div style="position:absolute;inset:12px 70px;background:repeating-linear-gradient(90deg,rgba(230,230,230,.14) 0 2px,transparent 2px 11px)"></div></div>
+      <div style="position:absolute;left:0;top:50%;width:440px;height:78px;margin-top:-39px;transform:translateY(150px) rotateX(-90deg);background:#0F1013;border:1px solid var(--p1-hairline);backface-visibility:hidden"></div>
+      <div style="position:absolute;inset:0;transform:translateZ(-39px) rotateY(180deg);background:#101114;border:1px solid var(--p1-hairline);backface-visibility:hidden">
+        <div style="position:absolute;inset:0;background-image:linear-gradient(var(--p1-hairline) 1px,transparent 1px),linear-gradient(90deg,var(--p1-hairline) 1px,transparent 1px);background-size:38px 38px"></div>
+        <div style="position:absolute;left:36px;top:50%;margin-top:-8px;width:72px;height:16px;border:1px solid var(--sig-40)"></div>
+        <div style="position:absolute;right:36px;top:50%;margin-top:-8px;width:72px;height:16px;border:1px solid var(--sig-40)"></div>
+      </div>
+      <div style="position:absolute;inset:0;transform:translateZ(39px);border:1px solid var(--p1-hairline);overflow:hidden;backface-visibility:hidden">
+        <img src="https://pro1st-demo.netlify.app/assets/mixer-aj6-eGXoaviy.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+      </div>
+    </div>
+  </div>
+
+  <div style="position:relative;max-width:1440px;width:100%;margin:0 auto;z-index:2">
+    <div data-p1="rise" style="display:flex;align-items:center;gap:10px;font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.6);margin-bottom:32px">
+      <span style="width:6px;height:6px;border-radius:50%;background:var(--p1-signal);animation:p1-blink 1.8s infinite"></span>Live from Chandni Chowk
+    </div>
+
+    <h1 style="margin:0;font-family:var(--f-d);font-weight:700;font-size:clamp(56px,9vw,148px);letter-spacing:-0.04em;line-height:.88;color:var(--p1-white);text-transform:uppercase">
+      <span style="display:block;overflow:hidden"><span data-p1="hw" style="display:block">Professional</span></span>
+      <span style="display:block;overflow:hidden"><span data-p1="hw" style="display:block"><span style="color:var(--p1-signal)">Rhythm</span> Operators</span></span>
+    </h1>
+
+    <p data-p1="rise" style="margin:32px 0 0;max-width:52ch;font-size:18px;line-height:1.55;color:rgba(230,230,230,.72)">The 1st choice of DJs, event professionals and retailers across India. Built loud. Tuned for clarity. Engineered for the long set.</p>
+
+    <div data-p1="rise" style="display:flex;flex-wrap:wrap;gap:12px;margin-top:40px">
+      <a href="#products" data-p1="magnetic" style="display:inline-flex;align-items:center;gap:10px;background:var(--p1-signal);color:var(--p1-black);font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;padding:16px 26px;transition:letter-spacing 120ms var(--e-signal)" style-hover="letter-spacing:0.1em;color:var(--p1-black)">Enter the arsenal ↓</a>
+      <a href="#dealers" data-p1="magnetic" style="display:inline-flex;align-items:center;background:transparent;border:1px solid var(--p1-hairline);color:var(--p1-ash);font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;padding:16px 26px;transition:border-color 120ms var(--e-signal)" style-hover="border-color:var(--p1-signal);color:var(--p1-signal)">Talk to a dealer</a>
+    </div>
+  </div>
+
+  <canvas ref="{{ waveRef }}" data-p1="wave" aria-hidden="true" style="position:absolute;left:0;right:0;bottom:0;width:100%;height:34vh;display:block;z-index:1"></canvas>
+
+  <div style="position:absolute;right:var(--gutter);bottom:40px;z-index:2;font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.45);text-align:right">Est. 2004 · Delhi-6 · 10,000+ units shipped</div>
+</section>
+
+<section aria-label="Categories" style="border-top:1px solid var(--p1-hairline);border-bottom:1px solid var(--p1-hairline);background:var(--p1-steel);height:64px;overflow:hidden;display:flex;align-items:center">
+  <div ref="{{ marqueeRef }}" style="display:flex;gap:0;white-space:nowrap;will-change:transform">
+    <sc-for list="{{ marqueeItems }}" as="m" hint-placeholder-count="14">
+      <a href="#products" style="display:inline-flex;align-items:center;gap:20px;padding:0 14px;font-family:var(--f-d);font-weight:500;font-size:20px;letter-spacing:-0.01em;color:rgba(230,230,230,.82);transition:color 120ms var(--e-signal)" style-hover="color:var(--p1-signal)"><img src="{{ m.img }}" alt="" loading="lazy" style="width:40px;height:40px;object-fit:cover;border:1px solid var(--p1-hairline);flex:none">{{ m.label }}<span style="width:5px;height:5px;border-radius:50%;background:var(--p1-signal);flex:none"></span></a>
+    </sc-for>
+  </div>
+</section>
+
+<section id="build" ref="{{ buildWrapRef }}" style="position:relative;height:620vh;border-top:1px solid var(--p1-hairline)">
+  <div data-p1="buildsticky" style="position:sticky;top:0;height:100vh;overflow:hidden;display:flex;flex-direction:column;padding:88px var(--gutter) 40px">
+    <div data-p1="buildbloom" aria-hidden="true" style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 52%,var(--sig-24),transparent 58%);opacity:0;pointer-events:none"></div>
+
+    <div style="position:relative;z-index:3;display:flex;align-items:baseline;justify-content:space-between;gap:32px;flex-wrap:wrap;flex:none">
+      <div>
+        <div style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--p1-signal);margin-bottom:20px">[ 01 — The build ]</div>
+        <h2 style="margin:0;font-family:var(--f-d);font-weight:500;font-size:clamp(32px,4vw,56px);letter-spacing:-0.02em;line-height:1;color:var(--p1-white)">Eight layers. One chassis.</h2>
+      </div>
+      <p style="margin:0;max-width:32ch;font-size:16px;line-height:1.6;color:rgba(230,230,230,.6)">The MX-1600, pressed and stacked in the order it leaves our floor.</p>
+    </div>
+
+    <div style="position:relative;flex:1;min-height:0;perspective:1700px;perspective-origin:50% 46%">
+      <div ref="{{ buildStageRef }}" style="position:absolute;left:50%;top:50%;width:660px;height:400px;margin:-200px 0 0 -330px;transform-style:preserve-3d;will-change:transform">
+
+        <div data-p1="face" data-face="side" style="position:absolute;left:50%;top:0;width:112px;height:400px;margin-left:-56px;transform:translateX(-330px) rotateY(-90deg);background:linear-gradient(90deg,#101114,#2A2D33 40%,#16171A);border:1px solid var(--p1-hairline);opacity:0;backface-visibility:hidden">
+          <div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(230,230,230,.09) 0 1px,transparent 1px 9px)"></div>
+        </div>
+        <div data-p1="face" data-face="side" style="position:absolute;left:50%;top:0;width:112px;height:400px;margin-left:-56px;transform:translateX(330px) rotateY(90deg);background:linear-gradient(90deg,#16171A,#2A2D33 60%,#101114);border:1px solid var(--p1-hairline);opacity:0;backface-visibility:hidden">
+          <div style="position:absolute;inset:0;background:repeating-linear-gradient(90deg,rgba(230,230,230,.09) 0 1px,transparent 1px 9px)"></div>
+        </div>
+        <div data-p1="face" data-face="side" style="position:absolute;left:0;top:50%;width:660px;height:112px;margin-top:-56px;transform:translateY(-200px) rotateX(90deg);background:#16171A;border:1px solid var(--p1-hairline);opacity:0;backface-visibility:hidden">
+          <div style="position:absolute;inset:14px 90px;background:repeating-linear-gradient(90deg,rgba(230,230,230,.14) 0 2px,transparent 2px 12px)"></div>
+        </div>
+        <div data-p1="face" data-face="side" style="position:absolute;left:0;top:50%;width:660px;height:112px;margin-top:-56px;transform:translateY(200px) rotateX(-90deg);background:#0F1013;border:1px solid var(--p1-hairline);opacity:0;backface-visibility:hidden"></div>
+        <div data-p1="face" data-face="back" style="position:absolute;inset:0;transform:translateZ(-56px) rotateY(180deg);background:#101114;border:1px solid var(--p1-hairline);opacity:0;backface-visibility:hidden">
+          <div style="position:absolute;inset:0;background-image:linear-gradient(var(--p1-hairline) 1px,transparent 1px),linear-gradient(90deg,var(--p1-hairline) 1px,transparent 1px);background-size:44px 44px"></div>
+          <div style="position:absolute;left:44px;top:50%;margin-top:-9px;width:88px;height:18px;border:1px solid var(--sig-40)"></div>
+          <div style="position:absolute;right:44px;top:50%;margin-top:-9px;width:88px;height:18px;border:1px solid var(--sig-40)"></div>
+        </div>
+
+        <div style="position:absolute;inset:0;transform:translateZ(56px);transform-style:preserve-3d">
+          <img data-p1="slice" data-i="0" src="https://pro1st-demo.netlify.app/assets/amp-mx1600-BDXE_Wuw.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(0% 0 87.5% 0);will-change:transform">
+          <img data-p1="slice" data-i="1" src="https://pro1st-demo.netlify.app/assets/amp-mx1600-BDXE_Wuw.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(12.5% 0 75% 0);will-change:transform">
+          <img data-p1="slice" data-i="2" src="https://pro1st-demo.netlify.app/assets/amp-mx1600-BDXE_Wuw.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(25% 0 62.5% 0);will-change:transform">
+          <img data-p1="slice" data-i="3" src="https://pro1st-demo.netlify.app/assets/amp-mx1600-BDXE_Wuw.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(37.5% 0 50% 0);will-change:transform">
+          <img data-p1="slice" data-i="4" src="https://pro1st-demo.netlify.app/assets/amp-mx1600-BDXE_Wuw.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(50% 0 37.5% 0);will-change:transform">
+          <img data-p1="slice" data-i="5" src="https://pro1st-demo.netlify.app/assets/amp-mx1600-BDXE_Wuw.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(62.5% 0 25% 0);will-change:transform">
+          <img data-p1="slice" data-i="6" src="https://pro1st-demo.netlify.app/assets/amp-mx1600-BDXE_Wuw.jpg" alt="" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(75% 0 12.5% 0);will-change:transform">
+          <img data-p1="slice" data-i="7" src="https://pro1st-demo.netlify.app/assets/amp-mx1600-BDXE_Wuw.jpg" alt="MX-1600 professional power booster amplifier" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;clip-path:inset(87.5% 0 0% 0);will-change:transform">
+          <div data-p1="platebox" aria-hidden="true" style="position:absolute;inset:0;border:1px solid var(--sig-40);opacity:0"></div>
+        </div>
+      </div>
+
+      <div data-p1="callouts" aria-hidden="true" style="position:absolute;inset:0;opacity:0;transition:opacity 420ms var(--e-signal)">
+        <div style="position:absolute;left:6%;top:24%;display:flex;align-items:center;gap:14px"><span style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.6);white-space:nowrap">Pressed steel faceplate</span><span style="width:80px;height:1px;background:var(--sig-40)"></span></div>
+        <div style="position:absolute;left:4%;top:62%;display:flex;align-items:center;gap:14px"><span style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.6);white-space:nowrap">Hand-biased output pairs</span><span style="width:110px;height:1px;background:var(--sig-40)"></span></div>
+        <div style="position:absolute;right:6%;top:33%;display:flex;align-items:center;gap:14px"><span style="width:80px;height:1px;background:var(--sig-40)"></span><span style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.6);white-space:nowrap">Extruded heat-sink flank</span></div>
+        <div style="position:absolute;right:4%;top:70%;display:flex;align-items:center;gap:14px"><span style="width:110px;height:1px;background:var(--sig-40)"></span><span style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.6);white-space:nowrap">1600W · 2Ω stable</span></div>
+      </div>
+    </div>
+
+    <div style="position:relative;z-index:3;flex:none;display:flex;justify-content:space-between;align-items:flex-end;gap:24px;font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.42)">
+      <span ref="{{ buildPhaseRef }}">Assembly — 00%</span>
+      <span style="color:rgba(230,230,230,.6)">MX-1600 · ₹25,000</span>
+    </div>
+    <div aria-hidden="true" style="position:relative;z-index:3;flex:none;margin-top:14px;height:1px;background:var(--p1-hairline)"><div ref="{{ buildRailRef }}" style="height:1px;background:var(--p1-signal);transform:scaleX(0);transform-origin:left;will-change:transform"></div></div>
+  </div>
+</section>
+
+<section id="origin" style="padding:128px var(--gutter);max-width:1440px;margin:0 auto">
+  <div style="display:grid;grid-template-columns:7fr 5fr;gap:80px;align-items:start">
+    <div data-p1="rise">
+      <div style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--p1-signal);margin-bottom:28px">[ 02 — Origin ]</div>
+      <h2 style="margin:0;font-family:var(--f-d);font-weight:500;font-size:clamp(32px,4vw,56px);letter-spacing:-0.02em;line-height:1;color:var(--p1-white);max-width:16ch">From a workshop in Chandni Chowk, we move air across India.</h2>
+      <p style="margin:36px 0 0;font-size:16px;line-height:1.6;color:rgba(230,230,230,.72);max-width:58ch">Desire Electronics has traded in audio since 2004. PRO1st is the professional line: imported drivers, transformers and DSP boards mated to housings, chassis and crossovers built on our own floor at Moti Cinema Compound.</p>
+      <p style="margin:20px 0 0;font-size:16px;line-height:1.6;color:rgba(230,230,230,.72);max-width:58ch">That split is deliberate. We buy the components nobody should improvise, and we build the parts that decide whether a cabinet survives a monsoon load-in. Every unit is bench-tested before it leaves the compound.</p>
+    </div>
+    <div data-p1="rise" style="position:relative">
+      <div aria-hidden="true" style="position:absolute;top:16px;left:16px;right:-16px;bottom:-16px;border:1px solid var(--sig-40)"></div>
+      <div data-p1="parallax" style="position:relative;aspect-ratio:4/5;background:var(--p1-panel);border:1px solid var(--p1-hairline);overflow:hidden">
+        <img src="https://pro1st.in/cdn/shop/files/image3.png?v=1776941364&amp;width=900" alt="PRO1st assembly floor, Chandni Chowk" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+      </div>
+    </div>
+  </div>
+
+  <div ref="{{ statsRef }}" style="display:grid;grid-template-columns:repeat(4,1fr);margin-top:96px;border-top:1px solid var(--p1-hairline)">
+    <sc-for list="{{ stats }}" as="s" hint-placeholder-count="4">
+      <div style="padding:32px 24px 0;border-left:1px solid var(--p1-hairline)">
+        <div data-p1="counter" data-to="{{ s.to }}" data-suffix="{{ s.suffix }}" style="font-family:var(--f-d);font-weight:500;font-size:clamp(32px,4vw,56px);letter-spacing:-0.02em;line-height:1;color:var(--p1-white)">{{ s.initial }}</div>
+        <div style="margin-top:12px;font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.5)">{{ s.label }}</div>
+      </div>
+    </sc-for>
+  </div>
+</section>
+
+<section id="chain" ref="{{ chainWrapRef }}" style="position:relative;height:360vh;border-top:1px solid var(--p1-hairline)">
+  <div style="position:sticky;top:0;height:100vh;overflow:hidden;display:flex;flex-direction:column;padding:88px var(--gutter) 40px">
+    <div data-p1="bloom" aria-hidden="true" style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 55%,var(--sig-24),transparent 62%);opacity:0;pointer-events:none"></div>
+
+    <div style="position:relative;max-width:1440px;width:100%;margin:0 auto;z-index:2;flex:1;min-height:0;display:flex;flex-direction:column">
+      <div style="display:flex;align-items:baseline;justify-content:space-between;gap:32px;flex-wrap:wrap">
+        <div>
+          <div style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--p1-signal);margin-bottom:24px">[ 03 — The chain ]</div>
+          <h2 style="margin:0;font-family:var(--f-d);font-weight:500;font-size:clamp(32px,4vw,56px);letter-spacing:-0.02em;line-height:1;color:var(--p1-white)">Source to subwoofer. One system.</h2>
+        </div>
+        <p style="margin:0;max-width:34ch;font-size:16px;line-height:1.6;color:rgba(230,230,230,.6)">Seven pillars of the PRO1st line, engineered to interlock.</p>
+      </div>
+
+      <div style="position:relative;margin-top:40px;flex:none">
+        <div aria-hidden="true" style="position:absolute;left:0;right:0;top:44px;height:1px;background:var(--p1-hairline)"></div>
+        <div ref="{{ railRef }}" aria-hidden="true" style="position:absolute;left:0;right:0;top:44px;height:1px;background:var(--p1-signal);transform:scaleX(0);transform-origin:left;will-change:transform"></div>
+        <div ref="{{ pulseRef }}" aria-hidden="true" style="position:absolute;left:0;top:41px;width:7px;height:7px;border-radius:50%;background:var(--p1-signal);box-shadow:0 0 14px 3px var(--sig-40);opacity:0;will-change:transform"></div>
+
+        <div ref="{{ nodesRef }}" style="position:relative;display:grid;grid-template-columns:repeat(7,1fr);gap:12px">
+          <sc-for list="{{ chainNodes }}" as="n" hint-placeholder-count="7">
+            <div data-p1="node" data-idx="{{ n.idx }}" style="display:flex;flex-direction:column;gap:0;transition:opacity 420ms var(--e-signal)">
+              <button type="button" onClick="{{ n.onPin }}" aria-pressed="{{ n.pinned }}" style="text-align:left;background:var(--p1-panel);border:1px solid var(--p1-hairline);padding:14px 14px 12px;cursor:pointer;display:flex;flex-direction:column;gap:12px;transition:border-color 420ms var(--e-signal),background-color 420ms var(--e-signal)" style-hover="background-color:var(--p1-steel)">
+                <span style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.55);display:flex;justify-content:space-between;gap:8px"><span>{{ n.label }}</span><span data-p1="nodenum">{{ n.num }}</span></span>
+                <span data-p1="vugroup" style="display:flex;align-items:flex-end;gap:3px;height:26px">
+                  <span data-p1="vu" style="flex:1;background:rgba(230,230,230,.18);height:100%;transform:scaleY(.12);transform-origin:bottom;transition:transform 620ms var(--e-signal),background-color 420ms var(--e-signal)"></span>
+                  <span data-p1="vu" style="flex:1;background:rgba(230,230,230,.18);height:100%;transform:scaleY(.12);transform-origin:bottom;transition:transform 620ms var(--e-signal),background-color 420ms var(--e-signal)"></span>
+                  <span data-p1="vu" style="flex:1;background:rgba(230,230,230,.18);height:100%;transform:scaleY(.12);transform-origin:bottom;transition:transform 620ms var(--e-signal),background-color 420ms var(--e-signal)"></span>
+                  <span data-p1="vu" style="flex:1;background:rgba(230,230,230,.18);height:100%;transform:scaleY(.12);transform-origin:bottom;transition:transform 620ms var(--e-signal),background-color 420ms var(--e-signal)"></span>
+                  <span data-p1="vu" style="flex:1;background:rgba(230,230,230,.18);height:100%;transform:scaleY(.12);transform-origin:bottom;transition:transform 620ms var(--e-signal),background-color 420ms var(--e-signal)"></span>
+                </span>
+              </button>
+            </div>
+          </sc-for>
+        </div>
+      </div>
+
+      <div data-p1="stagegrid" style="flex:1;min-height:0;margin-top:44px;display:grid;grid-template-columns:7fr 5fr;gap:64px;align-items:center">
+        <div data-p1="stagepanel" style="position:relative;height:100%;min-height:0;background:var(--p1-panel);border:1px solid var(--p1-hairline);overflow:hidden">
+          <div aria-hidden="true" style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 62%,var(--sig-12),transparent 60%)"></div>
+          <sc-for list="{{ chainNodes }}" as="n" hint-placeholder-count="7">
+            <img data-p1="stageimg" data-idx="{{ n.idx }}" src="{{ n.img }}" alt="{{ n.product }}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:contain;padding:36px;opacity:0;transform:scale(1.06);transition:opacity 620ms var(--e-signal),transform 900ms var(--e-signal);will-change:transform,opacity">
+          </sc-for>
+          <div aria-hidden="true" style="position:absolute;left:20px;top:20px;font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.4)">Signal in <span ref="{{ chainPctRef }}" style="color:var(--p1-signal)">00%</span> Air out</div>
+          <div ref="{{ stageIdxRef }}" aria-hidden="true" style="position:absolute;right:20px;bottom:18px;font-family:var(--f-d);font-weight:700;font-size:64px;line-height:1;letter-spacing:-0.04em;color:rgba(230,230,230,.09)">01</div>
+        </div>
+        <div aria-live="polite" data-p1="stagetext" style="display:flex;flex-direction:column;justify-content:center;gap:0;min-height:0">
+          <div ref="{{ stageLabelRef }}" style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--p1-signal);margin-bottom:20px">Source</div>
+          <h3 ref="{{ stageNameRef }}" style="margin:0;font-family:var(--f-d);font-weight:500;font-size:clamp(28px,3vw,44px);letter-spacing:-0.02em;line-height:1.02;color:var(--p1-white)">TK600 / BETA58S Microphones</h3>
+          <div ref="{{ stageSpecRef }}" style="margin-top:20px;font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.55)">Dynamic · Supercardioid · XLR</div>
+          <div style="display:flex;align-items:baseline;gap:20px;margin-top:28px;padding-top:24px;border-top:1px solid var(--p1-hairline)">
+            <span ref="{{ stagePriceRef }}" style="font-family:var(--f-d);font-weight:500;font-size:26px;color:var(--p1-signal)">₹850</span>
+            <a href="#products" style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.6);border-bottom:1px solid var(--p1-hairline);padding-bottom:3px" style-hover="color:var(--p1-signal);border-color:var(--p1-signal)">View product →</a>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="products" style="padding:128px var(--gutter);max-width:1440px;margin:0 auto;border-top:1px solid var(--p1-hairline)">
+  <div data-p1="rise" style="display:flex;align-items:baseline;justify-content:space-between;gap:32px;flex-wrap:wrap;margin-bottom:56px">
+    <div>
+      <div style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--p1-signal);margin-bottom:24px">[ 04 — On the floor ]</div>
+      <h2 style="margin:0;font-family:var(--f-d);font-weight:500;font-size:clamp(32px,4vw,56px);letter-spacing:-0.02em;line-height:1;color:var(--p1-white)">What professionals reorder.</h2>
+    </div>
+  </div>
+
+  <div ref="{{ gridRef }}" style="display:grid;grid-template-columns:repeat(4,1fr);gap:24px">
+    <sc-for list="{{ bestSellers }}" as="p" hint-placeholder-count="8">
+      <article data-p1="card" style="position:relative;display:flex;flex-direction:column;border-bottom:1px solid var(--p1-hairline);padding-bottom:20px">
+        <div data-p1="media" style="position:relative;aspect-ratio:1/1;background:var(--p1-panel);border:1px solid var(--p1-hairline);overflow:hidden;margin-bottom:18px">
+          <div data-p1="mediainner" style="position:absolute;inset:0;transition:transform 420ms var(--e-signal);will-change:transform">
+            <img src="{{ p.img }}" alt="{{ p.title }}" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover">
+          </div>
+          <sc-if value="{{ p.soon }}" hint-placeholder-val="{{ false }}">
+            <div style="position:absolute;top:12px;left:12px;font-family:var(--f-m);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;color:var(--p1-black);background:var(--p1-ash);padding:4px 8px">Coming soon</div>
+          </sc-if>
+          <button type="button" onClick="{{ p.onAdd }}" data-p1="addbtn" style="position:absolute;left:12px;right:12px;bottom:12px;background:var(--p1-ash);color:var(--p1-black);border:0;padding:11px;cursor:pointer;font-family:var(--f-m);font-size:10px;letter-spacing:0.08em;text-transform:uppercase;opacity:0;transform:translateY(8px);transition:opacity 300ms var(--e-signal),transform 300ms var(--e-signal),background-color 120ms" style-hover="background-color:var(--p1-signal)">Add to cart</button>
+        </div>
+        <div style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.45)">{{ p.category }}</div>
+        <h3 style="margin:10px 0 0;font-family:var(--f-d);font-weight:500;font-size:17px;line-height:1.25;letter-spacing:-0.01em;color:var(--p1-white)">{{ p.title }}</h3>
+        <div data-p1="specline" style="margin-top:8px;font-family:var(--f-m);font-size:11px;letter-spacing:0.06em;text-transform:uppercase;color:rgba(230,230,230,.5);opacity:0;transform:translateY(6px);transition:opacity 300ms var(--e-signal),transform 300ms var(--e-signal)">{{ p.specLine }}</div>
+        <div style="margin-top:14px;font-family:var(--f-d);font-weight:500;font-size:17px;color:var(--p1-signal)">{{ p.price }}</div>
+        <div data-p1="sweep" aria-hidden="true" style="position:absolute;left:0;bottom:-1px;height:1px;width:100%;background:var(--p1-signal);transform:scaleX(0);transform-origin:left;transition:transform 420ms var(--e-signal)"></div>
+      </article>
+    </sc-for>
+  </div>
+
+  <a href="#chain" style="display:inline-flex;align-items:center;gap:10px;margin-top:48px;font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--p1-ash);border-bottom:1px solid var(--p1-hairline);padding-bottom:8px" style-hover="color:var(--p1-signal);border-color:var(--p1-signal)">View all 25 products →</a>
+</section>
+
+<section id="craft" ref="{{ craftWrapRef }}" style="position:relative;height:300vh;border-top:1px solid var(--p1-hairline)">
+  <div style="position:sticky;top:0;height:100vh;overflow:hidden">
+    <div style="position:absolute;top:96px;left:var(--gutter);z-index:3">
+      <div style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--p1-signal);margin-bottom:16px">[ 05 — Craft ]</div>
+      <h2 style="margin:0;font-family:var(--f-d);font-weight:500;font-size:clamp(22px,2.4vw,32px);letter-spacing:-0.01em;line-height:1.15;color:var(--p1-white)">Imported precision. In-house backbone.</h2>
+    </div>
+    <div ref="{{ craftTrackRef }}" style="display:flex;height:100%;width:300vw;will-change:transform">
+      <sc-for list="{{ craftPanels }}" as="c" hint-placeholder-count="3">
+        <div data-p1="craftpanel" style="width:100vw;height:100%;display:grid;grid-template-columns:1fr 1fr;align-items:center;gap:80px;padding:200px var(--gutter) 96px;flex:none">
+          <div style="order:{{ c.order }};position:relative;aspect-ratio:4/3;background:var(--p1-panel);border:1px solid var(--p1-hairline);overflow:hidden">
+            <img data-p1="craftimg" src="{{ c.img }}" alt="" loading="lazy" style="position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transform:scale(1.14);will-change:transform">
+            <div aria-hidden="true" style="position:absolute;inset:0;background:linear-gradient(180deg,transparent 55%,rgba(13,13,15,.5))"></div>
+          </div>
+          <div>
+            <div style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.45);margin-bottom:20px">{{ c.num }}</div>
+            <h3 style="margin:0;font-family:var(--f-d);font-weight:500;font-size:clamp(32px,4vw,56px);letter-spacing:-0.02em;line-height:1;color:var(--p1-white)">{{ c.title }}</h3>
+            <p style="margin:28px 0 0;font-size:18px;line-height:1.55;color:rgba(230,230,230,.7);max-width:46ch">{{ c.body }}</p>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+    <div aria-hidden="true" style="position:absolute;left:var(--gutter);right:var(--gutter);bottom:48px;height:1px;background:var(--p1-hairline)">
+      <div ref="{{ craftRailRef }}" style="height:1px;background:var(--p1-signal);transform:scaleX(0);transform-origin:left;will-change:transform"></div>
+    </div>
+  </div>
+</section>
+
+<section aria-label="Manifesto" ref="{{ manifestoRef }}" style="position:relative;padding:192px var(--gutter);border-top:1px solid var(--p1-hairline);overflow:hidden">
+  <div aria-hidden="true" style="position:absolute;inset:0;opacity:.06;pointer-events:none;background-image:repeating-radial-gradient(circle at 20% 50%,rgba(255,106,0,0) 0 64px,rgba(255,106,0,1) 64px 65px),repeating-radial-gradient(circle at 84% 40%,rgba(255,106,0,0) 0 78px,rgba(255,106,0,1) 78px 79px)"></div>
+  <p style="position:relative;margin:0 auto;max-width:1180px;font-family:var(--f-d);font-weight:700;font-size:clamp(40px,6vw,88px);letter-spacing:-0.03em;line-height:.92;color:var(--p1-white)">
+    <sc-for list="{{ manifesto }}" as="w" hint-placeholder-count="46">
+      <span style="display:inline-block;overflow:hidden;vertical-align:bottom"><span data-p1="mw" style="display:inline-block;transform:translateY(100%);color:{{ w.color }}">{{ w.t }}</span></span>
+      <span> </span>
+    </sc-for>
+  </p>
+</section>
+
+<section id="dealers" style="display:grid;grid-template-columns:1fr 1fr;border-top:1px solid var(--p1-hairline)">
+  <div data-p1="shear" data-dir="-1" style="background:var(--p1-signal);color:var(--p1-black);padding:96px var(--gutter);transition:transform 420ms var(--e-signal)">
+    <div style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;opacity:.6;margin-bottom:24px">[ 06 — Trade ]</div>
+    <h2 style="margin:0;font-family:var(--f-d);font-weight:700;font-size:clamp(40px,6vw,88px);letter-spacing:-0.03em;line-height:.92">Stock PRO1st.</h2>
+    <p style="margin:28px 0 40px;font-size:18px;line-height:1.55;max-width:42ch;color:rgba(13,13,15,.78)">Dealer margins, PAN-India dispatch and bulk pricing on the full line. GSTIN and a first order is all it takes to open an account.</p>
+    <a href="#contact" data-p1="magnetic" style="display:inline-flex;background:var(--p1-black);color:var(--p1-ash);font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;padding:16px 26px" style-hover="color:var(--p1-signal)">Dealer enquiry</a>
+  </div>
+  <div data-p1="shear" data-dir="1" style="background:var(--p1-black);padding:96px var(--gutter);border-left:1px solid var(--p1-hairline);transition:transform 420ms var(--e-signal)">
+    <div style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.45);margin-bottom:24px">[ 06 — Systems ]</div>
+    <h2 style="margin:0;font-family:var(--f-d);font-weight:700;font-size:clamp(40px,6vw,88px);letter-spacing:-0.03em;line-height:.92;color:var(--p1-white)">Or spec a system.</h2>
+    <p style="margin:28px 0 40px;font-size:18px;line-height:1.55;max-width:42ch;color:rgba(230,230,230,.7)">Installers and AV contractors: send us the room and the headcount. We will return a chain that interlocks, from mic to cabinet, with load figures.</p>
+    <a href="#contact" data-p1="magnetic" style="display:inline-flex;border:1px solid var(--p1-hairline);color:var(--p1-ash);font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;padding:16px 26px;transition:border-color 120ms var(--e-signal)" style-hover="border-color:var(--p1-signal);color:var(--p1-signal)">Talk to an engineer</a>
+  </div>
+</section>
+
+<section aria-label="Assurances" style="display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--p1-hairline);border-bottom:1px solid var(--p1-hairline)">
+  <sc-for list="{{ trust }}" as="t" hint-placeholder-count="4">
+    <div style="padding:40px var(--gutter);border-left:1px solid var(--p1-hairline);display:flex;align-items:center;gap:16px">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#FF6A00" stroke-width="1.2" aria-hidden="true" style="flex:none"><rect x="3.5" y="3.5" width="17" height="17"></rect><circle cx="12" cy="12" r="5"></circle><circle cx="12" cy="12" r="1.5" fill="#FF6A00" stroke="none"></circle></svg>
+      <span style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.7);line-height:1.5">{{ t }}</span>
+    </div>
+  </sc-for>
+</section>
+
+<section id="faq" style="padding:128px var(--gutter);max-width:1440px;margin:0 auto">
+  <div style="display:grid;grid-template-columns:5fr 7fr;gap:80px;align-items:start">
+    <div style="position:sticky;top:120px">
+      <div style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--p1-signal);margin-bottom:24px">[ Support ]</div>
+      <h2 style="margin:0;font-family:var(--f-d);font-weight:500;font-size:clamp(32px,4vw,56px);letter-spacing:-0.02em;line-height:1;color:var(--p1-white)">Questions we get on the phone.</h2>
+      <p style="margin:24px 0 0;font-size:16px;line-height:1.6;color:rgba(230,230,230,.6);max-width:38ch">If it isn't here, call +91 72900 77778. Someone picks up.</p>
+    </div>
+    <div style="border-top:1px solid var(--p1-hairline)">
+      <sc-for list="{{ faqs }}" as="f" hint-placeholder-count="9">
+        <div style="border-bottom:1px solid var(--p1-hairline);border-left:2px solid {{ f.rail }};padding-left:{{ f.pad }}">
+          <button type="button" onClick="{{ f.onToggle }}" aria-expanded="{{ f.openStr }}" style="width:100%;background:none;border:0;cursor:pointer;display:flex;align-items:center;justify-content:space-between;gap:24px;padding:26px 0;text-align:left;font-family:var(--f-d);font-weight:500;font-size:18px;letter-spacing:-0.01em;color:var(--p1-white)" style-hover="color:var(--p1-signal)">
+            <span>{{ f.q }}</span>
+            <span aria-hidden="true" style="flex:none;width:14px;height:14px;position:relative;transition:transform 420ms var(--e-signal);transform:rotate({{ f.rot }})">
+              <span style="position:absolute;top:6.5px;left:0;width:14px;height:1px;background:currentColor"></span>
+              <span style="position:absolute;left:6.5px;top:0;width:1px;height:14px;background:currentColor;opacity:{{ f.vbar }}"></span>
+            </span>
+          </button>
+          <div style="display:grid;grid-template-rows:{{ f.rows }};transition:grid-template-rows 420ms var(--e-signal),opacity 420ms var(--e-signal);opacity:{{ f.op }}">
+            <div style="overflow:hidden"><p style="margin:0;padding:0 40px 28px 0;font-size:16px;line-height:1.6;color:rgba(230,230,230,.68);max-width:62ch">{{ f.a }}</p></div>
+          </div>
+        </div>
+      </sc-for>
+    </div>
+  </div>
+</section>
+
+<section id="contact" style="padding:96px var(--gutter) 128px;max-width:1440px;margin:0 auto;border-top:1px solid var(--p1-hairline)">
+  <div style="display:grid;grid-template-columns:5fr 7fr;gap:80px;align-items:start">
+    <div>
+      <div style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--p1-signal);margin-bottom:24px">[ Showroom ]</div>
+      <h2 style="margin:0 0 32px;font-family:var(--f-d);font-weight:500;font-size:clamp(22px,2.4vw,32px);letter-spacing:-0.01em;line-height:1.15;color:var(--p1-white)">1487/2 Moti Cinema Compound,<br>Chandni Chowk, Delhi-110006</h2>
+      <div style="display:flex;flex-direction:column;gap:2px;border-top:1px solid var(--p1-hairline)">
+        <a href="tel:+917290077778" style="display:flex;justify-content:space-between;gap:16px;padding:18px 0;border-bottom:1px solid var(--p1-hairline);font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase"><span style="color:rgba(230,230,230,.45)">Phone</span><span>+91 72900 77778</span></a>
+        <a href="mailto:info@pro1st.in" style="display:flex;justify-content:space-between;gap:16px;padding:18px 0;border-bottom:1px solid var(--p1-hairline);font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase"><span style="color:rgba(230,230,230,.45)">Email</span><span>info@pro1st.in</span></a>
+        <a href="#contact" style="display:flex;justify-content:space-between;gap:16px;padding:18px 0;border-bottom:1px solid var(--p1-hairline);font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase"><span style="color:rgba(230,230,230,.45)">WhatsApp</span><span>Message us</span></a>
+        <div style="display:flex;justify-content:space-between;gap:16px;padding:18px 0;border-bottom:1px solid var(--p1-hairline);font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase"><span style="color:rgba(230,230,230,.45)">Hours</span><span>Mon–Sat · 10:30–19:30</span></div>
+      </div>
+    </div>
+    <div style="position:relative;aspect-ratio:16/9;background:var(--p1-panel);border:1px solid var(--p1-hairline);overflow:hidden">
+      <div style="position:absolute;inset:0;background-image:linear-gradient(var(--p1-hairline) 1px,transparent 1px),linear-gradient(90deg,var(--p1-hairline) 1px,transparent 1px);background-size:56px 56px"></div>
+      <div style="position:absolute;left:46%;top:44%;width:10px;height:10px;border-radius:50%;background:var(--p1-signal);box-shadow:0 0 0 10px var(--sig-12),0 0 20px 4px var(--sig-40)"></div>
+      <div style="position:absolute;inset:0;display:grid;place-items:end start;padding:20px;font-family:var(--f-m);font-size:11px;letter-spacing:0.06em;color:rgba(230,230,230,.4)">{image: map-chandni-chowk}</div>
+    </div>
+  </div>
+</section>
+
+</main>
+
+<footer style="position:relative;border-top:1px solid var(--p1-hairline);padding:96px var(--gutter) 0;overflow:hidden">
+  <div style="position:relative;z-index:2;max-width:1440px;margin:0 auto">
+    <div style="display:grid;grid-template-columns:5fr 7fr;gap:80px;padding-bottom:64px;border-bottom:1px solid var(--p1-hairline)">
+      <div>
+        <div style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.45);margin-bottom:20px">Stock alerts &amp; new gear</div>
+        <div style="display:flex;align-items:center;gap:12px;border-bottom:1px solid var(--p1-hairline);padding-bottom:12px;max-width:360px;transition:border-color 120ms var(--e-signal)" style-focus-within="border-color:var(--p1-signal)">
+          <input type="email" placeholder="you@company.in" aria-label="Email address" style="flex:1;background:none;border:0;outline:none;padding:4px 0;font-size:15px;color:var(--p1-white)">
+          <button type="button" style="background:none;border:0;cursor:pointer;font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:var(--p1-signal)">Subscribe</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:24px">
+        <sc-for list="{{ footerCols }}" as="col" hint-placeholder-count="4">
+          <div>
+            <div style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.45);margin-bottom:20px">{{ col.head }}</div>
+            <div style="display:flex;flex-direction:column;gap:12px;font-size:14px;color:rgba(230,230,230,.72)">
+              <sc-for list="{{ col.links }}" as="l" hint-placeholder-count="5">
+                <a href="#top">{{ l }}</a>
+              </sc-for>
+            </div>
+          </div>
+        </sc-for>
+      </div>
+    </div>
+    <div style="display:flex;justify-content:space-between;gap:24px;flex-wrap:wrap;padding:28px 0 72px;font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.4)">
+      <span>© 2026 PRO1ST · Desire Electronics, Delhi</span>
+      <span style="display:flex;gap:24px"><a href="#top">Privacy</a><a href="#top">Terms</a><a href="#top">Warranty</a><a href="#top">Shipping</a><a href="#top">Returns</a></span>
+    </div>
+  </div>
+  <div aria-hidden="true" style="position:absolute;left:0;right:0;bottom:-4%;text-align:center;font-family:var(--f-d);font-weight:700;font-size:20vw;line-height:.8;letter-spacing:-0.05em;color:var(--p1-white);opacity:.15;pointer-events:none;white-space:nowrap">PRO·1ST</div>
+</footer>
+
+<a href="#contact" data-p1="fab" aria-label="WhatsApp us" style="position:fixed;right:28px;bottom:28px;z-index:130;width:52px;height:52px;display:grid;place-items:center;background:var(--p1-signal);color:var(--p1-black);opacity:0;transform:translateY(20px) scale(.8);transition:opacity 420ms var(--e-signal),transform 420ms cubic-bezier(.2,1.4,.4,1)">
+  <svg width="22" height="22" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2zm5.4 14.1c-.2.6-1.3 1.2-1.8 1.2-.5 0-1 .2-3.4-.8-2.9-1.2-4.7-4.2-4.8-4.4-.1-.2-1.1-1.5-1.1-2.8s.7-2 .9-2.2c.2-.3.5-.3.7-.3h.5c.2 0 .4 0 .6.5s.8 2 .9 2.1c.1.2.1.3 0 .5s-.2.4-.4.6c-.2.2-.3.4-.2.6.2.3.8 1.4 1.8 2.2 1.2 1.1 2.2 1.4 2.5 1.5.2.1.4.1.5-.1.2-.2.6-.7.8-1 .2-.2.3-.2.6-.1.2.1 1.5.7 1.8.9.3.1.4.2.5.3.1.2.1.6-.1 1.2z"></path></svg>
+</a>
+
+<div data-p1="cartbackdrop" onClick="{{ closeCart }}" aria-hidden="true" style="position:fixed;inset:0;z-index:140;background:rgba(13,13,15,.6);backdrop-filter:blur(8px);opacity:{{ cartOp }};pointer-events:{{ cartPE }};transition:opacity 420ms var(--e-signal)"></div>
+<aside aria-label="Cart" style="position:fixed;top:0;right:0;bottom:0;z-index:141;width:min(420px,100vw);background:var(--p1-black);border-left:1px solid var(--p1-hairline);display:flex;flex-direction:column;transform:translateX({{ cartX }});transition:transform 420ms var(--e-signal)">
+  <div style="display:flex;align-items:center;justify-content:space-between;padding:24px;border-bottom:1px solid var(--p1-hairline)">
+    <span style="font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.6)">Cart — {{ cartCount }} items</span>
+    <button type="button" onClick="{{ closeCart }}" aria-label="Close cart" style="background:none;border:0;cursor:pointer;font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;color:var(--p1-ash)" style-hover="color:var(--p1-signal)">Close ✕</button>
+  </div>
+  <div aria-live="polite" style="flex:1;overflow-y:auto;padding:8px 24px">
+    <sc-for list="{{ cartItems }}" as="ci" hint-placeholder-count="0">
+      <div style="display:grid;grid-template-columns:64px 1fr auto;gap:16px;align-items:center;padding:20px 0;border-bottom:1px solid var(--p1-hairline)">
+        <div style="aspect-ratio:1/1;background:var(--p1-panel);border:1px solid var(--p1-hairline)"></div>
+        <div>
+          <div style="font-family:var(--f-d);font-weight:500;font-size:14px;color:var(--p1-white);line-height:1.3">{{ ci.title }}</div>
+          <div style="margin-top:6px;font-family:var(--f-m);font-size:10px;letter-spacing:0.06em;text-transform:uppercase;color:rgba(230,230,230,.45)">Qty {{ ci.qty }}</div>
+        </div>
+        <div style="font-family:var(--f-d);font-weight:500;font-size:14px;color:var(--p1-signal)">{{ ci.price }}</div>
+      </div>
+    </sc-for>
+    <sc-if value="{{ cartEmpty }}" hint-placeholder-val="{{ true }}">
+      <div style="padding:64px 0;text-align:center;font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.35)">No signal yet — add gear to begin</div>
+    </sc-if>
+  </div>
+  <div style="padding:24px;border-top:1px solid var(--p1-hairline)">
+    <div style="display:flex;justify-content:space-between;font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase;color:rgba(230,230,230,.6);margin-bottom:20px"><span>Subtotal · incl. GST</span><span style="color:var(--p1-signal)">{{ cartTotal }}</span></div>
+    <button type="button" style="width:100%;background:var(--p1-signal);color:var(--p1-black);border:0;padding:16px;cursor:pointer;font-family:var(--f-m);font-size:11px;letter-spacing:0.08em;text-transform:uppercase">Checkout</button>
+  </div>
+</aside>
+
+</div>
+
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;$preview&quot;:{&quot;width&quot;:1440,&quot;height&quot;:900}}">
+const D = 'https://pro1st-demo.netlify.app/';
+const S = 'https://pro1st.in/cdn/shop/files/';
+const IMG = {
+  aj6: D+'assets/mixer-aj6-eGXoaviy.jpg',
+  um6: D+'assets/mixer-um6-BZqltkxf.jpg',
+  mx1600: D+'assets/amp-mx1600-BDXE_Wuw.jpg',
+  tn780: D+'assets/driver-780tn-BKQvbUdE.jpg',
+  t12: D+'assets/trolley-speaker-CaJqB0MY.jpg',
+  xtr6: D+'assets/feedback-xtr6-CbMKx-Ie.jpg',
+  tk600: D+'products/TK-600-JPEG.jpg',
+  tk280: D+'products/TK-280-JPEG.jpg',
+  beta58: D+'products/Beta-58S-JPEG.jpg',
+  d518: D+'products/D518-Tweeter.jpg',
+  d750: D+'products/D750-Network.jpg',
+  d450: D+'products/D450-Network.jpg',
+  wire: D+'products/Slim-Wire-2-Core-in-100-yards.jpg',
+  ratchet: D+'products/Ratchet-Belt-15m.jpg',
+  partybox: S+'cellImage_1802645157_1.jpg?v=1779529404&width=900',
+  workshop: S+'image3.png?v=1776941364&width=900'
+};
+
+const CAT = [
+  {h:'aj6-mixer',t:'AJ6 Professional Audio Mixer',c:'Mixers',p:6750,s:'6-channel · 99 DSP · Phantom',img:IMG.aj6},
+  {h:'mx-1600',t:'MX-1600 Professional Power Booster',c:'Amplifiers',p:25000,s:'1600W · Pro booster',img:IMG.mx1600},
+  {h:'780-tn',t:'780 TN High Power Compression Driver',c:'Drivers',p:5500,s:'120W · 8Ω · Titanium',img:IMG.tn780},
+  {h:'party-box',t:'Party Box Portable Bluetooth Speaker',c:'Speakers',p:6480,s:'Portable · Bluetooth',img:IMG.partybox},
+  {h:'xtr-60',t:'XTR 6.0 Feedback Eliminator',c:'Processors',p:11000,s:'1U rack · Zero screech',img:IMG.xtr6},
+  {h:'tk600',t:'TK600 Uni-Directional Dynamic Microphone',c:'Microphones',p:850,s:'Uni-directional · Hi-Fi',img:IMG.tk600},
+  {h:'d-750',t:'D-750 HF Cross Over Network',c:'Crossovers',p:550,s:'3-way · High frequency',img:IMG.d750},
+  {h:'t-12',t:'12" Trolley Speaker (T-12)',c:'Speakers',p:null,s:'Wheeled · Field rated',img:IMG.t12,soon:true}
+];
+const inr = n => '₹' + n.toLocaleString('en-IN');
+
+const NODES = [
+  {label:'Source',product:'TK600 / BETA58S Microphones',spec:'Dynamic · Supercardioid · XLR',price:'₹850',img:IMG.tk600},
+  {label:'Mixer',product:'AJ6 Voice Mixer',spec:'6-channel · 99 DSP · Phantom',price:'₹6,750',img:IMG.aj6},
+  {label:'Processor',product:'XTR 6.0 Feedback Eliminator',spec:'1U rack · Zero screech',price:'₹11,000',img:IMG.xtr6},
+  {label:'Amplifier',product:'MX-1600 Power Booster',spec:'1600W · Pro booster',price:'₹25,000',img:IMG.mx1600},
+  {label:'Crossover',product:'D-750 / A-450 Network',spec:'2-way & 3-way · 8Ω',price:'₹550',img:IMG.d750},
+  {label:'Driver',product:'780 TN Compression Driver',spec:'120W · 8Ω · Titanium',price:'₹5,500',img:IMG.tn780},
+  {label:'Cabinet',product:'Party Box / T-12 Trolley',spec:'Portable · Bluetooth · Wheeled',price:'₹6,480',img:IMG.t12}
+];
+
+// Fixed exploded offsets per chassis layer — deterministic, never random.
+const EXPLODE = [
+  {x:-330, y:-215, z: 210, r:-13},
+  {x: 315, y:-168, z: 128, r:  9},
+  {x:-268, y:-104, z: 268, r: -7},
+  {x: 246, y: -38, z:  86, r:  6},
+  {x:-232, y:  46, z: 232, r: -5},
+  {x: 288, y: 112, z: 150, r:  8},
+  {x:-306, y: 178, z:  98, r:-11},
+  {x: 338, y: 236, z: 246, r: 12}
+];
+const clamp01 = v => v < 0 ? 0 : v > 1 ? 1 : v;
+const outCubic = t => 1 - Math.pow(1 - t, 3);
+const inOutCubic = t => t < .5 ? 4*t*t*t : 1 - Math.pow(-2*t + 2, 3)/2;
+
+const MANIFESTO = "We don't build for the showroom. We build for the dancefloor at 2 AM, for the wedding generator that won't quit, for the retailer who needs gear that comes back as a referral — not a complaint.";
+const HILITE = new Set([12,13,35]);
+
+const FAQS = [
+  ['What products does PRO1st offer?','Speakers, mixers, amplifiers, microphones, compression drivers, crossover networks and PA accessories. Twenty-five SKUs published, more assembled to order.'],
+  ['Is this gear built for professional use?','Yes. Every unit in the line is specified for live events, installations and rental stock, not for home listening.'],
+  ['Do you manufacture or import?','Both. Drivers, transformers and DSP boards are imported from specialists. Housings, chassis and crossover networks are built and assembled on our floor in Delhi-6.'],
+  ['Do you offer bulk and dealer pricing?','Yes. Share your GSTIN and expected monthly volume through the dealer form and we will send a rate card within one working day.'],
+  ['What warranty do you provide?','Twelve months against manufacturing defect from date of invoice, covering drivers, amplifier boards and passive networks. Physical damage and misuse are excluded.'],
+  ['How long does delivery take?','Delhi NCR in 24–48 hours. Metro cities in 3–5 working days. Remaining PIN codes in 5–8 working days.'],
+  ['Can you help me select the right product?','Call +91 72900 77778 with your venue size, headcount and existing gear. We will spec the chain end to end.'],
+  ['Do you ship across India?','Yes, PAN-India by surface and air cargo. Heavy cabinets ship by road transport with insurance available.'],
+  ['How do I reach you?','Phone or WhatsApp on +91 72900 77778, email info@pro1st.in, or visit 1487/2 Moti Cinema Compound, Chandni Chowk.']
+];
+
+class Component extends DCLogic {
+  constructor(p){
+    super(p);
+    const seen = (() => { try { return sessionStorage.getItem('p1-seen') === '1'; } catch(e){ return false; } })();
+    this.state = { loading:!seen, megaOpen:false, cartOpen:false, cart:[], pinned:null, openFaq:null };
+    this.rootRef = React.createRef();
+    this.waveRef = React.createRef();
+    this.marqueeRef = React.createRef();
+    this.chainWrapRef = React.createRef();
+    this.railRef = React.createRef();
+    this.pulseRef = React.createRef();
+    this.nodesRef = React.createRef();
+    this.chainPctRef = React.createRef();
+    this.stageLabelRef = React.createRef();
+    this.stageNameRef = React.createRef();
+    this.stageSpecRef = React.createRef();
+    this.stagePriceRef = React.createRef();
+    this.stageIdxRef = React.createRef();
+    this._active = -1;
+    this.buildWrapRef = React.createRef();
+    this.buildStageRef = React.createRef();
+    this.buildPhaseRef = React.createRef();
+    this.buildRailRef = React.createRef();
+    this.craftWrapRef = React.createRef();
+    this.craftTrackRef = React.createRef();
+    this.craftRailRef = React.createRef();
+    this.manifestoRef = React.createRef();
+    this.statsRef = React.createRef();
+    this.gridRef = React.createRef();
+    this._m = {x:-999,y:-999,lx:-999,ly:-999};
+    this._marq = {off:0,vel:0,dir:1};
+    this._sv = 0; this._lastY = 0; this._bloomed = false;
+  }
+
+  get reduced(){ return window.matchMedia('(prefers-reduced-motion: reduce)').matches; }
+
+  componentDidMount(){
+    this._lastY = window.scrollY;
+    if(this.state.loading) this.runPreloader();
+    this.bindScroll();
+    this.bindCursor();
+    this.initWave();
+    this.initReveals();
+    this.initCounters();
+    this.initCards();
+    this.initShear();
+    this.initMagnetic();
+    this.tick();
+    this.layout();
+    this.onScroll();
+  }
+  componentWillUnmount(){
+    cancelAnimationFrame(this._raf);
+    window.removeEventListener('scroll', this._onScroll);
+    window.removeEventListener('resize', this._onResize);
+    window.removeEventListener('mousemove', this._onMove);
+    if(this._io) this._io.disconnect();
+    if(this._io2) this._io2.disconnect();
+  }
+
+  runPreloader(){
+    const root = this.rootRef.current; if(!root) return;
+    const bars = root.querySelectorAll('[data-p1="vubar"]');
+    const pct = root.querySelector('[data-p1="pct"]');
+    const pre = root.querySelector('[data-p1="preloader"]');
+    const dur = this.reduced ? 300 : 1600;
+    const t0 = performance.now();
+    const step = () => {
+      const e = Math.min(1,(performance.now()-t0)/dur);
+      if(pct) pct.textContent = String(Math.round(e*100)).padStart(3,'0') + '%';
+      bars.forEach((b,i) => {
+        const lvl = e < .88
+          ? 0.15 + Math.abs(Math.sin(performance.now()/(150+i*40) + i)) * (0.25 + e*0.6)
+          : 1;
+        b.style.transform = 'scaleY(' + Math.min(1,lvl) + ')';
+      });
+      if(e < 1){ requestAnimationFrame(step); }
+      else {
+        bars.forEach(b => { b.style.transition='transform 420ms cubic-bezier(0.16,1,0.3,1)'; b.style.transform='scaleY(0.02)'; });
+        if(pre){ pre.style.opacity='0'; }
+        setTimeout(() => {
+          try{ sessionStorage.setItem('p1-seen','1'); }catch(e){}
+          this.setState({loading:false}, () => { this.playHero(); this.rebind(); });
+        }, 460);
+      }
+    };
+    requestAnimationFrame(step);
+  }
+
+  rebind(){ this.initReveals(); this.initCounters(); this.initCards(); this.initShear(); this.initMagnetic(); this.layout(); this.onScroll(); }
+
+  playHero(){
+    const root = this.rootRef.current; if(!root) return;
+    root.querySelectorAll('[data-p1="hw"]').forEach((el,i) => {
+      el.style.transform = 'translateY(100%)';
+      requestAnimationFrame(() => {
+        el.style.transition = 'transform 900ms cubic-bezier(0.16,1,0.3,1) ' + (i*90) + 'ms';
+        el.style.transform = 'translateY(0)';
+      });
+    });
+  }
+
+  initReveals(){
+    const root = this.rootRef.current; if(!root) return;
+    if(this._io) this._io.disconnect();
+    const els = root.querySelectorAll('[data-p1="rise"]');
+    if(this.reduced){ els.forEach(e => { e.style.opacity='1'; }); return; }
+    els.forEach((e,i) => { e.style.opacity='0'; e.style.transform='translateY(24px)'; e.style.willChange='transform,opacity'; });
+    this._io = new IntersectionObserver(ents => {
+      ents.forEach(en => {
+        if(en.isIntersecting){
+          en.target.style.transition = 'opacity 420ms cubic-bezier(0.16,1,0.3,1), transform 420ms cubic-bezier(0.16,1,0.3,1)';
+          en.target.style.opacity='1'; en.target.style.transform='none';
+          this._io.unobserve(en.target);
+        }
+      });
+    }, {rootMargin:'0px 0px -20% 0px'});
+    els.forEach(e => this._io.observe(e));
+    if(!this.state.loading) this.playHero();
+  }
+
+  initCounters(){
+    const wrap = this.statsRef.current; if(!wrap) return;
+    if(this._io2) this._io2.disconnect();
+    const els = wrap.querySelectorAll('[data-p1="counter"]');
+    this._io2 = new IntersectionObserver(ents => {
+      ents.forEach(en => {
+        if(!en.isIntersecting) return;
+        const el = en.target, to = parseInt(el.dataset.to,10), sfx = el.dataset.suffix || '';
+        this._io2.unobserve(el);
+        if(this.reduced){ el.textContent = to.toLocaleString('en-IN') + sfx; return; }
+        const t0 = performance.now(), dur = 1400;
+        const chars = '0123456789';
+        const step = () => {
+          const e = Math.min(1,(performance.now()-t0)/dur);
+          const eased = 1 - Math.pow(1-e,3);
+          if(e < .93){
+            let v = Math.round(to*eased).toLocaleString('en-IN');
+            if(e > .78) v = v.split('').map((c,i) => i >= v.length-2 && /\d/.test(c) ? chars[(Math.random()*10)|0] : c).join('');
+            el.textContent = v + sfx;
+            requestAnimationFrame(step);
+          } else el.textContent = to.toLocaleString('en-IN') + sfx;
+        };
+        requestAnimationFrame(step);
+      });
+    }, {threshold:.4});
+    els.forEach(e => this._io2.observe(e));
+  }
+
+  initCards(){
+    const grid = this.gridRef.current; if(!grid) return;
+    grid.querySelectorAll('[data-p1="card"]').forEach(card => {
+      if(card._bound) return; card._bound = true;
+      const inner = card.querySelector('[data-p1="mediainner"]');
+      const spec = card.querySelector('[data-p1="specline"]');
+      const sweep = card.querySelector('[data-p1="sweep"]');
+      const add = card.querySelector('[data-p1="addbtn"]');
+      const on = v => {
+        if(inner && !this.reduced) inner.style.transform = v ? 'scale(1.04)' : 'none';
+        if(spec){ spec.style.opacity = v ? '1' : '0'; spec.style.transform = v ? 'none' : 'translateY(6px)'; }
+        if(sweep) sweep.style.transform = v ? 'scaleX(1)' : 'scaleX(0)';
+        if(add){ add.style.opacity = v ? '1' : '0'; add.style.transform = v ? 'none' : 'translateY(8px)'; }
+      };
+      card.addEventListener('mouseenter', () => on(true));
+      card.addEventListener('mouseleave', () => on(false));
+      card.addEventListener('focusin', () => on(true));
+      card.addEventListener('focusout', () => on(false));
+    });
+  }
+
+  initShear(){
+    const root = this.rootRef.current; if(!root || this.reduced) return;
+    const halves = root.querySelectorAll('[data-p1="shear"]');
+    halves.forEach(h => {
+      if(h._bound) return; h._bound = true;
+      const set = v => halves.forEach(x => { x.style.transform = v ? 'translateY(' + (parseInt(x.dataset.dir,10)*8) + 'px)' : 'none'; });
+      h.addEventListener('mouseenter', () => set(true));
+      h.addEventListener('mouseleave', () => set(false));
+    });
+  }
+
+  initMagnetic(){
+    const root = this.rootRef.current; if(!root || this.reduced) return;
+    root.querySelectorAll('[data-p1="magnetic"]').forEach(el => {
+      if(el._bound) return; el._bound = true;
+      el.style.transition = 'transform 420ms cubic-bezier(0.16,1,0.3,1), letter-spacing 120ms cubic-bezier(0.16,1,0.3,1)';
+      el.addEventListener('mousemove', ev => {
+        const r = el.getBoundingClientRect();
+        const dx = ev.clientX - (r.left + r.width/2), dy = ev.clientY - (r.top + r.height/2);
+        const d = Math.hypot(dx,dy);
+        if(d < r.width/2 + 60){
+          el.style.transition = 'transform 120ms linear, letter-spacing 120ms';
+          el.style.transform = 'translate(' + Math.max(-8,Math.min(8,dx*.25)) + 'px,' + Math.max(-8,Math.min(8,dy*.35)) + 'px)';
+        }
+      });
+      el.addEventListener('mouseleave', () => { el.style.transition = 'transform 420ms cubic-bezier(0.16,1,0.3,1)'; el.style.transform = 'none'; });
+    });
+  }
+
+  bindCursor(){
+    if(this.reduced || !window.matchMedia('(pointer:fine)').matches) return;
+    this._onMove = e => { this._m.x = e.clientX; this._m.y = e.clientY; };
+    window.addEventListener('mousemove', this._onMove, {passive:true});
+  }
+
+  bindScroll(){
+    this._onScroll = () => this.onScroll();
+    window.addEventListener('scroll', this._onScroll, {passive:true});
+    this._onResize = () => { this.layout(); this.onScroll(); };
+    window.addEventListener('resize', this._onResize, {passive:true});
+  }
+
+  // Pinned sections un-pin rather than shrink below the pin-safe envelope.
+  layout(){
+    const W = window.innerWidth, H = window.innerHeight;
+    // Narrow viewports un-pin outright. The chain also un-pins when too short,
+    // because its spec column has a real min-content height it cannot give back.
+    const narrow = W <= 900;
+    const unpin = narrow;
+    const unpinChain = narrow || H < 720 || W <= 1024;
+    this._unpin = unpin;
+    this._unpinChain = unpinChain;
+
+    const set = (wrap, tallH, off) => {
+      if(!wrap) return;
+      const st = wrap.querySelector('[data-p1="buildsticky"]') || wrap.firstElementChild;
+      wrap.style.height = off ? 'auto' : tallH;
+      st.style.position = off ? 'static' : 'sticky';
+      st.style.height = off ? 'auto' : '100vh';
+      st.style.overflow = off ? 'visible' : 'hidden';
+      st.style.padding = off ? '80px var(--gutter)' : (wrap === this.craftWrapRef.current ? '0' : '88px var(--gutter) 40px');
+    };
+    set(this.chainWrapRef.current, '360vh', unpinChain);
+    set(this.buildWrapRef.current, '620vh', unpin);
+    set(this.craftWrapRef.current, '300vh', unpin);
+
+    const cw = this.chainWrapRef.current;
+    if(cw){
+      const unpin = unpinChain;
+      const g = cw.querySelector('[data-p1="stagegrid"]');
+      const panel = cw.querySelector('[data-p1="stagepanel"]');
+      if(g){ g.style.gridTemplateColumns = unpin ? '1fr' : '7fr 5fr'; g.style.gap = unpin ? '32px' : '64px'; g.style.flex = unpin ? 'none' : '1'; }
+      if(panel){ panel.style.height = unpin ? 'auto' : '100%'; panel.style.aspectRatio = unpin ? '16 / 10' : 'auto'; }
+      if(unpin){
+        cw.querySelectorAll('[data-p1="stageimg"]').forEach((im,i) => { im.style.opacity = i === 0 ? '1' : '0'; });
+      }
+    }
+
+    const bw = this.buildWrapRef.current;
+    if(bw){
+      const stage = this.buildStageRef.current;
+      const shell = bw.querySelector('[data-p1="buildsticky"]');
+      if(shell) shell.style.minHeight = unpin ? '520px' : '0';
+      // Fit the 660×400 chassis into whatever the pinned frame leaves us.
+      const availW = Math.min(W * 0.62, W - 220), availH = H - 340;
+      this._buildFit = Math.max(0.42, Math.min(1, availW / 700, availH / 430));
+      if(stage && unpin){
+        stage.style.transform = 'scale(' + Math.min(1,(W - 96)/700).toFixed(3) + ')';
+        bw.querySelectorAll('[data-p1="slice"]').forEach(sl => { sl.style.transform = 'none'; sl.style.opacity = '1'; });
+        bw.querySelectorAll('[data-p1="face"]').forEach(f => { f.style.opacity = '1'; });
+        const co = bw.querySelector('[data-p1="callouts"]'); if(co) co.style.opacity = '0';
+      }
+    }
+
+    const kw = this.craftWrapRef.current;
+    if(kw){
+      const track = this.craftTrackRef.current;
+      if(track){
+        track.style.flexDirection = unpin ? 'column' : 'row';
+        track.style.width = unpin ? '100%' : '300vw';
+        track.style.height = unpin ? 'auto' : '100%';
+        if(unpin) track.style.transform = 'none';
+      }
+      kw.querySelectorAll('[data-p1="craftpanel"]').forEach(pn => {
+        pn.style.width = unpin ? '100%' : '100vw';
+        pn.style.height = unpin ? 'auto' : '100%';
+        pn.style.gridTemplateColumns = unpin ? '1fr' : '1fr 1fr';
+        pn.style.padding = unpin ? '56px 0' : '200px var(--gutter) 96px';
+      });
+    }
+
+    const hh = (this.rootRef.current || document).querySelector('[data-p1="herohero"]');
+    if(hh){
+      hh.style.display = W <= 980 ? 'none' : 'block';
+      hh.style.right = W <= 1200 ? '8px' : 'calc(var(--gutter) - 48px)';
+      this._heroFit = Math.max(0.6, Math.min(1, (W - 720) / 520, (H - 300) / 340));
+    }
+  }
+
+  onScroll(){
+    const root = this.rootRef.current; if(!root) return;
+    const y = window.scrollY, vh = window.innerHeight;
+    this._sv = y - this._lastY; this._lastY = y;
+
+    const hdr = root.querySelector('[data-p1="header"]');
+    if(hdr){
+      const c = y > 80;
+      hdr.style.height = c ? '56px' : '72px';
+      hdr.style.backgroundColor = c ? 'rgba(13,13,15,.88)' : 'transparent';
+      hdr.style.backdropFilter = c ? 'blur(16px)' : 'none';
+      hdr.style.borderBottomColor = c ? 'rgba(230,230,230,0.10)' : 'transparent';
+      const wm = hdr.querySelector('[data-p1="wordmark"]');
+      if(wm){ wm.style.opacity = c ? '0' : '1'; wm.style.maxWidth = c ? '0px' : '140px'; }
+    }
+
+    const fab = root.querySelector('[data-p1="fab"]');
+    if(fab){ const on = y > 400; fab.style.opacity = on ? '1':'0'; fab.style.transform = on ? 'none' : 'translateY(20px) scale(.8)'; fab.style.pointerEvents = on ? 'auto':'none'; }
+
+    // Signal chain
+    const cw = this.chainWrapRef.current;
+    if(cw && !this._unpinChain){
+      const r = cw.getBoundingClientRect();
+      const p = Math.max(0, Math.min(1, (-r.top) / (cw.offsetHeight - vh)));
+      const rail = this.railRef.current, pulse = this.pulseRef.current, nodes = this.nodesRef.current;
+      if(rail) rail.style.transform = 'scaleX(' + p + ')';
+      if(pulse){
+        pulse.style.opacity = p > 0.001 && p < 0.999 ? '1' : '0';
+        pulse.style.transform = 'translateX(' + (p * (rail ? rail.offsetWidth : 0)) + 'px)';
+      }
+      if(this.chainPctRef.current) this.chainPctRef.current.textContent = String(Math.round(p*100)).padStart(2,'0') + '%';
+      let active = 0;
+      if(nodes){
+        const list = nodes.querySelectorAll('[data-p1="node"]');
+        const pin = this.state.pinned;
+        list.forEach((n,i) => {
+          const th = (i + 0.5) / list.length;
+          const lit = p >= th - 0.06;
+          if(lit) active = i;
+          n.style.opacity = pin === null ? '1' : (pin === i ? '1' : '0.3');
+          const btn = n.querySelector('button');
+          if(btn){
+            btn.style.borderColor = lit || pin === i ? '#FF6A00' : 'rgba(230,230,230,0.10)';
+            btn.style.backgroundColor = pin === i ? '#2A2D33' : '#16171A';
+          }
+          n.querySelectorAll('[data-p1="vu"]').forEach((v,j) => {
+            const lvl = lit ? 0.25 + ((Math.sin(i*2.3 + j*1.7)+1)/2) * 0.75 : 0.12;
+            v.style.transform = 'scaleY(' + lvl + ')';
+            v.style.backgroundColor = lit ? '#FF6A00' : 'rgba(230,230,230,.18)';
+          });
+        });
+        if(pin !== null) active = pin;
+      }
+
+      // Big product stage — crossfade + scale scrubbed to the pulse
+      const stage = cw.querySelectorAll('[data-p1="stageimg"]');
+      if(stage.length){
+        const seg = 1 / stage.length;
+        stage.forEach((im,i) => {
+          const on = i === active;
+          im.style.opacity = on ? '1' : '0';
+          const local = Math.max(0, Math.min(1, (p - i*seg) / seg));
+          im.style.transform = on
+            ? 'scale(' + (1.02 - local*0.06).toFixed(3) + ') translateY(' + ((0.5 - local) * 22).toFixed(1) + 'px)'
+            : 'scale(1.08)';
+        });
+      }
+      if(active !== this._active){
+        this._active = active;
+        const n = NODES[active];
+        if(n){
+          const set = (r,v) => { if(r.current) r.current.textContent = v; };
+          set(this.stageLabelRef, n.label);
+          set(this.stageNameRef, n.product);
+          set(this.stageSpecRef, n.spec);
+          set(this.stagePriceRef, n.price);
+          set(this.stageIdxRef, String(active+1).padStart(2,'0'));
+          [this.stageLabelRef,this.stageNameRef,this.stageSpecRef,this.stagePriceRef].forEach((r,k) => {
+            const el = r.current; if(!el || this.reduced) return;
+            el.style.transition = 'none'; el.style.opacity = '0'; el.style.transform = 'translateY(10px)';
+            requestAnimationFrame(() => {
+              el.style.transition = 'opacity 420ms cubic-bezier(0.16,1,0.3,1) ' + (k*50) + 'ms, transform 420ms cubic-bezier(0.16,1,0.3,1) ' + (k*50) + 'ms';
+              el.style.opacity = '1'; el.style.transform = 'none';
+            });
+          });
+        }
+      }
+      const bloom = cw.querySelector('[data-p1="bloom"]');
+      if(bloom){
+        if(p > 0.985 && !this._bloomed && !this.reduced){
+          this._bloomed = true;
+          bloom.style.animation = 'p1-bloom 900ms cubic-bezier(0.16,1,0.3,1)';
+          setTimeout(() => { bloom.style.animation = 'none'; }, 950);
+        }
+        if(p < 0.9) this._bloomed = false;
+      }
+    }
+
+    // Craft horizontal
+    const kw = this.craftWrapRef.current;
+    if(kw && !this._unpin){
+      const r = kw.getBoundingClientRect();
+      const p = Math.max(0, Math.min(1, (-r.top) / (kw.offsetHeight - vh)));
+      if(this.craftTrackRef.current) this.craftTrackRef.current.style.transform = 'translateX(' + (-p * 200) + 'vw)';
+      if(this.craftRailRef.current) this.craftRailRef.current.style.transform = 'scaleX(' + p + ')';
+      if(!this.reduced) kw.querySelectorAll('[data-p1="craftimg"]').forEach((im,i) => {
+        const local = Math.max(-1, Math.min(1, p*2 - i));
+        im.style.transform = 'scale(' + (1.16 - Math.abs(local)*0.06).toFixed(3) + ') translateX(' + (local*-5).toFixed(2) + '%)';
+      });
+    }
+
+    // THE BUILD — exploded assembly, 3D traverse, lock. Pure function of scroll.
+    const bw = this.buildWrapRef.current;
+    if(bw && !this._unpin){
+      const r = bw.getBoundingClientRect();
+      const p = clamp01((-r.top) / (bw.offsetHeight - vh));
+      const stage = this.buildStageRef.current;
+
+      // Phase A 0.00–0.42 assemble · Phase B 0.42–0.86 traverse + revolve · Phase C 0.86–1 lock
+      const tA = clamp01(p / 0.42);
+      const tB = clamp01((p - 0.42) / 0.44);
+      const tC = clamp01((p - 0.86) / 0.14);
+
+      bw.querySelectorAll('[data-p1="slice"]').forEach(sl => {
+        const i = +sl.dataset.i, e = EXPLODE[i];
+        const local = outCubic(clamp01((tA - i*0.045) / (1 - 7*0.045)));
+        const k = 1 - local;
+        sl.style.transform = 'translate3d(' + (e.x*k).toFixed(1) + 'px,' + (e.y*k).toFixed(1) + 'px,' + (e.z*k).toFixed(1) + 'px) rotate(' + (e.r*k).toFixed(2) + 'deg)';
+        sl.style.opacity = String(0.35 + local*0.65);
+      });
+
+      bw.querySelectorAll('[data-p1="face"]').forEach(f => { f.style.opacity = String(clamp01((tA - 0.72) / 0.28)); });
+      const plate = bw.querySelector('[data-p1="platebox"]');
+      if(plate) plate.style.opacity = String(clamp01((tA - 0.86) / 0.14) * (1 - tB*0.6));
+
+      if(stage){
+        const xVW = (-30 + inOutCubic(tB) * 58) * (window.innerWidth / 100);
+        const rotY = inOutCubic(tB) * 360;
+        const rotX = Math.sin(tB * Math.PI) * -9;
+        const fit = this._buildFit || 1;
+        const sc = (0.86 + tA*0.14 + Math.sin(tB*Math.PI)*0.06 + tC*0.05) * fit;
+        stage.style.transform = 'translateX(' + xVW.toFixed(1) + 'px) rotateY(' + rotY.toFixed(2) + 'deg) rotateX(' + rotX.toFixed(2) + 'deg) scale(' + sc.toFixed(3) + ')';
+      }
+
+      const co = bw.querySelector('[data-p1="callouts"]');
+      if(co) co.style.opacity = String(tC);
+      if(this.buildRailRef.current) this.buildRailRef.current.style.transform = 'scaleX(' + p + ')';
+      if(this.buildPhaseRef.current){
+        const txt = tB <= 0 ? 'Assembly — ' + Math.round(tA*100) + '%'
+          : tC <= 0 ? 'Revolution — ' + Math.round(tB*100) + '%'
+          : 'Chassis locked';
+        if(this.buildPhaseRef.current.textContent !== txt) this.buildPhaseRef.current.textContent = txt;
+      }
+      const bb = bw.querySelector('[data-p1="buildbloom"]');
+      if(bb) bb.style.opacity = String(Math.max(clamp01((tA-0.9)/0.1) * 0.5, tC * 0.7));
+    }
+
+    // Hero chassis drift — the revolve itself runs in tick()
+    const hh = root.querySelector('[data-p1="herohero"]');
+    if(hh){
+      const hp = Math.min(1, y / vh);
+      this._heroP = hp;
+      hh.style.opacity = String(Math.max(0, 1 - hp*1.6));
+      if(!this.reduced) hh.style.transform = 'translateY(' + (hp*-140).toFixed(1) + 'px) scale(' + (this._heroFit || 1) * (1 - hp*0.12) + ')';
+      else hh.style.transform = 'scale(' + (this._heroFit || 1) + ')';
+    }
+
+    // Manifesto words
+    const mf = this.manifestoRef.current;
+    if(mf){
+      const words = mf.querySelectorAll('[data-p1="mw"]');
+      const r = mf.getBoundingClientRect();
+      const p = Math.max(0, Math.min(1, (vh*0.85 - r.top) / (r.height*0.65)));
+      words.forEach((w,i) => {
+        const on = this.reduced || p > (i / words.length) * 0.9;
+        w.style.transition = 'transform 620ms cubic-bezier(0.16,1,0.3,1) ' + (this.reduced ? 0 : (i%6)*45) + 'ms';
+        w.style.transform = on ? 'translateY(0)' : 'translateY(100%)';
+      });
+    }
+
+    // Best-seller grid — each card tilts in 3D by its own position. Fixed, not random.
+    const grid = this.gridRef.current;
+    if(grid && !this.reduced){
+      const gr = grid.getBoundingClientRect();
+      if(gr.bottom > -200 && gr.top < vh + 200){
+        grid.querySelectorAll('[data-p1="media"]').forEach((m,i) => {
+          const b = m.getBoundingClientRect();
+          const q = (b.top + b.height/2 - vh/2) / vh;      // -1 above … +1 below
+          const col = i % 4;
+          m.style.transform = 'perspective(1200px) rotateX(' + (q * 7).toFixed(2) + 'deg) rotateY(' + ((col - 1.5) * 2.2 * (1 - Math.abs(q))).toFixed(2) + 'deg) translateY(' + (q * -14).toFixed(1) + 'px)';
+        });
+      }
+    }
+
+    // Parallax media
+    root.querySelectorAll('[data-p1="parallax"]').forEach(el => {
+      if(this.reduced) return;
+      const r = el.getBoundingClientRect();
+      const p = (r.top + r.height/2 - vh/2) / vh;
+      el.style.transform = 'translateY(' + Math.max(-40, Math.min(40, -p*40)) + 'px)';
+    });
+  }
+
+  initWave(){
+    const c = this.waveRef.current; if(!c) return;
+    const ctx = c.getContext('2d');
+    this._wave = {ctx, c, on:true};
+    const io = new IntersectionObserver(e => { this._wave.on = e[0].isIntersecting; }, {threshold:0});
+    io.observe(c);
+  }
+
+  drawWave(t){
+    const w = this._wave; if(!w || !w.on) return;
+    const {c, ctx} = w;
+    const dpr = Math.min(2, window.devicePixelRatio || 1);
+    const W = c.clientWidth, H = c.clientHeight;
+    if(c.width !== W*dpr || c.height !== H*dpr){ c.width = W*dpr; c.height = H*dpr; ctx.setTransform(dpr,0,0,dpr,0,0); }
+    ctx.clearRect(0,0,W,H);
+    const base = H * 0.62;
+    const compress = 1 / (1 + Math.abs(this._sv) * 0.012);
+    const mx = this._m.x;
+    const bars = Math.floor(W / 6);
+    for(let i=0;i<bars;i++){
+      const x = i*6 + 1;
+      const n = Math.sin(i*0.09 + t*0.0011) * 0.5 + Math.sin(i*0.031 - t*0.0007) * 0.32 + Math.sin(i*0.21 + t*0.0019) * 0.18;
+      let a = Math.abs(n);
+      if(mx > -500){ const d = Math.abs(x - mx); a *= 1 + Math.max(0, 1 - d/260) * 1.1; }
+      a *= compress;
+      const h = a * H * 0.42;
+      const peak = a > 0.72;
+      ctx.fillStyle = peak ? 'rgba(255,106,0,0.9)' : 'rgba(230,230,230,0.22)';
+      ctx.fillRect(x, base - h, 3, h*2);
+    }
+    ctx.fillStyle = 'rgba(255,106,0,0.5)';
+    ctx.fillRect(0, base, W, 1);
+  }
+
+  tick(){
+    const loop = t => {
+      this._raf = requestAnimationFrame(loop);
+      if(!this.reduced) this.drawWave(t); else if(this._wave && !this._drewOnce){ this._drewOnce = true; this.drawWave(0); }
+
+      // cursor
+      const root = this.rootRef.current;
+      if(root && this._m.x > -500 && !this.reduced){
+        this._m.lx += (this._m.x - this._m.lx) * 0.15;
+        this._m.ly += (this._m.y - this._m.ly) * 0.15;
+        const dot = root.querySelector('[data-p1="cursor-dot"]');
+        const ring = root.querySelector('[data-p1="cursor-ring"]');
+        if(dot){ dot.style.opacity='1'; dot.style.transform = 'translate(' + this._m.x + 'px,' + this._m.y + 'px)'; }
+        if(ring){ ring.style.opacity='1'; ring.style.transform = 'translate(' + this._m.lx + 'px,' + this._m.ly + 'px)'; }
+      }
+
+      // hero chassis — slow continuous revolve, scroll adds a deterministic push
+      if(root && !this.reduced){
+        const hb = root.querySelector('[data-p1="herobox"]');
+        if(hb){
+          const hp = this._heroP || 0;
+          const ry = (t * 0.014) + hp * 150;
+          const rx = Math.sin(t * 0.00042) * 7 - 4 + hp * 10;
+          hb.style.transform = 'rotateY(' + (ry % 360).toFixed(2) + 'deg) rotateX(' + rx.toFixed(2) + 'deg)';
+        }
+      }
+
+      // marquee
+      const mq = this.marqueeRef.current;
+      if(mq && !this.reduced){
+        const dir = this._sv > 0.5 ? 1 : this._sv < -0.5 ? -1 : this._marq.dir;
+        this._marq.dir = dir;
+        const speed = 0.55 + Math.min(4, Math.abs(this._sv) * 0.08);
+        this._marq.off -= speed * dir;
+        const half = mq.scrollWidth / 2 || 1;
+        if(this._marq.off <= -half) this._marq.off += half;
+        if(this._marq.off > 0) this._marq.off -= half;
+        mq.style.transform = 'translateX(' + this._marq.off + 'px)';
+      }
+      this._sv *= 0.86;
+    };
+    this._raf = requestAnimationFrame(loop);
+  }
+
+  addToCart(p){
+    if(!p.price) return;
+    this.setState(s => ({cart: [...s.cart, p], cartOpen: true}));
+  }
+
+  renderVals(){
+    const s = this.state;
+    const cats = [
+      ['Speakers',IMG.t12],['Mixers',IMG.aj6],['Amplifiers',IMG.mx1600],['Microphones',IMG.beta58],
+      ['Crossovers',IMG.d450],['PA Systems',IMG.partybox],['Drivers',IMG.d518],['Accessories',IMG.wire]
+    ];
+    const marqueeItems = [...cats, ...cats].map((c,i) => ({label:c[0], img:c[1], i}));
+
+    const bestSellers = CAT.map((p,i) => ({
+      img:p.img, category:p.c, title:p.t, specLine:p.s,
+      price: p.p ? inr(p.p) : 'Enquire',
+      soon: !!p.soon,
+      onAdd: (e) => { e.stopPropagation(); this.addToCart({title:p.t, price:p.p}); }
+    }));
+
+    const chainNodes = NODES.map((n,i) => ({
+      idx:i, num:String(i+1).padStart(2,'0'), label:n.label, product:n.product,
+      spec:n.spec, price:n.price, img:n.img,
+      pinned: s.pinned === i ? 'true' : 'false',
+      onPin: () => this.setState({pinned: s.pinned === i ? null : i}, () => this.onScroll())
+    }));
+
+    const mwords = MANIFESTO.split(' ').map((t,i) => ({t, color: HILITE.has(i) ? '#FF6A00' : 'inherit'}));
+
+    const faqs = FAQS.map((f,i) => {
+      const open = s.openFaq === i;
+      return {
+        q:f[0], a:f[1],
+        rows: open ? '1fr' : '0fr', op: open ? '1' : '0',
+        rot: open ? '90deg' : '0deg', vbar: open ? '0' : '1',
+        rail: open ? '#FF6A00' : 'transparent',
+        pad: open ? '20px' : '0px',
+        openStr: open ? 'true' : 'false',
+        onToggle: () => this.setState({openFaq: open ? null : i})
+      };
+    });
+
+    const total = s.cart.reduce((a,b) => a + (b.price||0), 0);
+
+    return {
+      loading: s.loading,
+      megaOpen: s.megaOpen,
+      openMega: () => this.setState({megaOpen:true}),
+      toggleMega: () => this.setState(x => ({megaOpen:!x.megaOpen})),
+      closeMega: () => this.setState({megaOpen:false}),
+      megaCols: [
+        {name:'Microphones', count:'07 SKU', img:IMG.tk280}, {name:'DJ Mixers', count:'03 SKU', img:IMG.aj6},
+        {name:'Speakers', count:'04 SKU', img:IMG.t12}, {name:'Amplifiers', count:'02 SKU', img:IMG.mx1600},
+        {name:'Crossovers', count:'04 SKU', img:IMG.d450}, {name:'Accessories', count:'06 SKU', img:IMG.wire}
+      ],
+      marqueeItems, bestSellers, chainNodes, faqs,
+      manifesto: mwords,
+      stats: [
+        {to:20, suffix:'+', initial:'0+', label:'Years in trade'},
+        {to:10000, suffix:'+', initial:'0+', label:'Units shipped'},
+        {to:120, suffix:'W', initial:'0W', label:'Per driver'},
+        {to:1600, suffix:'W', initial:'0W', label:'Pro amp output'}
+      ],
+      buildWrapRef:this.buildWrapRef, buildStageRef:this.buildStageRef,
+      buildPhaseRef:this.buildPhaseRef, buildRailRef:this.buildRailRef,
+      craftPanels: [
+        {num:'[ 01 / 03 ]', order:'1', img:IMG.tn780, title:'Magnet, voice coil, titanium.', body:'Compression drivers sourced from specialists, mated to housings built on our floor, so they survive humidity, road shocks and 14-hour weddings.'},
+        {num:'[ 02 / 03 ]', order:'2', img:IMG.mx1600, title:'1600 watts. One toggle.', body:'The MX-1600 chassis is pressed, painted and assembled in Delhi. Output transistors are matched in pairs and biased by hand.'},
+        {num:'[ 03 / 03 ]', order:'1', img:IMG.t12, title:'Wheels, handle, weatherproof shell.', body:'A trolley speaker is a tool, not a trophy. Reinforced corners, gasket-sealed back panel, batteries that outlast the gig.'}
+      ],
+      trust: ['Factory direct','48-hour burn-in testing','PAN-India delivery','Warranty backed'],
+      footerCols: [
+        {head:'Products', links:['Microphones','Mixers','Amplifiers','Speakers','Crossovers']},
+        {head:'Trade', links:['Dealer enquiry','Bulk pricing','Spec a system','Rate card']},
+        {head:'Support', links:['Warranty','Spec sheets','Shipping','Returns','Contact']},
+        {head:'Company', links:['Origin','Chandni Chowk','Instagram','WhatsApp']}
+      ],
+      cartCount: s.cart.length,
+      cartItems: s.cart.map(c => ({title:c.title, qty:1, price: inr(c.price)})),
+      cartEmpty: s.cart.length === 0,
+      cartTotal: inr(total),
+      cartX: s.cartOpen ? '0%' : '100%',
+      cartOp: s.cartOpen ? '1' : '0',
+      cartPE: s.cartOpen ? 'auto' : 'none',
+      openCart: () => this.setState({cartOpen:true}),
+      closeCart: () => this.setState({cartOpen:false}),
+      rootRef:this.rootRef, waveRef:this.waveRef, marqueeRef:this.marqueeRef,
+      chainWrapRef:this.chainWrapRef, railRef:this.railRef, pulseRef:this.pulseRef,
+      nodesRef:this.nodesRef, chainPctRef:this.chainPctRef,
+      stageLabelRef:this.stageLabelRef, stageNameRef:this.stageNameRef,
+      stageSpecRef:this.stageSpecRef, stagePriceRef:this.stagePriceRef, stageIdxRef:this.stageIdxRef,
+      craftWrapRef:this.craftWrapRef, craftTrackRef:this.craftTrackRef, craftRailRef:this.craftRailRef,
+      manifestoRef:this.manifestoRef, statsRef:this.statsRef, gridRef:this.gridRef
+    };
+  }
+}
+
+</script>
+</body>
+</html>

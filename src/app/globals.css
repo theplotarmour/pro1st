@@ -1,0 +1,378 @@
+@import "tailwindcss";
+
+/* ------------------------------------------------------------------ *
+ * PRO1ST design tokens
+ * Ported verbatim from the approved design source. Do not re-pick
+ * these values — they are the brand palette, not a starting point.
+ * ------------------------------------------------------------------ */
+@theme {
+  --color-signal: #ff6a00;
+  --color-ink: #0d0d0f;
+  --color-steel: #2a2d33;
+  --color-ash: #e6e6e6;
+  --color-panel: #16171a;
+  --color-hairline: rgba(230, 230, 230, 0.1);
+
+  --color-sig-12: rgba(255, 106, 0, 0.12);
+  --color-sig-24: rgba(255, 106, 0, 0.24);
+  --color-sig-40: rgba(255, 106, 0, 0.4);
+
+  --font-display: var(--f-d);
+  --font-body: var(--f-b);
+  --font-mono: var(--f-m);
+
+  --ease-signal: cubic-bezier(0.16, 1, 0.3, 1);
+  --ease-cut: cubic-bezier(0.7, 0, 0.84, 0);
+
+  --animate-blink: p1-blink 1.8s infinite;
+  --animate-arc: p1-arc 6s infinite;
+}
+
+:root {
+  --p1-signal: #ff6a00;
+  --p1-black: #0d0d0f;
+  --p1-steel: #2a2d33;
+  --p1-ash: #e6e6e6;
+  --p1-white: #ffffff;
+  --p1-panel: #16171a;
+  --p1-hairline: rgba(230, 230, 230, 0.1);
+  --sig-12: rgba(255, 106, 0, 0.12);
+  --sig-24: rgba(255, 106, 0, 0.24);
+  --sig-40: rgba(255, 106, 0, 0.4);
+  --e-signal: cubic-bezier(0.16, 1, 0.3, 1);
+  --e-cut: cubic-bezier(0.7, 0, 0.84, 0);
+
+  /* Horizontal page gutter — the single source of layout rhythm. */
+  --gutter: 120px;
+}
+
+@media (max-width: 1100px) {
+  :root {
+    --gutter: 48px;
+  }
+}
+@media (max-width: 760px) {
+  :root {
+    --gutter: 24px;
+  }
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+  html {
+    scroll-behavior: smooth;
+    background: var(--p1-black);
+  }
+  body {
+    margin: 0;
+    background: var(--p1-black);
+    color: var(--p1-ash);
+    font-family: var(--f-b);
+    font-optical-sizing: auto;
+    letter-spacing: -0.011em;
+    -webkit-font-smoothing: antialiased;
+    text-wrap: pretty;
+  }
+  a {
+    color: var(--p1-ash);
+    text-decoration: none;
+  }
+  a:hover {
+    color: var(--p1-signal);
+  }
+  button,
+  input,
+  select,
+  textarea {
+    font: inherit;
+    color: inherit;
+  }
+  :focus-visible {
+    outline: 2px solid var(--p1-signal);
+    outline-offset: 2px;
+  }
+  ::selection {
+    background: var(--p1-signal);
+    color: var(--p1-black);
+  }
+}
+
+@keyframes p1-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+@keyframes p1-arc {
+  0%,
+  88%,
+  100% {
+    opacity: 0.35;
+  }
+  92% {
+    opacity: 1;
+  }
+}
+@keyframes p1-bloom {
+  0% {
+    opacity: 0;
+  }
+  12% {
+    opacity: 1;
+  }
+  100% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.001ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.001ms !important;
+  }
+  html {
+    scroll-behavior: auto;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Typographic + layout primitives
+ * Every repeated treatment in the design lives here once.
+ * ------------------------------------------------------------------ */
+@utility gutter-x {
+  padding-inline: var(--gutter);
+}
+
+@layer components {
+  .p1-shell {
+    max-width: 1440px;
+    margin-inline: auto;
+    width: 100%;
+  }
+
+  /* Mono micro-label — section eyebrows, meta, buttons. */
+  .p1-mono {
+    font-family: var(--f-m);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+  }
+
+  .p1-eyebrow {
+    font-family: var(--f-m);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--p1-signal);
+  }
+
+  .p1-h1 {
+    font-family: var(--f-d);
+    font-weight: 700;
+    font-size: clamp(46px, 9vw, 148px);
+    letter-spacing: -0.04em;
+    line-height: 0.88;
+    color: #fff;
+    text-transform: uppercase;
+    margin: 0;
+  }
+
+  /* Display headline — manifesto, trade split, page titles. */
+  .p1-h-xl {
+    font-family: var(--f-d);
+    font-weight: 700;
+    font-size: clamp(36px, 6vw, 88px);
+    letter-spacing: -0.03em;
+    line-height: 0.92;
+    margin: 0;
+  }
+
+  .p1-h2 {
+    font-family: var(--f-d);
+    font-weight: 500;
+    font-size: clamp(30px, 4vw, 56px);
+    letter-spacing: -0.02em;
+    line-height: 1;
+    color: #fff;
+    margin: 0;
+  }
+
+  .p1-h3 {
+    font-family: var(--f-d);
+    font-weight: 500;
+    font-size: clamp(26px, 3vw, 44px);
+    letter-spacing: -0.02em;
+    line-height: 1.02;
+    color: #fff;
+    margin: 0;
+  }
+
+  .p1-h4 {
+    font-family: var(--f-d);
+    font-weight: 500;
+    font-size: clamp(20px, 2.4vw, 32px);
+    letter-spacing: -0.01em;
+    line-height: 1.15;
+    color: #fff;
+    margin: 0;
+  }
+
+  .p1-lead {
+    font-size: clamp(16px, 1.4vw, 18px);
+    line-height: 1.55;
+    color: rgba(230, 230, 230, 0.72);
+  }
+
+  .p1-body {
+    font-size: 16px;
+    line-height: 1.6;
+    color: rgba(230, 230, 230, 0.72);
+  }
+
+  .p1-rule {
+    border-top: 1px solid var(--p1-hairline);
+  }
+
+  /* --- Buttons ---------------------------------------------------- */
+  .p1-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--f-m);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    padding: 16px 26px;
+    border: 1px solid transparent;
+    cursor: pointer;
+    text-align: center;
+    transition:
+      letter-spacing 120ms var(--e-signal),
+      border-color 120ms var(--e-signal),
+      background-color 120ms var(--e-signal),
+      color 120ms var(--e-signal),
+      opacity 120ms var(--e-signal);
+  }
+  .p1-btn:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .p1-btn--primary {
+    background: var(--p1-signal);
+    color: var(--p1-black);
+  }
+  .p1-btn--primary:hover:not(:disabled) {
+    letter-spacing: 0.1em;
+    color: var(--p1-black);
+  }
+
+  .p1-btn--outline {
+    background: transparent;
+    border-color: var(--p1-hairline);
+    color: var(--p1-ash);
+  }
+  .p1-btn--outline:hover:not(:disabled) {
+    border-color: var(--p1-signal);
+    color: var(--p1-signal);
+  }
+
+  .p1-btn--dark {
+    background: var(--p1-black);
+    color: var(--p1-ash);
+  }
+  .p1-btn--dark:hover:not(:disabled) {
+    color: var(--p1-signal);
+  }
+
+  .p1-btn--ash {
+    background: var(--p1-ash);
+    color: var(--p1-black);
+  }
+  .p1-btn--ash:hover:not(:disabled) {
+    background: var(--p1-signal);
+    color: var(--p1-black);
+  }
+
+  /* Underlined mono link — "View all products →" */
+  .p1-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    font-family: var(--f-m);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--p1-ash);
+    border-bottom: 1px solid var(--p1-hairline);
+    padding-bottom: 8px;
+    transition:
+      color 120ms var(--e-signal),
+      border-color 120ms var(--e-signal);
+  }
+  .p1-link:hover {
+    color: var(--p1-signal);
+    border-color: var(--p1-signal);
+  }
+
+  /* --- Forms ------------------------------------------------------ */
+  .p1-field {
+    width: 100%;
+    background: var(--p1-panel);
+    border: 1px solid var(--p1-hairline);
+    padding: 14px 16px;
+    font-size: 15px;
+    color: #fff;
+    transition: border-color 120ms var(--e-signal);
+  }
+  .p1-field::placeholder {
+    color: rgba(230, 230, 230, 0.35);
+  }
+  .p1-field:focus {
+    border-color: var(--p1-signal);
+    outline: none;
+  }
+  .p1-label {
+    display: block;
+    font-family: var(--f-m);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: rgba(230, 230, 230, 0.5);
+    margin-bottom: 10px;
+  }
+}
+
+/* Scroll-reveal primitive — driven by useReveal(). */
+[data-p1-rise] {
+  opacity: 0;
+  transform: translateY(24px);
+  will-change: transform, opacity;
+}
+[data-p1-rise][data-shown="true"] {
+  opacity: 1;
+  transform: none;
+  transition:
+    opacity 420ms var(--e-signal),
+    transform 420ms var(--e-signal);
+}
+@media (prefers-reduced-motion: reduce) {
+  [data-p1-rise] {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Thin, dark scrollbars so the industrial surface stays unbroken. */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--p1-steel) transparent;
+}
