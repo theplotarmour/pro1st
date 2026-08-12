@@ -114,7 +114,12 @@
     box-sizing: border-box;
   }
   html {
-    scroll-behavior: smooth;
+    /*
+       Scrolling is native and unmodified — no `scroll-behavior: smooth`, and
+       no smooth-scroll library. Both were changing how the wheel and anchor
+       jumps behave relative to every other site the reader uses, which reads
+       as the page resisting them rather than as polish.
+    */
     background: var(--p1-black);
   }
   body {

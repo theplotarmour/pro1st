@@ -34,10 +34,10 @@ export function Hero() {
     viewport, so it is finished by the time the trust bar arrives.
 
     `scrub: true`, not a number. A numeric scrub eases toward the scroll
-    position over that many seconds, and Lenis is already easing the scroll
-    itself — two lags in series, which is felt as the hero sliding around
-    loosely behind the page rather than being attached to it. Lenis supplies
-    the weight; this just follows.
+    position over that many seconds, which puts the hero on a different clock
+    from the page it is pinned to and reads as it sliding around loosely
+    behind the content. Scrolling here is native and unsmoothed, so this
+    tracks it exactly.
   */
   const sceneRef = useGsapContext<HTMLElement>((gsap, scope) => {
     gsap
