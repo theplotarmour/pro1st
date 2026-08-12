@@ -244,6 +244,135 @@
      not prose — the same register as the mono labels used throughout the
      page, so the bar reads as part of the system instead of a separate menu.
   */
+  /*
+     Merchant-authored rich text from Shopify, styled to this design system.
+
+     Shopify's editor emits plain h1–h4, p, ul/ol, strong/em, a, table and img
+     with no classes, so every one of them has to be given a treatment here or
+     the description renders with browser defaults — Times, blue underlined
+     links, and margins that belong to no other part of the page.
+  */
+  .p1-prose {
+    font-family: var(--f-b);
+    font-size: 15px;
+    line-height: 1.7;
+    color: var(--text-body);
+  }
+
+  .p1-prose > :first-child {
+    margin-top: 0;
+  }
+
+  .p1-prose > :last-child {
+    margin-bottom: 0;
+  }
+
+  .p1-prose p {
+    margin: 0 0 1.1em;
+  }
+
+  .p1-prose h1,
+  .p1-prose h2,
+  .p1-prose h3,
+  .p1-prose h4,
+  .p1-prose h5,
+  .p1-prose h6 {
+    font-family: var(--f-d);
+    font-weight: 600;
+    letter-spacing: -0.01em;
+    line-height: 1.25;
+    color: var(--text-strong);
+    margin: 1.8em 0 0.6em;
+  }
+
+  .p1-prose h1 { font-size: 22px; }
+  .p1-prose h2 { font-size: 19px; }
+  .p1-prose h3,
+  .p1-prose h4,
+  .p1-prose h5,
+  .p1-prose h6 { font-size: 16px; }
+
+  .p1-prose strong,
+  .p1-prose b {
+    font-weight: 600;
+    color: var(--text-strong);
+  }
+
+  .p1-prose em,
+  .p1-prose i {
+    font-style: italic;
+  }
+
+  .p1-prose ul,
+  .p1-prose ol {
+    margin: 0 0 1.1em;
+    padding-left: 1.3em;
+  }
+
+  .p1-prose ul { list-style: disc; }
+  .p1-prose ol { list-style: decimal; }
+
+  .p1-prose li {
+    margin: 0 0 0.4em;
+  }
+
+  .p1-prose li::marker {
+    color: var(--signal);
+  }
+
+  .p1-prose a {
+    color: var(--signal);
+    text-decoration: underline;
+    text-underline-offset: 3px;
+  }
+
+  .p1-prose img {
+    max-width: 100%;
+    height: auto;
+    margin: 1.4em 0;
+    border: 1px solid var(--hairline);
+  }
+
+  .p1-prose hr {
+    border: 0;
+    border-top: 1px solid var(--hairline);
+    margin: 1.8em 0;
+  }
+
+  .p1-prose blockquote {
+    margin: 1.4em 0;
+    padding-left: 1.1em;
+    border-left: 2px solid var(--signal);
+    color: var(--text-muted);
+  }
+
+  /* Spec tables are common in Shopify descriptions and must not overflow. */
+  .p1-prose table {
+    width: 100%;
+    margin: 1.4em 0;
+    border-collapse: collapse;
+    font-size: 14px;
+    display: block;
+    overflow-x: auto;
+  }
+
+  .p1-prose th,
+  .p1-prose td {
+    border: 1px solid var(--hairline);
+    padding: 8px 12px;
+    text-align: left;
+    vertical-align: top;
+  }
+
+  .p1-prose th {
+    font-family: var(--f-m);
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    font-weight: 500;
+  }
+
   .p1-hero-line {
     display: block;
     animation: p1-hero-rise 900ms var(--ease-signal) both;

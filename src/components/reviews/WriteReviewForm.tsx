@@ -84,15 +84,12 @@ export function WriteReviewForm({
                 className="sr-only"
               />
               {/*
-                Each label shows the whole row filled to its own value, so
-                hovering across reads as filling up rather than as five
-                separate switches.
+                One star per label, filled or empty. The previous version hid
+                the empty track with an arbitrary-variant selector, which
+                collapsed the component's box to zero width and made every
+                star invisible.
               */}
-              <Stars
-                value={rating >= value ? 1 : 0}
-                size="22px"
-                className="[&>span:first-child]:hidden"
-              />
+              <SingleStar filled={rating >= value} />
               <span className="sr-only">{value} out of 5</span>
             </label>
           ))}
@@ -158,6 +155,22 @@ export function WriteReviewForm({
         {state.status === "error" ? state.message : ""}
       </p>
     </form>
+  );
+}
+
+/** One star, at input size. Same path the rating display uses. */
+function SingleStar({ filled }: { filled: boolean }) {
+  return (
+    <svg
+      viewBox="0 0 24 24"
+      width={24}
+      height={24}
+      fill={filled ? "var(--signal)" : "var(--hairline-strong)"}
+      aria-hidden="true"
+      className="block transition-colors duration-150"
+    >
+      <path d="M12 2.6l2.9 5.9 6.5.9-4.7 4.6 1.1 6.5L12 17.4 6.2 20.5l1.1-6.5L2.6 9.4l6.5-.9z" />
+    </svg>
   );
 }
 

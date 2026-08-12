@@ -122,9 +122,18 @@ async function requestPage(
 
   const response = await fetch(url, {
     signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
-    // Judge.me is a GET, so Next would cache it; the in-process cache above
-    // already bounds it and this keeps the two from disagreeing.
-    cache: "no-store",
+    /*
+      Cached, not `no-store`.
+
+      `no-store` here opted the whole product route out of static rendering —
+      Next treats an uncached fetch during render as dynamic server usage, so
+      every product page silently stopped being prerendered and became a
+      per-request render. Reviews are not worth that.
+
+      300s matches the route's own revalidate, so the page and its reviews go
+      stale together rather than one refreshing without the other.
+    */
+    next: { revalidate: 300 },
   });
 
   if (!response.ok) {
@@ -293,9 +302,38 @@ export async function createReview(
     });
 
     if (!response.ok) {
+      /*
+        Read the body. Judge.me returns 422 with a reason — the field it
+        objected to, or that the product is unknown to it — and swallowing
+        that leaves nothing to debug but a status code. Logged in full
+        server-side; the reader gets the message only when it is short enough
+        to be a real sentence rather than a dump.
+      */
+      const detail = await response.text().catch(() => "");
+      console.error(
+        `[pro1st] Judge.me POST /reviews ${response.status}: ${detail.slice(0, 500)}`,
+      );
+
+      let reason = "";
+      try {
+        const parsed = JSON.parse(detail) as {
+          error?: string;
+          message?: string;
+          errors?: unknown;
+        };
+        reason =
+          parsed.error ??
+          parsed.message ??
+          (typeof parsed.errors === "string" ? parsed.errors : "");
+      } catch {
+        reason = "";
+      }
+
       return {
         ok: false,
-        error: `Judge.me rejected the review (${response.status}).`,
+        error: reason
+          ? `Judge.me rejected the review: ${reason}`
+          : `Judge.me rejected the review (${response.status}).`,
       };
     }
 

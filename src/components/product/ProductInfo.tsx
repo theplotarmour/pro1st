@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState } from "react";
 import { AddToCartButton } from "@/components/commerce/AddToCartButton";
+import { DescriptionSections } from "@/components/product/DescriptionSections";
 import {
   availabilityLabel,
   categorySlug,
@@ -69,11 +70,23 @@ export function ProductInfo({ product }: { product: Product }) {
         </div>
       ) : null}
 
-      {product.description ? (
-        <p className="p1-body mt-7 max-w-[54ch] whitespace-pre-line">
-          {product.description}
-        </p>
-      ) : null}
+      {/*
+        The description as the merchant wrote it, with anything under a
+        heading folded into a disclosure. See `parseDescription`.
+
+        This used to render `description`, Shopify's plain-text flattening of
+        the rich text field — every heading, list, bold run and paragraph break
+        collapsed into one wall of prose. `descriptionHtml` is the authored
+        markup and was already being fetched and typed; it just was not used.
+
+        The HTML is merchant-authored, reaching us over an authenticated
+        Storefront API from the store's own admin — the same content Shopify's
+        own themes render directly. It is not visitor input.
+      */}
+      <DescriptionSections
+        descriptionHtml={product.descriptionHtml}
+        fallback={product.description}
+      />
 
       {showOptions ? (
         <div className="mt-8 flex flex-col gap-5">
