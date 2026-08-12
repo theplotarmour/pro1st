@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useRef, useState } from "react";
 import { Media } from "@/components/ui/Media";
 import type { ChainNode } from "@/lib/content/sections";
-import { sectionProgress, useMediaQuery, useScrollEffect } from "@/lib/motion";
+import { sectionProgress, useScrollEffect } from "@/lib/motion";
 
 /**
  * "The chain" — source to subwoofer as one system.
@@ -28,9 +28,12 @@ export function ChainSection({ nodes }: { nodes: ChainNode[] }) {
   const [active, setActive] = useState(0);
   const [pinned, setPinned] = useState<number | null>(null);
 
-  const unpinned = useMediaQuery(
-    "(max-width: 1024px), (max-height: 719px)",
-  );
+  // Scroll-jacking removed. These sections used to pin the viewport and drive
+  // their choreography from scroll position, which meant the page stopped
+  // responding to normal scrolling and broke touch gestures outright. The
+  // stacked composition — previously the mobile fallback — is now the only
+  // layout, and reveals are triggered on viewport entry instead.
+  const unpinned = true;
 
   useScrollEffect(
     (vh) => {

@@ -15,26 +15,16 @@ interface HeroProps {
 
 /**
  * Product-launch hero: two masked headline lines, one line of supporting
- * copy, two CTAs. The headline waits for the preload curtain so the reveal
- * is never spent behind it.
+ * copy, two CTAs, and the flagship unit priced and linked.
  */
 export function Hero({ chassisImage }: HeroProps) {
   const [play, setPlay] = useState(false);
 
+  // Plays on mount. There is no preload curtain to wait for any more — the
+  // headline is readable as soon as the document paints.
   useEffect(() => {
-    let seen = true;
-    try {
-      seen = window.sessionStorage.getItem("p1-seen") === "1";
-    } catch {
-      seen = true;
-    }
-    if (seen) {
-      setPlay(true);
-      return;
-    }
-    const onReady = () => setPlay(true);
-    window.addEventListener("p1:ready", onReady, { once: true });
-    return () => window.removeEventListener("p1:ready", onReady);
+    const frame = requestAnimationFrame(() => setPlay(true));
+    return () => cancelAnimationFrame(frame);
   }, []);
 
   const line = (index: number) => ({

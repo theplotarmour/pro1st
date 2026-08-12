@@ -1,9 +1,7 @@
 import type { Metadata, Viewport } from "next";
 import { CartDrawer } from "@/components/commerce/CartDrawer";
-import { CursorRing } from "@/components/layout/CursorRing";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
-import { Preloader } from "@/components/layout/Preloader";
 import { WhatsAppFab } from "@/components/layout/WhatsAppFab";
 import { site } from "@/data/site";
 import { CartProvider } from "@/lib/cart/CartProvider";
@@ -85,8 +83,6 @@ export default async function RootLayout({
       </head>
       <body>
         <CartProvider>
-          <Preloader />
-          <CursorRing />
           <Header categories={categories} />
           <main id="main">{children}</main>
           <Footer />

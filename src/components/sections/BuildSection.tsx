@@ -7,7 +7,7 @@ import { buildCopy } from "@/data/editorial";
 import { explodeOffsets } from "@/data/site";
 import type { BuildUnit } from "@/lib/content/sections";
 import { clamp01, inOutCubic, outCubic } from "@/lib/format";
-import { sectionProgress, useMediaQuery, useScrollEffect } from "@/lib/motion";
+import { sectionProgress, useScrollEffect } from "@/lib/motion";
 
 const STAGE_W = 660;
 const STAGE_H = 400;
@@ -34,7 +34,12 @@ export function BuildSection({ unit }: { unit: BuildUnit }) {
   const calloutsRef = useRef<HTMLDivElement>(null);
   const bloomRef = useRef<HTMLDivElement>(null);
 
-  const unpinned = useMediaQuery("(max-width: 900px)");
+  // Scroll-jacking removed. These sections used to pin the viewport and drive
+  // their choreography from scroll position, which meant the page stopped
+  // responding to normal scrolling and broke touch gestures outright. The
+  // stacked composition — previously the mobile fallback — is now the only
+  // layout, and reveals are triggered on viewport entry instead.
+  const unpinned = true;
 
   useScrollEffect(
     (vh, vw) => {

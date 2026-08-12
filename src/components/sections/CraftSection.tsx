@@ -3,7 +3,7 @@
 import { useRef } from "react";
 import { Media } from "@/components/ui/Media";
 import type { CraftPanel } from "@/lib/content/sections";
-import { sectionProgress, useMediaQuery, useScrollEffect } from "@/lib/motion";
+import { sectionProgress, useScrollEffect } from "@/lib/motion";
 
 /**
  * "Craft" — three engineering panels that traverse horizontally as the page
@@ -30,8 +30,12 @@ export function CraftSection({
   const trackRef = useRef<HTMLDivElement>(null);
   const railRef = useRef<HTMLDivElement>(null);
 
-  const narrow = useMediaQuery("(max-width: 900px)");
-  const unpinned = layout === "stacked" || narrow;
+  // Scroll-jacking removed. These sections used to pin the viewport and drive
+  // their choreography from scroll position, which meant the page stopped
+  // responding to normal scrolling and broke touch gestures outright. The
+  // stacked composition — previously the mobile fallback — is now the only
+  // layout, and reveals are triggered on viewport entry instead.
+  const unpinned = true;
 
   useScrollEffect(
     (vh) => {
