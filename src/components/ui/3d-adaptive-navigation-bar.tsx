@@ -17,11 +17,10 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
  * Three adaptations:
  *
  *   1. Tint. The original is an opaque light-grey plastic (#fcfcfd → #e2e3e6)
- *      designed for a white page. This asked for orange glass, so the body is
- *      now a translucent signal-orange gradient over `backdrop-filter`, the
- *      white specular highlights are warmed, and the shadow stack is deepened
- *      for a dark surface — black shadows at 0.08 opacity are invisible on
- *      #0d0d0f. Text switches to the light-on-dark tokens.
+ *      designed for a white page. Here it is clear glass: a near-neutral white
+ *      gradient at 5–13% over `backdrop-filter`, so the page reads through it.
+ *      The shadow stack is deepened for a dark surface — black shadows at 0.08
+ *      opacity are invisible on #0d0d0f. Text uses the light-on-dark tokens.
  *
  *   2. Width. The original hardcodes 140px collapsed / 580px expanded, which
  *      fits its four demo labels ("Home", "Problem", "Solution", "Contact")
@@ -33,7 +32,8 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
  *
  *   3. Links, not scroll targets. The demo tracks a section id on one page.
  *      These are real routes, so items are `next/link` and the active item
- *      comes from the pathname.
+ *      comes from the pathname. Navigation is all the pill does — it opens no
+ *      panel, so hovering the bar never covers the page behind it.
  *
  * No framer-motion. Width, opacity and blur are CSS transitions; the spring
  * was the only thing the dependency was buying and a spring that overshoots a
@@ -43,15 +43,12 @@ import { useEffect, useLayoutEffect, useRef, useState } from "react";
 export interface PillNavItem {
   label: string;
   href: string;
-  /** Opens the category panel on pointer/focus rather than only navigating. */
-  hasMegaMenu?: boolean;
 }
 
 interface PillBaseProps {
   items: PillNavItem[];
   /** Href of the item to show while collapsed. */
   activeHref: string;
-  onMegaMenuEnter?: () => void;
   className?: string;
 }
 
@@ -62,7 +59,6 @@ const PILL_PADDING = 48;
 export function PillBase({
   items,
   activeHref,
-  onMegaMenuEnter,
   className = "",
 }: PillBaseProps) {
   const [expanded, setExpanded] = useState(false);
@@ -150,44 +146,44 @@ export function PillBase({
         height: 56,
         overflow: "hidden",
         background: `linear-gradient(135deg,
-          rgba(255, 158, 74, 0.72) 0%,
-          rgba(255, 132, 32, 0.68) 18%,
-          rgba(255, 106, 0, 0.66) 38%,
-          rgba(246, 100, 0, 0.64) 58%,
-          rgba(228, 90, 0, 0.66) 78%,
-          rgba(206, 80, 0, 0.72) 100%
+          rgba(255, 255, 255, 0.13) 0%,
+          rgba(255, 255, 255, 0.09) 18%,
+          rgba(255, 255, 255, 0.06) 38%,
+          rgba(255, 255, 255, 0.05) 58%,
+          rgba(255, 255, 255, 0.06) 78%,
+          rgba(255, 255, 255, 0.09) 100%
         )`,
-        backdropFilter: "blur(18px) saturate(160%)",
-        WebkitBackdropFilter: "blur(18px) saturate(160%)",
+        backdropFilter: "blur(18px) saturate(140%)",
+        WebkitBackdropFilter: "blur(18px) saturate(140%)",
         boxShadow: expanded
           ? `0 2px 4px rgba(0, 0, 0, 0.30),
              0 6px 12px rgba(0, 0, 0, 0.36),
              0 12px 24px rgba(0, 0, 0, 0.40),
              0 24px 48px rgba(0, 0, 0, 0.34),
-             inset 0 2px 2px rgba(255, 210, 170, 0.42),
+             inset 0 2px 2px rgba(255, 255, 255, 0.26),
              inset 0 -3px 8px rgba(0, 0, 0, 0.34),
-             inset 3px 3px 8px rgba(255, 160, 90, 0.12),
+             inset 3px 3px 8px rgba(255, 255, 255, 0.07),
              inset -3px 3px 8px rgba(0, 0, 0, 0.26),
-             inset 0 0 0 0.5px rgba(255, 176, 112, 0.30)`
+             inset 0 0 0 0.5px rgba(255, 255, 255, 0.18)`
           : `0 3px 6px rgba(0, 0, 0, 0.32),
              0 8px 16px rgba(0, 0, 0, 0.30),
              0 16px 32px rgba(0, 0, 0, 0.26),
-             inset 0 2px 1px rgba(255, 210, 170, 0.34),
+             inset 0 2px 1px rgba(255, 255, 255, 0.20),
              inset 0 -2px 6px rgba(0, 0, 0, 0.30),
-             inset 2px 2px 8px rgba(255, 160, 90, 0.10),
+             inset 2px 2px 8px rgba(255, 255, 255, 0.06),
              inset -2px 2px 8px rgba(0, 0, 0, 0.22),
-             inset 0 0 0 0.5px rgba(255, 176, 112, 0.24)`,
+             inset 0 0 0 0.5px rgba(255, 255, 255, 0.14)`,
         transition:
           "width 420ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 300ms ease-out",
       }}
     >
-      {/* Top edge ridge — warm rather than pure white. */}
+      {/* Top edge ridge. */}
       <div
         className="pointer-events-none absolute inset-x-0 top-0 rounded-t-full"
         style={{
           height: 2,
           background:
-            "linear-gradient(90deg, rgba(255,214,178,0) 0%, rgba(255,214,178,0.75) 5%, rgba(255,228,203,0.92) 15%, rgba(255,228,203,0.92) 85%, rgba(255,214,178,0.75) 95%, rgba(255,214,178,0) 100%)",
+            "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 5%, rgba(255,255,255,0.62) 15%, rgba(255,255,255,0.62) 85%, rgba(255,255,255,0.45) 95%, rgba(255,255,255,0) 100%)",
           filter: "blur(0.3px)",
         }}
       />
@@ -198,7 +194,7 @@ export function PillBase({
         style={{
           height: "55%",
           background:
-            "linear-gradient(180deg, rgba(255,186,110,0.20) 0%, rgba(255,166,80,0.10) 30%, rgba(255,150,60,0.04) 60%, rgba(255,150,60,0) 100%)",
+            "linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.08) 30%, rgba(255,255,255,0.03) 60%, rgba(255,255,255,0) 100%)",
         }}
       />
 
@@ -207,7 +203,7 @@ export function PillBase({
         className="pointer-events-none absolute inset-0 rounded-full"
         style={{
           background:
-            "linear-gradient(135deg, rgba(255,198,132,0.18) 0%, rgba(255,178,100,0.09) 20%, rgba(255,164,80,0.03) 40%, rgba(255,164,80,0) 65%)",
+            "linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.07) 20%, rgba(255,255,255,0.02) 40%, rgba(255,255,255,0) 65%)",
         }}
       />
 
@@ -220,7 +216,7 @@ export function PillBase({
           width: expanded ? 140 : 60,
           height: 14,
           background:
-            "radial-gradient(ellipse at center, rgba(255,224,190,0.45) 0%, rgba(255,200,150,0.20) 40%, rgba(255,190,130,0.05) 70%, rgba(255,190,130,0) 100%)",
+            "radial-gradient(ellipse at center, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.17) 40%, rgba(255,255,255,0.04) 70%, rgba(255,255,255,0) 100%)",
           filter: "blur(4px)",
           transform: "rotate(-12deg)",
           transition: "all 300ms ease",
@@ -236,7 +232,7 @@ export function PillBase({
           width: 80,
           height: 10,
           background:
-            "radial-gradient(ellipse at center, rgba(255,232,206,0.38) 0%, rgba(255,216,182,0.11) 60%, rgba(255,216,182,0) 100%)",
+            "radial-gradient(ellipse at center, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.08) 60%, rgba(255,255,255,0) 100%)",
           filter: "blur(3px)",
           transform: "rotate(8deg)",
           opacity: expanded ? 1 : 0,
@@ -250,7 +246,7 @@ export function PillBase({
         style={{
           width: "35%",
           background:
-            "linear-gradient(90deg, rgba(255,220,186,0.16) 0%, rgba(255,210,170,0.08) 40%, rgba(255,210,170,0.02) 70%, rgba(255,210,170,0) 100%)",
+            "linear-gradient(90deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.02) 70%, rgba(255,255,255,0) 100%)",
           opacity: expanded ? 1 : 0,
           transition: "opacity 300ms ease",
         }}
@@ -272,7 +268,7 @@ export function PillBase({
         style={{
           height: "50%",
           background:
-            "linear-gradient(0deg, rgba(92,26,0,0.34) 0%, rgba(92,26,0,0.18) 25%, rgba(92,26,0,0.06) 50%, rgba(92,26,0,0) 100%)",
+            "linear-gradient(0deg, rgba(0,0,0,0.32) 0%, rgba(0,0,0,0.17) 25%, rgba(0,0,0,0.06) 50%, rgba(0,0,0,0) 100%)",
         }}
       />
       <div
@@ -280,7 +276,7 @@ export function PillBase({
         style={{
           height: "20%",
           background:
-            "linear-gradient(0deg, rgba(74,20,0,0.38) 0%, rgba(74,20,0,0) 100%)",
+            "linear-gradient(0deg, rgba(0,0,0,0.36) 0%, rgba(0,0,0,0) 100%)",
           filter: "blur(2px)",
         }}
       />
@@ -289,7 +285,7 @@ export function PillBase({
       <div
         className="pointer-events-none absolute inset-0 rounded-full"
         style={{
-          boxShadow: "inset 0 0 40px rgba(255, 150, 70, 0.20)",
+          boxShadow: "inset 0 0 40px rgba(255, 255, 255, 0.10)",
           opacity: 0.7,
         }}
       />
@@ -366,10 +362,6 @@ export function PillBase({
                 href={item.href}
                 tabIndex={expanded ? 0 : -1}
                 aria-current={isActive ? "page" : undefined}
-                onMouseEnter={
-                  item.hasMegaMenu ? onMegaMenuEnter : undefined
-                }
-                onFocus={item.hasMegaMenu ? onMegaMenuEnter : undefined}
                 onClick={() => setExpanded(false)}
                 className={`pill-label whitespace-nowrap px-4 py-2.5 ${
                   isActive ? "pill-label--active" : ""

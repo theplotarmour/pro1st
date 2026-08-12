@@ -74,7 +74,6 @@ export const contact = {
 } as const;
 
 export const heroContent = {
-  status: "Live from Chandni Chowk",
   headlineTop: "Professional",
   headlineAccent: "Rhythm",
   headlineRest: "Operators",

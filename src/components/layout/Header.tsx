@@ -2,13 +2,12 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { PillBase } from "@/components/ui/3d-adaptive-navigation-bar";
 import { primaryNav } from "@/data/site";
 import { useCart } from "@/lib/cart/CartProvider";
 import type { CategorySummary } from "@/types/product";
 import { Logo } from "./Logo";
-import { MegaMenu } from "./MegaMenu";
 import { MobileNav } from "./MobileNav";
 import { CartIcon, MenuIcon, SearchIcon } from "./icons";
 
@@ -16,7 +15,6 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
   const pathname = usePathname();
   const { count, open: openCart } = useCart();
   const [condensed, setCondensed] = useState(false);
-  const [megaOpen, setMegaOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
 
   useEffect(() => {
@@ -28,21 +26,8 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
 
   // Route changes close every transient surface.
   useEffect(() => {
-    setMegaOpen(false);
     setMobileOpen(false);
   }, [pathname]);
-
-  // Escape closes the category panel from anywhere inside it.
-  useEffect(() => {
-    if (!megaOpen) return;
-    const onKey = (event: KeyboardEvent) => {
-      if (event.key === "Escape") setMegaOpen(false);
-    };
-    window.addEventListener("keydown", onKey);
-    return () => window.removeEventListener("keydown", onKey);
-  }, [megaOpen]);
-
-  const closeMega = useCallback(() => setMegaOpen(false), []);
 
   // A nav item tied to a collection only appears when that collection exists
   // in Shopify. Create a "packages" collection and System Packages appears.
@@ -85,21 +70,23 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
         <Logo collapsed={condensed} />
 
         {/*
-          The pill sits in the header's centre column. It carries its own
-          `nav` landmark and label, so the header must not wrap it in another.
-          The category panel still opens from the "Shop All" item, on hover for
-          pointers and on focus for keyboards — hover alone made the whole
-          category menu unreachable without a mouse.
+          Centred on the viewport, not on the space left between the logo and
+          the actions — those two flank it at different widths, so `mx-auto`
+          in the flex row put it visibly off-centre. Absolute positioning also
+          keeps the pill from shifting sideways when the cart badge appears.
+
+          It carries its own `nav` landmark and label, so the header must not
+          wrap it in another. It navigates and nothing more — no category panel
+          opens from it, so hovering the bar never covers the page. "Shop All"
+          goes to the gallery, where categories are browsable with filters.
         */}
-        <div className="mx-auto hidden lg:block">
-          <PillBase
-            items={nav}
-            activeHref={activeHref}
-            onMegaMenuEnter={() => setMegaOpen(true)}
-          />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 top-0 hidden items-center justify-center lg:flex">
+          <div className="pointer-events-auto">
+            <PillBase items={nav} activeHref={activeHref} />
+          </div>
         </div>
 
-        <div className="ml-auto flex flex-none items-center gap-4 lg:ml-0 lg:gap-[18px]">
+        <div className="ml-auto flex flex-none items-center gap-4 lg:gap-[18px]">
           <Link
             href="/search"
             aria-label="Search products"
@@ -141,10 +128,6 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
           </button>
         </div>
       </header>
-
-      {megaOpen ? (
-        <MegaMenu categories={categories} onClose={closeMega} />
-      ) : null}
 
       <MobileNav
         open={mobileOpen}
