@@ -3,6 +3,7 @@
 import { useEffect, useState } from "react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Magnetic } from "@/components/ui/Magnetic";
+import { SonicWaveform } from "@/components/ui/sonic-waveform";
 import { heroContent } from "@/data/site";
 
 
@@ -44,6 +45,8 @@ export function Hero() {
             "radial-gradient(circle at 62% 30%,#000 20%,transparent 68%)",
         }}
       />
+
+      <SonicWaveform />
 
       <div className="p1-shell relative z-[2]">
         <div>
