@@ -52,37 +52,24 @@ export function PillBase({
   return (
     <nav
       aria-label="Primary"
-      className={`relative flex h-14 items-center gap-1 rounded-full px-3 ${className}`}
+      className={`relative flex h-11 items-center rounded-full px-2 ${className}`}
       style={{
-        // A pane, not a body. The fill is a 6%→2% sheen across the diagonal —
-        // enough for the surface to catch light and read as a solid object,
-        // far below the level where it starts to look like frosted plastic.
-        // The nine-layer specular stack this component shipped with is what
-        // made it grey; a single soft gradient does the same job at a tenth
-        // of the weight.
-        background:
-          "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 45%, rgba(255,255,255,0.02) 100%)",
-        backdropFilter: "blur(16px) saturate(130%)",
-        WebkitBackdropFilter: "blur(16px) saturate(130%)",
-        boxShadow: `
-          0 2px 8px rgba(0, 0, 0, 0.28),
-          0 12px 32px rgba(0, 0, 0, 0.22),
-          inset 0 1px 0 rgba(255, 255, 255, 0.14),
-          inset 0 0 0 1px rgba(255, 255, 255, 0.09)
-        `,
+        /*
+          An outline, not an object. Almost-black fill, a 1px hairline, and
+          just enough blur to separate it from whatever passes underneath —
+          the pill should register as a drawn boundary and then get out of the
+          way of the hero.
+
+          No drop shadow, no highlight layer, no gradient. Each of those makes
+          the bar read as a raised card floating above the page, which is
+          exactly the weight this navigation should not carry.
+        */
+        background: "rgba(10, 10, 12, 0.55)",
+        backdropFilter: "blur(8px)",
+        WebkitBackdropFilter: "blur(8px)",
+        boxShadow: "inset 0 0 0 1px rgba(255, 255, 255, 0.10)",
       }}
     >
-      {/* Top-edge light catch — the one highlight worth keeping. */}
-      <div
-        aria-hidden="true"
-        className="pointer-events-none absolute inset-x-0 top-0 rounded-t-full"
-        style={{
-          height: "45%",
-          background:
-            "linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 55%, rgba(255,255,255,0) 100%)",
-        }}
-      />
-
       {items.map((item) => {
         const isActive = item.href === activeHref;
         return (
@@ -90,7 +77,7 @@ export function PillBase({
             key={item.href}
             href={item.href}
             aria-current={isActive ? "page" : undefined}
-            className={`pill-label relative whitespace-nowrap rounded-full px-4 py-2.5 ${
+            className={`pill-label relative whitespace-nowrap rounded-full px-5 py-2 ${
               isActive ? "pill-label--active" : ""
             }`}
           >

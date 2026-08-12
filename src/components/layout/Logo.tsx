@@ -21,10 +21,14 @@ export function Logo({ collapsed = false }: { collapsed?: boolean }) {
         } as React.CSSProperties
       }
     >
+      {/*
+        Height only — width stays `auto`, so the mark scales at its own aspect
+        ratio and the 1st/soundwave lockup keeps its exact proportions.
+      */}
       <Wordmark
         className="w-auto transition-[height] duration-[420ms] ease-signal"
         title="PRO1ST"
-        style={{ height: collapsed ? 26 : 32 }}
+        style={{ height: collapsed ? 34 : 44 }}
       />
     </Link>
   );

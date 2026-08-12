@@ -215,14 +215,20 @@
      sizers, so the measured width and the painted width can never drift —
      any change to size, weight or tracking has to move both together.
   */
+  /*
+     Mono, uppercase and widely tracked, matching the eyebrows and the dealer
+     button rather than the body face. Navigation here is a technical index,
+     not prose — the same register as the mono labels used throughout the
+     page, so the bar reads as part of the system instead of a separate menu.
+  */
   .pill-label {
-    font-family: var(--f-b);
-    font-size: 14px;
-    font-weight: 510;
-    letter-spacing: 0.02em;
+    font-family: var(--f-m);
+    font-size: 11px;
+    font-weight: 500;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
     white-space: nowrap;
     color: var(--text-muted);
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45);
     transition: color 200ms var(--ease-signal, ease);
   }
 
@@ -231,9 +237,8 @@
   }
 
   .pill-label--active {
-    font-weight: 680;
+    font-weight: 700;
     color: var(--text-strong);
-    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.5);
   }
 
   /* Mono micro-label — section eyebrows, meta, buttons. */
