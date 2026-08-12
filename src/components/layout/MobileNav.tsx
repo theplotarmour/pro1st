@@ -35,7 +35,13 @@ export function MobileNav({ open, onClose, categories }: MobileNavProps) {
       className="fixed inset-0 z-[118] flex flex-col overflow-y-auto bg-ink pt-[72px] lg:hidden"
     >
       <nav aria-label="Mobile" className="gutter-x flex flex-col py-6">
-        {primaryNav.map((item) => (
+        {primaryNav
+          .filter(
+            (item) =>
+              !item.requiresCollection ||
+              categories.some((c) => c.slug === item.requiresCollection),
+          )
+          .map((item) => (
           <Link
             key={item.href}
             href={item.href}
@@ -44,7 +50,7 @@ export function MobileNav({ open, onClose, categories }: MobileNavProps) {
           >
             {item.label}
           </Link>
-        ))}
+          ))}
       </nav>
 
       <div className="gutter-x pb-8">

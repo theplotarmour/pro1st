@@ -43,8 +43,17 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
 
   const closeMega = useCallback(() => setMegaOpen(false), []);
 
+  // A nav item tied to a collection only appears when that collection exists
+  // in Shopify. Create a "packages" collection and System Packages appears.
+  const available = new Set(categories.map((category) => category.slug));
+  const nav = primaryNav.filter(
+    (item) => !item.requiresCollection || available.has(item.requiresCollection),
+  );
+
   const isActive = (href: string) =>
-    href === "/" ? pathname === "/" : pathname.startsWith(href);
+    href === "/"
+      ? pathname === "/"
+      : pathname.startsWith(href.split("?")[0] ?? href);
 
   return (
     <>
@@ -70,7 +79,7 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
           aria-label="Primary"
           className="mx-auto hidden gap-7 font-body text-[13px] font-medium tracking-[0.02em] lg:flex"
         >
-          {primaryNav.map((item) =>
+          {nav.map((item) =>
             item.hasMegaMenu ? (
               <div
                 key={item.href}

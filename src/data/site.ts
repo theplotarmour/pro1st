@@ -26,15 +26,31 @@ export interface NavItem {
   href: string;
   /** Opens the category panel on desktop. */
   hasMegaMenu?: boolean;
+  /**
+   * Only render when this Shopify collection actually exists. Keeps a nav
+   * item from pointing at an empty category — the same rule the footer uses.
+   */
+  requiresCollection?: string;
 }
 
-/** Primary navigation — the information architecture from the brief. */
+/**
+ * Primary navigation.
+ *
+ * Purchasing pathways, not essays. "Home" is an explicit link rather than
+ * relying on the logo, which is what usability guidance expects and what
+ * Sweetwater, Crutchfield and Audio Advice all do.
+ */
 export const primaryNav: NavItem[] = [
-  { label: "Origin", href: "/origin" },
-  { label: "Arsenal", href: "/arsenal" },
-  { label: "Product Gallery", href: "/products", hasMegaMenu: true },
-  { label: "Craft", href: "/craft" },
-  { label: "Get in Touch", href: "/contact" },
+  { label: "Home", href: "/" },
+  { label: "Shop All", href: "/products", hasMegaMenu: true },
+  {
+    label: "System Packages",
+    href: "/products?category=packages",
+    requiresCollection: "packages",
+  },
+  { label: "Our Story", href: "/origin" },
+  { label: "Support & FAQ", href: "/contact#faq" },
+  { label: "Wholesale", href: "/wholesale" },
 ];
 
 /* CONFIRM — supplied by the design source, verify with the client. */
@@ -175,10 +191,10 @@ export const footerColumns = [
   {
     head: "Explore",
     links: [
-      { label: "Arsenal", href: "/arsenal" },
-      { label: "Product gallery", href: "/products" },
-      { label: "Craft", href: "/craft" },
-      { label: "Origin", href: "/origin" },
+      { label: "Shop all", href: "/products" },
+      { label: "Our story", href: "/origin" },
+      { label: "Wholesale", href: "/wholesale" },
+      { label: "Support & FAQ", href: "/contact#faq" },
       { label: "Search", href: "/search" },
     ],
   },

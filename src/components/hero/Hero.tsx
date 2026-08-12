@@ -4,20 +4,14 @@ import { useEffect, useState } from "react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { heroContent } from "@/data/site";
-import type { HeroUnit } from "@/lib/content/sections";
-import { HeroChassis } from "./HeroChassis";
-import { Waveform } from "./Waveform";
 
-interface HeroProps {
-  /** Product photography for the revolving chassis, resolved from Shopify. */
-  chassisImage: HeroUnit | null;
-}
+
 
 /**
  * Product-launch hero: two masked headline lines, one line of supporting
  * copy, two CTAs, and the flagship unit priced and linked.
  */
-export function Hero({ chassisImage }: HeroProps) {
+export function Hero() {
   const [play, setPlay] = useState(false);
 
   // Plays on mount. There is no preload curtain to wait for any more — the
@@ -51,7 +45,7 @@ export function Hero({ chassisImage }: HeroProps) {
         }}
       />
 
-      <div className="p1-shell relative z-[2] grid items-center gap-10 min-[1100px]:grid-cols-[minmax(0,1fr)_minmax(0,0.82fr)]">
+      <div className="p1-shell relative z-[2]">
         <div>
         <div className="p1-mono mb-8 flex items-center gap-2.5 text-muted">
           <span
@@ -79,21 +73,18 @@ export function Hero({ chassisImage }: HeroProps) {
         <div className="mt-8 flex flex-wrap gap-3">
           <Magnetic>
             <ButtonLink href="/products" variant="primary">
-              Shop the range
+              Browse audio systems
             </ButtonLink>
           </Magnetic>
           <Magnetic>
             <ButtonLink href="/contact?enquiry=dealer" variant="outline">
-              Talk to a dealer
+              Apply for dealer pricing
             </ButtonLink>
           </Magnetic>
         </div>
         </div>
 
-        {chassisImage ? <HeroChassis unit={chassisImage} /> : null}
       </div>
-
-      <Waveform />
 
       <div className="p1-mono absolute bottom-10 right-[var(--gutter)] z-[2] hidden text-right text-soft md:block">
         {heroContent.meta}

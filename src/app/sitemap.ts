@@ -23,7 +23,7 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
     console.error("[pro1st] sitemap: Shopify unreachable, emitting static routes only.", error);
   }
 
-  const staticRoutes = ["", "/origin", "/arsenal", "/products", "/craft", "/contact"];
+  const staticRoutes = ["", "/products", "/origin", "/contact", "/wholesale"];
 
   return [
     ...staticRoutes.map((path) => ({

@@ -5,7 +5,7 @@ import { ChainSection } from "@/components/sections/ChainSection";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { OriginSection } from "@/components/sections/OriginSection";
 import { TrustBar } from "@/components/sections/TrustBar";
-import { getChainNodes, getHeroUnit, getOriginImage } from "@/lib/content/sections";
+import { getChainNodes, getOriginImage } from "@/lib/content/sections";
 import { getFeaturedProducts, productRepository } from "@/lib/products";
 
 /**
@@ -28,21 +28,20 @@ import { getFeaturedProducts, productRepository } from "@/lib/products";
  * the FAQ and showroom on /contact. Nothing was deleted — it was filed.
  */
 export default async function HomePage() {
-  const [featured, all, categories, heroUnit, origin, chain] =
+  const [featured, all, categories, origin, chain] =
     await Promise.all([
       // Four, not twelve. One clean row that reads as a selection rather than
       // an inventory dump; the catalogue itself is one click away.
       getFeaturedProducts(undefined, 4),
       productRepository.getAll(),
       productRepository.getCategories(),
-      getHeroUnit(),
       getOriginImage(),
       getChainNodes(),
     ]);
 
   return (
     <>
-      <Hero chassisImage={heroUnit} />
+      <Hero />
       <TrustBar />
 
       {/* The primary browse path, and the first thing after the fold. */}

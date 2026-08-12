@@ -2,38 +2,47 @@ import type { Metadata } from "next";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { Manifesto } from "@/components/sections/Manifesto";
 import { OriginSection } from "@/components/sections/OriginSection";
+import { QualityStandards } from "@/components/sections/QualityStandards";
 import { ShowroomSection } from "@/components/sections/ShowroomSection";
 import { TrustBar } from "@/components/sections/TrustBar";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { getOriginImage } from "@/lib/content/sections";
+import { getCraftPanels, getOriginImage } from "@/lib/content/sections";
 
 export const metadata: Metadata = {
-  title: "Origin",
+  title: "Our Story",
   description:
-    "PRO1ST is the professional line of Desire Electronics, trading in audio from Chandni Chowk, Delhi since 2004.",
+    "PRO1ST is the professional line of Desire Electronics, trading in audio from Chandni Chowk, Delhi since 2004. How the gear is built, and where to find us.",
   alternates: { canonical: "/origin" },
   openGraph: {
-    title: "Origin · PRO1ST",
+    title: "Our Story · PRO1ST",
     description:
       "PRO1ST is the professional line of Desire Electronics, trading in audio from Chandni Chowk, Delhi since 2004.",
     url: "/origin",
   },
 };
 
-/** Story, trade figures, and where to find us. */
+/**
+ * Our Story — heritage, quality standards, trade figures and the showroom.
+ * The former /craft route was folded in here; it had no commercial context of
+ * its own and split the brand narrative across two pages.
+ */
 export default async function OriginPage() {
-  const image = await getOriginImage();
+  const [image, panels] = await Promise.all([
+    getOriginImage(),
+    getCraftPanels(),
+  ]);
 
   return (
     <>
       <PageHeader
-        eyebrow="[ Origin ]"
+        eyebrow="[ Our story ]"
         title="Built in Delhi-6."
         lead="Desire Electronics has traded in audio since 2004. PRO1ST is the professional line."
       />
       <OriginSection image={image} as="h2" showEyebrow={false} />
-      <Manifesto />
+      <QualityStandards panels={panels} />
       <TrustBar />
+      <Manifesto />
       <ShowroomSection />
       <ContactCTA />
     </>
