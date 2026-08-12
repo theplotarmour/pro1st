@@ -95,6 +95,18 @@ function pruneCache(now: number): void {
   }
 }
 
+/**
+ * Drop every cached response.
+ *
+ * Called by the revalidation webhook. `revalidatePath` alone is not enough:
+ * it tells Next to re-render, but a warm server instance would re-render from
+ * this map and produce byte-identical HTML from stale data. The cache has to
+ * go first, then the page.
+ */
+export function clearResponseCache(): void {
+  responseCache.clear();
+}
+
 interface RequestOptions {
   variables?: Record<string, unknown>;
   /** Cache lifetime in seconds. Pass 0 for cart calls, which must never cache. */

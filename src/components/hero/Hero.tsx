@@ -5,6 +5,7 @@ import { ButtonLink } from "@/components/ui/Button";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { SonicWaveform } from "@/components/ui/sonic-waveform";
 import { heroContent } from "@/data/site";
+import { useGsapContext } from "@/lib/motion/gsap";
 
 
 
@@ -39,8 +40,41 @@ export function Hero() {
     transition: `transform 900ms var(--e-signal) ${index * 90}ms`,
   });
 
+  /*
+    Depth on exit. Scrubbed against the first screen of scroll: the copy lifts
+    and fades while the ribbon behind it lifts at a third of the rate. Two
+    planes moving at different speeds is what separates them; without it the
+    hero is a flat card that slides off.
+
+    Scrubbed rather than triggered, so it is reversible and tracks the scroll
+    position exactly — nothing plays at you, it only responds. `end` is one
+    viewport, so it is finished by the time the trust bar arrives.
+  */
+  const sceneRef = useGsapContext<HTMLElement>((gsap, scope) => {
+    gsap
+      .timeline({
+        scrollTrigger: {
+          trigger: scope,
+          start: "top top",
+          end: "bottom top",
+          scrub: 0.4,
+        },
+      })
+      .to(
+        scope.querySelector("[data-hero-copy]"),
+        { y: -80, opacity: 0, ease: "none" },
+        0,
+      )
+      .to(
+        scope.querySelector("[data-hero-stage]"),
+        { y: -26, ease: "none" },
+        0,
+      );
+  });
+
   return (
     <section
+      ref={sceneRef}
       aria-label="PRO1ST — professional audio equipment"
       className="relative flex min-h-[680px] flex-col items-center justify-center overflow-hidden gutter-x pb-24 pt-[112px] h-svh"
     >
@@ -57,7 +91,9 @@ export function Hero() {
         }}
       />
 
-      <SonicWaveform />
+      <div data-hero-stage="" className="pointer-events-none absolute inset-0 z-0">
+        <SonicWaveform />
+      </div>
 
       {/*
         The blurred veil. `backdrop-filter` blurs the canvas beneath it; the
@@ -79,7 +115,10 @@ export function Hero() {
         }}
       />
 
-      <div className="p1-shell relative z-[2] flex flex-col items-center text-center">
+      <div
+        data-hero-copy=""
+        className="p1-shell relative z-[2] flex flex-col items-center text-center"
+      >
         {/*
           Each line is clipped so its reveal slides out of a hard edge. The
           clip box is the line box, which at line-height 0.88 is far shorter

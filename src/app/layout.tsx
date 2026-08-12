@@ -2,6 +2,7 @@ import type { Metadata, Viewport } from "next";
 import { CartDrawer } from "@/components/commerce/CartDrawer";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
+import { SmoothScroll } from "@/components/motion/SmoothScroll";
 import { WhatsAppFab } from "@/components/layout/WhatsAppFab";
 import { site } from "@/data/site";
 import { CartProvider } from "@/lib/cart/CartProvider";
@@ -82,6 +83,7 @@ export default async function RootLayout({
         </noscript>
       </head>
       <body>
+        <SmoothScroll />
         <CartProvider>
           <Header categories={categories} />
           <main id="main">{children}</main>
