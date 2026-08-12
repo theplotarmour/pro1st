@@ -30,9 +30,12 @@ export function Hero() {
     return () => cancelAnimationFrame(frame);
   }, []);
 
+  // 160%, not 100%: the clip box is padded out past the line box to fit the
+  // display face (see below), so a 100% offset would leave the line peeking
+  // into that padding before it animates in.
   const line = (index: number) => ({
     display: "block",
-    transform: play ? "translateY(0)" : "translateY(100%)",
+    transform: play ? "translateY(0)" : "translateY(160%)",
     transition: `transform 900ms var(--e-signal) ${index * 90}ms`,
   });
 
@@ -79,18 +82,19 @@ export function Hero() {
       <div className="p1-shell relative z-[2] flex flex-col items-center text-center">
         {/*
           Each line is clipped so its reveal slides out of a hard edge. The
-          clip box is the line box, which at line-height 0.88 is shorter than
-          the glyphs — so it is extended downward by padding and pulled back by
-          an equal negative margin. Without that the display face is sheared
-          off at the baseline.
+          clip box is the line box, which at line-height 0.88 is far shorter
+          than Space Grotesk's ascender-to-descender extent — so it is padded
+          out on both sides and pulled back by an equal negative margin, which
+          buys the room without moving anything. Without it the display face is
+          sheared off above the baseline.
         */}
         <h1 className="p1-h1">
-          <span className="block overflow-hidden pb-[0.16em] -mb-[0.16em]">
+          <span className="block overflow-hidden py-[0.24em] -my-[0.24em]">
             <span data-p1-hero-word="" style={line(0)}>
               {heroContent.headlineTop}
             </span>
           </span>
-          <span className="block overflow-hidden pb-[0.16em] -mb-[0.16em]">
+          <span className="block overflow-hidden py-[0.24em] -my-[0.24em]">
             <span data-p1-hero-word="" style={line(1)}>
               <span className="text-signal">{heroContent.headlineAccent}</span>{" "}
               {heroContent.headlineRest}

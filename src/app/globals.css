@@ -39,6 +39,16 @@
  * Dark is the only mode. The palette is the brand.
  * ------------------------------------------------------------------ */
 :root {
+  /*
+     Type stacks, carried over verbatim from the design source. The @font-face
+     rules in fonts.css only register the families; these are what actually
+     select them, and without them every var(--f-*) reference in this file
+     resolved to nothing and the page fell back to the UA default face.
+  */
+  --f-d: "Space Grotesk", system-ui, sans-serif;
+  --f-b: "Inter", system-ui, sans-serif;
+  --f-m: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
   /* Brand constants — identical in both themes. */
   --p1-signal: #ff6a00;
   --p1-black: #0d0d0f;

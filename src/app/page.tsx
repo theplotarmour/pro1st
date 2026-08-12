@@ -9,6 +9,16 @@ import { getChainNodes, getOriginImage } from "@/lib/content/sections";
 import { getFeaturedProducts, productRepository } from "@/lib/products";
 
 /**
+ * Re-render at most every five minutes, matching the product pages.
+ *
+ * Without this the page is prerendered once at build and frozen: swapping a
+ * product image in Shopify would not appear here until the next deploy, even
+ * though the same image updates on /products within minutes. Five minutes is
+ * the same window the catalogue routes already use.
+ */
+export const revalidate = 300;
+
+/**
  * Homepage.
  *
  * Rebuilt around what the research actually shows (COMPETITOR-RESEARCH.md):

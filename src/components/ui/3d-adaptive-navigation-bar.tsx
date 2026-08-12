@@ -1,43 +1,35 @@
 "use client";
 
 import Link from "next/link";
-import { useEffect, useLayoutEffect, useRef, useState } from "react";
 
 /**
- * 3D adaptive navigation pill.
+ * Navigation pill.
  *
- * The supplied `PillBase`, kept in structure: a pill that shows only the
- * current section, expands on hover to reveal every item, and collapses again
- * after a short grace period. All nine stacked light layers are preserved —
- * top ridge, hemisphere catch, directional key light, two gloss reflections,
- * left/right edge treatment, bottom curvature and contact shadow, inner glow
- * and micro edge — because that stack is what reads as a physical object
- * rather than a rounded rectangle.
+ * Descended from the supplied `PillBase`, now reduced to the part that earned
+ * its place: a rounded glass bar floating over the page.
  *
- * Three adaptations:
+ * What went, and why:
  *
- *   1. Tint. The original is an opaque light-grey plastic (#fcfcfd → #e2e3e6)
- *      designed for a white page. Here it is clear glass: a near-neutral white
- *      gradient at 5–13% over `backdrop-filter`, so the page reads through it.
- *      The shadow stack is deepened for a dark surface — black shadows at 0.08
- *      opacity are invisible on #0d0d0f. Text uses the light-on-dark tokens.
+ *   1. The plastic. The original is an opaque light-grey body (#fcfcfd →
+ *      #e2e3e6) under nine stacked light layers — top ridge, hemisphere catch,
+ *      key light, two gloss reflections, edge illumination, bottom curvature,
+ *      contact shadow, inner glow. That stack is what made it read as a
+ *      physical object on a white page, and it is also what kept the pill
+ *      looking grey no matter how far the fill's alpha came down: the
+ *      highlights were the grey. Real glass has no fill and no specular
+ *      stack. What remains is a `backdrop-filter`, a hairline edge and a
+ *      shadow to lift it off the page.
  *
- *   2. Width. The original hardcodes 140px collapsed / 580px expanded, which
- *      fits its four demo labels ("Home", "Problem", "Solution", "Contact")
- *      and nothing else. PRO1ST has up to six, including "System Packages"
- *      and "Support & FAQ", so a fixed 580 clips them. Both widths are
- *      measured off always-rendered sizer nodes instead. The sizers use
- *      `visibility: hidden`, never `display: none` — a display:none node has
- *      no box to measure, which is what produced an empty pill before.
+ *   2. The hover expansion. The original collapses to the active label and
+ *      expands on hover, which hides the navigation until it is pointed at
+ *      and makes every destination a two-step reveal. All items are visible
+ *      at all times now. With no width to animate between two states, the
+ *      spring, the sizer nodes and the measurement that fed them are all
+ *      gone too — the bar is simply as wide as its contents.
  *
- *   3. Links, not scroll targets. The demo tracks a section id on one page.
- *      These are real routes, so items are `next/link` and the active item
- *      comes from the pathname. Navigation is all the pill does — it opens no
- *      panel, so hovering the bar never covers the page behind it.
- *
- * No framer-motion. Width, opacity and blur are CSS transitions; the spring
- * was the only thing the dependency was buying and a spring that overshoots a
- * measured width just reintroduces the clipping.
+ *   3. Scroll targets. The demo tracks a section id on one page; these are
+ *      real routes, so items are `next/link` and the active one comes from
+ *      the pathname.
  */
 
 export interface PillNavItem {
@@ -47,332 +39,65 @@ export interface PillNavItem {
 
 interface PillBaseProps {
   items: PillNavItem[];
-  /** Href of the item to show while collapsed. */
+  /** Href of the item to mark as current. */
   activeHref: string;
   className?: string;
 }
-
-const COLLAPSE_DELAY_MS = 600;
-/** Breathing room either side of the measured content. */
-const PILL_PADDING = 48;
 
 export function PillBase({
   items,
   activeHref,
   className = "",
 }: PillBaseProps) {
-  const [expanded, setExpanded] = useState(false);
-  const [collapsedWidth, setCollapsedWidth] = useState(140);
-  const [expandedWidth, setExpandedWidth] = useState(580);
-
-  const collapsedSizerRef = useRef<HTMLDivElement>(null);
-  const expandedSizerRef = useRef<HTMLDivElement>(null);
-  const hoverTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
-
-  const activeItem = items.find((item) => item.href === activeHref) ?? items[0];
-
-  // Both sizers are laid out for real at all times, so a measurement is always
-  // available — including on the very first paint, before any hover.
-  useLayoutEffect(() => {
-    const measure = () => {
-      const collapsed = collapsedSizerRef.current;
-      const expandedNode = expandedSizerRef.current;
-      if (collapsed) {
-        setCollapsedWidth(
-          Math.round(collapsed.getBoundingClientRect().width) + PILL_PADDING,
-        );
-      }
-      if (expandedNode) {
-        setExpandedWidth(
-          Math.round(expandedNode.getBoundingClientRect().width) +
-            PILL_PADDING,
-        );
-      }
-    };
-
-    measure();
-
-    const observer = new ResizeObserver(measure);
-    if (collapsedSizerRef.current) observer.observe(collapsedSizerRef.current);
-    if (expandedSizerRef.current) observer.observe(expandedSizerRef.current);
-
-    // Labels reflow once the variable fonts land; re-measure rather than
-    // freezing the fallback-font width.
-    let cancelled = false;
-    void document.fonts?.ready.then(() => {
-      if (!cancelled) measure();
-    });
-
-    return () => {
-      cancelled = true;
-      observer.disconnect();
-    };
-  }, [items, activeItem?.label]);
-
-  useEffect(
-    () => () => {
-      if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
-    },
-    [],
-  );
-
-  const open = () => {
-    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
-    setExpanded(true);
-  };
-
-  const close = () => {
-    if (hoverTimeout.current) clearTimeout(hoverTimeout.current);
-    hoverTimeout.current = setTimeout(
-      () => setExpanded(false),
-      COLLAPSE_DELAY_MS,
-    );
-  };
-
   return (
     <nav
       aria-label="Primary"
-      onMouseEnter={open}
-      onMouseLeave={close}
-      onFocusCapture={open}
-      onBlurCapture={(event) => {
-        if (!event.currentTarget.contains(event.relatedTarget as Node | null)) {
-          close();
-        }
-      }}
-      className={`relative rounded-full ${className}`}
+      className={`relative flex h-14 items-center gap-1 rounded-full px-3 ${className}`}
       style={{
-        width: expanded ? expandedWidth : collapsedWidth,
-        height: 56,
-        overflow: "hidden",
-        background: `linear-gradient(135deg,
-          rgba(255, 255, 255, 0.13) 0%,
-          rgba(255, 255, 255, 0.09) 18%,
-          rgba(255, 255, 255, 0.06) 38%,
-          rgba(255, 255, 255, 0.05) 58%,
-          rgba(255, 255, 255, 0.06) 78%,
-          rgba(255, 255, 255, 0.09) 100%
-        )`,
-        backdropFilter: "blur(18px) saturate(140%)",
-        WebkitBackdropFilter: "blur(18px) saturate(140%)",
-        boxShadow: expanded
-          ? `0 2px 4px rgba(0, 0, 0, 0.30),
-             0 6px 12px rgba(0, 0, 0, 0.36),
-             0 12px 24px rgba(0, 0, 0, 0.40),
-             0 24px 48px rgba(0, 0, 0, 0.34),
-             inset 0 2px 2px rgba(255, 255, 255, 0.26),
-             inset 0 -3px 8px rgba(0, 0, 0, 0.34),
-             inset 3px 3px 8px rgba(255, 255, 255, 0.07),
-             inset -3px 3px 8px rgba(0, 0, 0, 0.26),
-             inset 0 0 0 0.5px rgba(255, 255, 255, 0.18)`
-          : `0 3px 6px rgba(0, 0, 0, 0.32),
-             0 8px 16px rgba(0, 0, 0, 0.30),
-             0 16px 32px rgba(0, 0, 0, 0.26),
-             inset 0 2px 1px rgba(255, 255, 255, 0.20),
-             inset 0 -2px 6px rgba(0, 0, 0, 0.30),
-             inset 2px 2px 8px rgba(255, 255, 255, 0.06),
-             inset -2px 2px 8px rgba(0, 0, 0, 0.22),
-             inset 0 0 0 0.5px rgba(255, 255, 255, 0.14)`,
-        transition:
-          "width 420ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 300ms ease-out",
+        // A pane, not a body. The fill is a 6%→2% sheen across the diagonal —
+        // enough for the surface to catch light and read as a solid object,
+        // far below the level where it starts to look like frosted plastic.
+        // The nine-layer specular stack this component shipped with is what
+        // made it grey; a single soft gradient does the same job at a tenth
+        // of the weight.
+        background:
+          "linear-gradient(135deg, rgba(255,255,255,0.06) 0%, rgba(255,255,255,0.03) 45%, rgba(255,255,255,0.02) 100%)",
+        backdropFilter: "blur(16px) saturate(130%)",
+        WebkitBackdropFilter: "blur(16px) saturate(130%)",
+        boxShadow: `
+          0 2px 8px rgba(0, 0, 0, 0.28),
+          0 12px 32px rgba(0, 0, 0, 0.22),
+          inset 0 1px 0 rgba(255, 255, 255, 0.14),
+          inset 0 0 0 1px rgba(255, 255, 255, 0.09)
+        `,
       }}
     >
-      {/* Top edge ridge. */}
+      {/* Top-edge light catch — the one highlight worth keeping. */}
       <div
+        aria-hidden="true"
         className="pointer-events-none absolute inset-x-0 top-0 rounded-t-full"
         style={{
-          height: 2,
+          height: "45%",
           background:
-            "linear-gradient(90deg, rgba(255,255,255,0) 0%, rgba(255,255,255,0.45) 5%, rgba(255,255,255,0.62) 15%, rgba(255,255,255,0.62) 85%, rgba(255,255,255,0.45) 95%, rgba(255,255,255,0) 100%)",
-          filter: "blur(0.3px)",
+            "linear-gradient(180deg, rgba(255,255,255,0.07) 0%, rgba(255,255,255,0.02) 55%, rgba(255,255,255,0) 100%)",
         }}
       />
 
-      {/* Top hemisphere light catch. */}
-      <div
-        className="pointer-events-none absolute inset-x-0 top-0 rounded-full"
-        style={{
-          height: "55%",
-          background:
-            "linear-gradient(180deg, rgba(255,255,255,0.16) 0%, rgba(255,255,255,0.08) 30%, rgba(255,255,255,0.03) 60%, rgba(255,255,255,0) 100%)",
-        }}
-      />
-
-      {/* Directional key light, top-left. */}
-      <div
-        className="pointer-events-none absolute inset-0 rounded-full"
-        style={{
-          background:
-            "linear-gradient(135deg, rgba(255,255,255,0.14) 0%, rgba(255,255,255,0.07) 20%, rgba(255,255,255,0.02) 40%, rgba(255,255,255,0) 65%)",
-        }}
-      />
-
-      {/* Primary gloss reflection. */}
-      <div
-        className="pointer-events-none absolute rounded-full"
-        style={{
-          left: expanded ? "18%" : "15%",
-          top: "16%",
-          width: expanded ? 140 : 60,
-          height: 14,
-          background:
-            "radial-gradient(ellipse at center, rgba(255,255,255,0.38) 0%, rgba(255,255,255,0.17) 40%, rgba(255,255,255,0.04) 70%, rgba(255,255,255,0) 100%)",
-          filter: "blur(4px)",
-          transform: "rotate(-12deg)",
-          transition: "all 300ms ease",
-        }}
-      />
-
-      {/* Secondary gloss accent. */}
-      <div
-        className="pointer-events-none absolute rounded-full"
-        style={{
-          right: "22%",
-          top: "20%",
-          width: 80,
-          height: 10,
-          background:
-            "radial-gradient(ellipse at center, rgba(255,255,255,0.28) 0%, rgba(255,255,255,0.08) 60%, rgba(255,255,255,0) 100%)",
-          filter: "blur(3px)",
-          transform: "rotate(8deg)",
-          opacity: expanded ? 1 : 0,
-          transition: "opacity 300ms ease",
-        }}
-      />
-
-      {/* Left edge illumination / right edge shadow. */}
-      <div
-        className="pointer-events-none absolute inset-y-0 left-0 rounded-l-full"
-        style={{
-          width: "35%",
-          background:
-            "linear-gradient(90deg, rgba(255,255,255,0.13) 0%, rgba(255,255,255,0.06) 40%, rgba(255,255,255,0.02) 70%, rgba(255,255,255,0) 100%)",
-          opacity: expanded ? 1 : 0,
-          transition: "opacity 300ms ease",
-        }}
-      />
-      <div
-        className="pointer-events-none absolute inset-y-0 right-0 rounded-r-full"
-        style={{
-          width: "35%",
-          background:
-            "linear-gradient(270deg, rgba(0,0,0,0.26) 0%, rgba(0,0,0,0.13) 40%, rgba(0,0,0,0.05) 70%, rgba(0,0,0,0) 100%)",
-          opacity: expanded ? 1 : 0,
-          transition: "opacity 300ms ease",
-        }}
-      />
-
-      {/* Bottom curvature and contact shadow. */}
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 rounded-b-full"
-        style={{
-          height: "50%",
-          background:
-            "linear-gradient(0deg, rgba(0,0,0,0.32) 0%, rgba(0,0,0,0.17) 25%, rgba(0,0,0,0.06) 50%, rgba(0,0,0,0) 100%)",
-        }}
-      />
-      <div
-        className="pointer-events-none absolute inset-x-0 bottom-0 rounded-b-full"
-        style={{
-          height: "20%",
-          background:
-            "linear-gradient(0deg, rgba(0,0,0,0.36) 0%, rgba(0,0,0,0) 100%)",
-          filter: "blur(2px)",
-        }}
-      />
-
-      {/* Inner diffuse glow. */}
-      <div
-        className="pointer-events-none absolute inset-0 rounded-full"
-        style={{
-          boxShadow: "inset 0 0 40px rgba(255, 255, 255, 0.10)",
-          opacity: 0.7,
-        }}
-      />
-
-      {/*
-        Sizers. Laid out and measurable at all times, hidden with `visibility`
-        so they never paint and are never read aloud. `inert` keeps their links
-        out of the tab order.
-      */}
-      <div
-        aria-hidden="true"
-        // @ts-expect-error — `inert` is valid HTML; React 19 types lag here.
-        inert=""
-        className="pointer-events-none absolute left-0 top-0 flex h-full items-center"
-        style={{ visibility: "hidden", width: "max-content" }}
-      >
-        <div ref={collapsedSizerRef} style={{ width: "max-content" }}>
-          <span className="pill-label pill-label--active">
-            {activeItem?.label}
-          </span>
-        </div>
-      </div>
-      <div
-        aria-hidden="true"
-        // @ts-expect-error — `inert` is valid HTML; React 19 types lag here.
-        inert=""
-        className="pointer-events-none absolute left-0 top-0 flex h-full items-center"
-        style={{ visibility: "hidden", width: "max-content" }}
-      >
-        <div ref={expandedSizerRef} className="flex" style={{ width: "max-content" }}>
-          {items.map((item) => (
-            <span key={item.href} className="pill-label px-4">
-              {item.label}
-            </span>
-          ))}
-        </div>
-      </div>
-
-      {/* Content. */}
-      <div className="relative z-10 flex h-full items-center justify-center px-6">
-        {/* Collapsed: the current route only. */}
-        <span
-          aria-hidden={expanded}
-          className="pill-label pill-label--active absolute"
-          style={{
-            opacity: expanded ? 0 : 1,
-            transform: expanded ? "translateY(-8px)" : "translateY(0)",
-            filter: expanded ? "blur(4px)" : "blur(0px)",
-            transition:
-              "opacity 260ms ease, transform 260ms ease, filter 260ms ease",
-            pointerEvents: "none",
-          }}
-        >
-          {activeItem?.label}
-        </span>
-
-        {/* Expanded: every route. */}
-        <div
-          className="flex w-full items-center justify-evenly"
-          style={{
-            opacity: expanded ? 1 : 0,
-            transform: expanded ? "translateY(0)" : "translateY(6px)",
-            filter: expanded ? "blur(0px)" : "blur(4px)",
-            transition:
-              "opacity 300ms ease 80ms, transform 300ms ease 80ms, filter 300ms ease 80ms",
-            pointerEvents: expanded ? "auto" : "none",
-          }}
-        >
-          {items.map((item) => {
-            const isActive = item.href === activeHref;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                tabIndex={expanded ? 0 : -1}
-                aria-current={isActive ? "page" : undefined}
-                onClick={() => setExpanded(false)}
-                className={`pill-label whitespace-nowrap px-4 py-2.5 ${
-                  isActive ? "pill-label--active" : ""
-                }`}
-              >
-                {item.label}
-              </Link>
-            );
-          })}
-        </div>
-      </div>
+      {items.map((item) => {
+        const isActive = item.href === activeHref;
+        return (
+          <Link
+            key={item.href}
+            href={item.href}
+            aria-current={isActive ? "page" : undefined}
+            className={`pill-label relative whitespace-nowrap rounded-full px-4 py-2.5 ${
+              isActive ? "pill-label--active" : ""
+            }`}
+          >
+            {item.label}
+          </Link>
+        );
+      })}
     </nav>
   );
 }

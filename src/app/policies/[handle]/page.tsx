@@ -4,6 +4,9 @@ import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { getPolicies, getPolicy } from "@/lib/shopify/policies";
 
+/** Policy bodies are edited in Shopify admin; see the note on src/app/page.tsx. */
+export const revalidate = 300;
+
 interface PageProps {
   params: Promise<{ handle: string }>;
 }

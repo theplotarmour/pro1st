@@ -14,15 +14,7 @@ import { CartIcon, MenuIcon, SearchIcon } from "./icons";
 export function Header({ categories }: { categories: CategorySummary[] }) {
   const pathname = usePathname();
   const { count, open: openCart } = useCart();
-  const [condensed, setCondensed] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
-
-  useEffect(() => {
-    const onScroll = () => setCondensed(window.scrollY > 80);
-    onScroll();
-    window.addEventListener("scroll", onScroll, { passive: true });
-    return () => window.removeEventListener("scroll", onScroll);
-  }, []);
 
   // Route changes close every transient surface.
   useEffect(() => {
@@ -58,16 +50,14 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
         Skip to content
       </a>
 
-      <header
-        className="fixed inset-x-0 top-0 z-[120] flex items-center gap-6 gutter-x border-b transition-[height,background-color,border-color,backdrop-filter] duration-[420ms] ease-signal"
-        style={{
-          height: condensed ? 56 : 72,
-          backgroundColor: condensed ? "var(--header-bg)" : "transparent",
-          backdropFilter: condensed ? "blur(16px)" : "none",
-          borderBottomColor: condensed ? "var(--hairline)" : "transparent",
-        }}
-      >
-        <Logo collapsed={condensed} />
+      {/*
+        Absolute, not fixed: the header belongs to the top of the page and
+        scrolls away with it. It keeps no scroll state — the condense-on-scroll
+        height, background and blur existed only to keep a pinned bar legible
+        over the content passing beneath it, and there is no pinned bar now.
+      */}
+      <header className="absolute inset-x-0 top-0 z-[120] flex h-[72px] items-center gap-6 gutter-x">
+        <Logo collapsed={false} />
 
         {/*
           Centred on the viewport, not on the space left between the logo and

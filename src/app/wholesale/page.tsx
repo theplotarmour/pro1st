@@ -7,6 +7,9 @@ import { PageHeader } from "@/components/ui/PageHeader";
 import { contact } from "@/data/site";
 import { productRepository } from "@/lib/products";
 
+/** Bulk-order table reads the live catalogue; see the note on src/app/page.tsx. */
+export const revalidate = 300;
+
 export const metadata: Metadata = {
   title: "Wholesale",
   description:
