@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { Suspense } from "react";
 import { ProductFeatures } from "@/components/product/ProductFeatures";
 import { ProductGallery } from "@/components/product/ProductGallery";
 import { ProductInfo } from "@/components/product/ProductInfo";
 import { ProductSpecs } from "@/components/product/ProductSpecs";
 import { RelatedProducts } from "@/components/product/RelatedProducts";
+import { ProductReviews } from "@/components/reviews/ProductReviews";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { Container } from "@/components/ui/Container";
 import { site } from "@/data/site";
@@ -143,6 +145,15 @@ export default async function ProductPage({ params }: PageProps) {
           </div>
         </div>
       </Container>
+
+      {/*
+        Reviews sit above related products: a buyer deciding on this unit
+        should meet other buyers' verdicts before being offered alternatives.
+        Suspended so a slow review service never holds up the product itself.
+      */}
+      <Suspense fallback={null}>
+        <ProductReviews productId={product.id} productTitle={product.title} />
+      </Suspense>
 
       <Container as="section" className="pb-24 lg:pb-32">
         <RelatedProducts products={related} />
