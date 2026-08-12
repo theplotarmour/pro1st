@@ -9,9 +9,19 @@ interface MediaProps {
   /** `cover` fills the frame; `contain` is for isolated product shots. */
   fit?: "cover" | "contain";
   sizes?: string;
+  /** Preloads at high priority. For the one image that is the LCP. */
   priority?: boolean;
+  /**
+   * Fetches immediately at normal priority, without the LCP preload.
+   *
+   * For media that is mounted but not yet shown — a gallery frame waiting
+   * behind the visible one. Lazy loading is keyed on intersection, and an
+   * element at `opacity: 0` still intersects, so the browser is free to defer
+   * it indefinitely; when the reader then clicks a thumbnail they wait on the
+   * network for an image that has been in the DOM the whole time.
+   */
+  eager?: boolean;
   className?: string;
-  /** Skip lazy-loading for above-the-fold media. */
   quality?: number;
 }
 
@@ -26,6 +36,7 @@ export function Media({
   fit = "cover",
   sizes = "(max-width: 760px) 100vw, (max-width: 1100px) 50vw, 33vw",
   priority = false,
+  eager = false,
   className = "",
   quality,
 }: MediaProps) {
@@ -52,6 +63,7 @@ export function Media({
       fill
       sizes={sizes}
       priority={priority}
+      loading={eager && !priority ? "eager" : undefined}
       quality={quality}
       onError={() => setFailed(true)}
       className={className}

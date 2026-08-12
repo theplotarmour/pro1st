@@ -1,6 +1,5 @@
 "use client";
 
-import { useEffect, useState } from "react";
 import { ButtonLink } from "@/components/ui/Button";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { SonicWaveform } from "@/components/ui/sonic-waveform";
@@ -13,31 +12,15 @@ import { useGsapContext } from "@/lib/motion/gsap";
  * Hero: the waveform behind a dark blurred veil, with the headline, lead and
  * CTAs stacked in the centre of the viewport on top of it.
  *
- * The veil is a `backdrop-filter` layer rather than a flat scrim. A scrim
- * alone can only be made readable by turning it up until the ribbon is gone;
- * a light blur softens the fine strokes that were competing with the type, so
- * much less darkening is needed and the ribbon keeps its shape. Deliberately
- * kept minor — 5px, enough to settle the detail behind the text and no more.
- * It sits between the canvas and the copy, and is masked to stay strongest
- * behind the text and clear at the edges of the frame.
+ * Two layers sit between the ribbon and the copy: the ribbon is blurred on
+ * its own layer (see below), and a masked gradient supplies the darkening,
+ * strongest behind the text and clear at the frame edges.
  */
 export function Hero() {
-  const [play, setPlay] = useState(false);
-
-  // Plays on mount. There is no preload curtain to wait for any more — the
-  // headline is readable as soon as the document paints.
-  useEffect(() => {
-    const frame = requestAnimationFrame(() => setPlay(true));
-    return () => cancelAnimationFrame(frame);
-  }, []);
-
-  // 160%, not 100%: the clip box is padded out past the line box to fit the
-  // display face (see below), so a 100% offset would leave the line peeking
-  // into that padding before it animates in.
+  // The reveal is a CSS animation (`.p1-hero-line`), so the headline does not
+  // wait on hydration to become visible — only the stagger is set here.
   const line = (index: number) => ({
-    display: "block",
-    transform: play ? "translateY(0)" : "translateY(160%)",
-    transition: `transform 900ms var(--e-signal) ${index * 90}ms`,
+    animationDelay: `${index * 90}ms`,
   });
 
   /*
@@ -91,21 +74,29 @@ export function Hero() {
         }}
       />
 
-      <div data-hero-stage="" className="pointer-events-none absolute inset-0 z-0">
+      {/*
+        The blur is on the ribbon itself, not on a `backdrop-filter` above it.
+
+        Both look the same at this radius, and the cost is not close. A
+        full-viewport backdrop filter has to re-sample everything beneath it
+        every time that backdrop changes, and the backdrop here is a canvas
+        repainting continuously — a whole-screen filter every frame, for as
+        long as the hero is on screen. Filtering the canvas layer instead is
+        one already-composited surface, blurred once per repaint.
+      */}
+      <div
+        data-hero-stage=""
+        className="pointer-events-none absolute inset-0 z-0"
+        style={{ filter: "blur(5px)" }}
+      >
         <SonicWaveform />
       </div>
 
-      {/*
-        The blurred veil. `backdrop-filter` blurs the canvas beneath it; the
-        gradient on top supplies the darkening. Masked to fade out towards the
-        frame edges so the ribbon still reads sharp where no text sits over it.
-      */}
+      {/* The veil. Masked to fade out towards the frame edges. */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-[1]"
         style={{
-          backdropFilter: "blur(5px)",
-          WebkitBackdropFilter: "blur(5px)",
           background:
             "radial-gradient(ellipse 78% 62% at 50% 48%, color-mix(in srgb, var(--surface-base) 74%, transparent) 0%, color-mix(in srgb, var(--surface-base) 48%, transparent) 55%, transparent 100%)",
           maskImage:
@@ -129,12 +120,12 @@ export function Hero() {
         */}
         <h1 className="p1-h1">
           <span className="block overflow-hidden py-[0.24em] -my-[0.24em]">
-            <span data-p1-hero-word="" style={line(0)}>
+            <span data-p1-hero-word="" className="p1-hero-line" style={line(0)}>
               {heroContent.headlineTop}
             </span>
           </span>
           <span className="block overflow-hidden py-[0.24em] -my-[0.24em]">
-            <span data-p1-hero-word="" style={line(1)}>
+            <span data-p1-hero-word="" className="p1-hero-line" style={line(1)}>
               <span className="text-signal">{heroContent.headlineAccent}</span>{" "}
               {heroContent.headlineRest}
             </span>

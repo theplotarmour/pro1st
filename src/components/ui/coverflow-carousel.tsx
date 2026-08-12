@@ -193,9 +193,26 @@ export function CoverflowCarousel({
     });
   }, [centreScale, count, depth, fade, falloff, gap, loop, rotate]);
 
+  /*
+    `will-change` is applied for the duration of a movement and taken off
+    again afterwards.
+
+    Left on permanently — as it was — it holds every card on its own
+    compositor layer for the entire life of the page. That is eleven
+    shadowed, 3D-rotated textures resident in GPU memory on a device that may
+    not have much, to accelerate an animation that is not running. The hint
+    is only worth anything while something is actually moving.
+  */
+  const setPromotion = React.useCallback((on: boolean) => {
+    for (const card of cardRefs.current) {
+      if (card) card.style.willChange = on ? "transform, opacity" : "";
+    }
+  }, []);
+
   const settle = React.useCallback(
     (target: number) => {
       if (rafRef.current !== null) cancelAnimationFrame(rafRef.current);
+      setPromotion(true);
       targetRef.current = target;
       setSelected(indexAt(target));
 
@@ -203,6 +220,7 @@ export function CoverflowCarousel({
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         posRef.current = target;
         paint();
+        setPromotion(false);
         return;
       }
 
@@ -212,6 +230,7 @@ export function CoverflowCarousel({
           posRef.current = target;
           paint();
           rafRef.current = null;
+          setPromotion(false);
           return;
         }
         // Exponential ease-out, not a spring. Swap in a spring only if the
@@ -222,7 +241,7 @@ export function CoverflowCarousel({
       };
       rafRef.current = requestAnimationFrame(step);
     },
-    [indexAt, paint],
+    [indexAt, paint, setPromotion],
   );
 
   const clamp = React.useCallback(
@@ -285,6 +304,7 @@ export function CoverflowCarousel({
       if (!drag.active) {
         if (Math.abs(travelled) < DRAG_THRESHOLD) return;
         drag.active = true;
+        setPromotion(true);
       }
 
       const pitch = widthRef.current * (1 + gap);
@@ -413,7 +433,7 @@ export function CoverflowCarousel({
                   aria-roledescription="slide"
                   aria-label={`${index + 1} of ${count}`}
                   className={cn(
-                    "absolute left-1/2 top-0 flex flex-col overflow-hidden border border-hairline bg-panel will-change-transform",
+                    "absolute left-1/2 top-0 flex flex-col overflow-hidden border border-hairline bg-panel",
                     cardClassName,
                   )}
                   style={{

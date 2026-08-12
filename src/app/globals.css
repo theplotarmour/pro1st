@@ -151,6 +151,24 @@
   }
 }
 
+/*
+   Hero headline reveal.
+
+   A CSS animation, not a JS-triggered transition. It used to render at
+   translateY(160%) and wait for React to hydrate and fire a rAF before moving
+   — so on a slow device, or any time that frame was delayed, the headline was
+   simply invisible. `both` fill means the line starts hidden and ends
+   visible whether or not any script ever runs.
+*/
+@keyframes p1-hero-rise {
+  from {
+    transform: translateY(160%);
+  }
+  to {
+    transform: translateY(0);
+  }
+}
+
 @keyframes p1-blink {
   0%,
   100% {
@@ -221,6 +239,11 @@
      not prose — the same register as the mono labels used throughout the
      page, so the bar reads as part of the system instead of a separate menu.
   */
+  .p1-hero-line {
+    display: block;
+    animation: p1-hero-rise 900ms var(--ease-signal) both;
+  }
+
   .pill-label {
     font-family: var(--f-m);
     font-size: 11px;
@@ -236,9 +259,11 @@
     color: var(--text-strong);
   }
 
-  .pill-label--active {
+  /* The current page is named in the brand colour, not just weighted. */
+  .pill-label--active,
+  .pill-label--active:hover {
     font-weight: 700;
-    color: var(--text-strong);
+    color: var(--signal);
   }
 
   /* Mono micro-label — section eyebrows, meta, buttons. */

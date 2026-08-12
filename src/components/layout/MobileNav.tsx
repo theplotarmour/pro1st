@@ -1,6 +1,7 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useRef } from "react";
 import { contact, primaryNav } from "@/data/site";
 import { useFocusTrap } from "@/lib/a11y/useFocusTrap";
@@ -19,6 +20,7 @@ interface MobileNavProps {
  */
 export function MobileNav({ open, onClose, categories }: MobileNavProps) {
   const panelRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
 
   // Escape, scroll lock, focus trap and focus restore all live in one place.
   useFocusTrap(panelRef, open, { onClose });
@@ -41,16 +43,27 @@ export function MobileNav({ open, onClose, categories }: MobileNavProps) {
               !item.requiresCollection ||
               categories.some((c) => c.slug === item.requiresCollection),
           )
-          .map((item) => (
-          <Link
-            key={item.href}
-            href={item.href}
-            onClick={onClose}
-            className="border-b border-hairline py-5 font-display text-2xl font-medium tracking-[-0.02em] text-strong"
-          >
-            {item.label}
-          </Link>
-          ))}
+          .map((item) => {
+            // Same rule the desktop pill uses: longest matching prefix wins,
+            // and "/" only ever matches the home route.
+            const path = item.href.split(/[?#]/)[0] ?? item.href;
+            const isCurrent =
+              path === "/" ? pathname === "/" : pathname.startsWith(path);
+
+            return (
+              <Link
+                key={item.href}
+                href={item.href}
+                onClick={onClose}
+                aria-current={isCurrent ? "page" : undefined}
+                className={`border-b border-hairline py-5 font-display text-2xl font-medium tracking-[-0.02em] ${
+                  isCurrent ? "text-signal" : "text-strong"
+                }`}
+              >
+                {item.label}
+              </Link>
+            );
+          })}
       </nav>
 
       <div className="gutter-x pb-8">

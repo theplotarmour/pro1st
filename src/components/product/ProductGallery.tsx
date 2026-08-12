@@ -9,9 +9,28 @@ interface ProductGalleryProps {
   title: string;
 }
 
+/**
+ * Product gallery.
+ *
+ * Every image is mounted at once and switching is a crossfade, rather than one
+ * frame whose `src` is swapped.
+ *
+ * Swapping the source meant each thumbnail press started a fresh request for
+ * the full-size optimised image and waited on the network and the decode
+ * before anything appeared — on a slow connection that is seconds of blank
+ * frame per click, every time, including going back to an image already seen.
+ * Mounted together, the browser fetches them once and every later switch is a
+ * composited opacity change.
+ *
+ * Only the first carries `priority` — it is the LCP and gets the preload. The
+ * rest are `eager`, which fetches them straight away at normal priority
+ * rather than leaving them to lazy loading: an element at `opacity: 0` still
+ * intersects the viewport, so the browser is entitled to defer it forever,
+ * and the reader ends up waiting on the network for an image that has been in
+ * the DOM since the page loaded.
+ */
 export function ProductGallery({ images, title }: ProductGalleryProps) {
   const [active, setActive] = useState(0);
-  const current = images[active] ?? images[0];
 
   return (
     <div className="flex flex-col gap-4">
@@ -24,15 +43,27 @@ export function ProductGallery({ images, title }: ProductGalleryProps) {
               "radial-gradient(ellipse at 50% 62%, var(--sig-12), transparent 60%)",
           }}
         />
-        {current ? (
-          <Media
-            src={current.src}
-            alt={current.alt || title}
-            fit="contain"
-            priority
-            sizes="(max-width: 1100px) 100vw, 55vw"
-            className="p-8"
-          />
+        {images.length > 0 ? (
+          images.map((image, index) => (
+            <div
+              key={image.src}
+              // Only the visible frame is exposed; the rest are decoration
+              // sitting underneath it.
+              aria-hidden={index !== active}
+              className="absolute inset-0 transition-opacity duration-300 ease-signal"
+              style={{ opacity: index === active ? 1 : 0 }}
+            >
+              <Media
+                src={image.src}
+                alt={index === active ? image.alt || title : ""}
+                fit="contain"
+                priority={index === 0}
+                eager
+                sizes="(max-width: 1100px) 100vw, 55vw"
+                className="p-8"
+              />
+            </div>
+          ))
         ) : (
           <div className="grid h-full place-items-center">
             <span className="p1-mono text-faint">
