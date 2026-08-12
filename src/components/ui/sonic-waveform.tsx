@@ -5,37 +5,41 @@ import { useEffect, useRef } from "react";
 /**
  * Sonic waveform — the hero soundstage.
  *
- * Canvas 2D rather than Three.js: this costs nothing in bundle size where a
- * WebGL scene would have added roughly 600KB gzipped for a background.
+ * The supplied `SonicWaveformCanvas` algorithm, unchanged in structure: 60
+ * overlapping curves sharing one centre line, each a sum of a slow noise term
+ * and a beating spike term, with a translucent fill each frame producing the
+ * motion-trail persistence that gives the ribbon its density. The cursor
+ * amplifies the spike within a 400px radius.
  *
- * A field of phase-shifted sine curves flowing across the viewport, brightest
- * through the middle band, tinted toward the signal accent at their peaks.
- * The cursor bends the field locally — the surface reacts to you rather than
- * looping at you, which is the difference between a soundstage and a screen
- * saver.
+ * Two adaptations, both required:
  *
- * Deliberately different from a bar spectrum: continuous curves with additive
- * blending read as a field of energy; vertical bars read as a media-player
- * visualiser, which is what made the previous version look amateurish.
+ *   1. Colour. The original strokes teal (0,255,192) on `bg-black`. PRO1ST is
+ *      signal orange on #0d0d0f, so the stroke and the trail fill are read
+ *      from the --signal and --surface-base custom properties at runtime.
+ *      Hardcoding teal would have put a second accent colour on the brand.
+ *
+ *   2. Sizing. The original measures `window.innerWidth/Height`. This is a
+ *      section background, not a full-page canvas, so it measures its own box
+ *      and is DPR-correct — otherwise it draws off-register inside the hero.
+ *
+ * The demo hero that shipped alongside it is deliberately NOT used: it carries
+ * its own copy ("Sonic Waveform", "Real-Time Data Sonification", "Analyze the
+ * Stream") for a data-sonification product, and its framer-motion entrance and
+ * lucide icons would have replaced PRO1ST's headline and CTAs. Only the canvas
+ * was wanted, so neither dependency is installed.
  */
 
 interface SonicWaveformProps {
-  /** Curves drawn per frame. Fewer on small screens. */
+  /** Overlapping curves per frame. */
   lineCount?: number;
+  /** Horizontal resolution of each curve. */
+  segmentCount?: number;
   className?: string;
 }
 
-interface Pointer {
-  x: number;
-  y: number;
-  /** Eased toward x/y so the field never snaps. */
-  ex: number;
-  ey: number;
-  active: boolean;
-}
-
 export function SonicWaveform({
-  lineCount = 28,
+  lineCount = 60,
+  segmentCount = 80,
   className = "",
 }: SonicWaveformProps) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
@@ -43,29 +47,30 @@ export function SonicWaveform({
   useEffect(() => {
     const canvas = canvasRef.current;
     if (!canvas) return;
-
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
+
+    const styles = getComputedStyle(document.documentElement);
+    const accent =
+      hexToRgb(styles.getPropertyValue("--signal").trim()) ??
+      { r: 255, g: 106, b: 0 };
+    const surface =
+      hexToRgb(styles.getPropertyValue("--surface-base").trim()) ??
+      { r: 13, g: 13, b: 15 };
 
     const reduced = window.matchMedia(
       "(prefers-reduced-motion: reduce)",
     ).matches;
 
-    // Read the brand accent from CSS rather than hardcoding it, so the
-    // waveform can never drift from the design tokens.
-    const styles = getComputedStyle(document.documentElement);
-    const signal = styles.getPropertyValue("--signal").trim() || "#ff6a00";
-    const rgb = hexToRgb(signal) ?? { r: 255, g: 106, b: 0 };
-
     let width = 0;
     let height = 0;
-    let frame = 0;
+    let animationFrameId = 0;
     let visible = true;
-    let running = true;
+    let time = 0;
 
-    const pointer: Pointer = { x: 0, y: 0, ex: 0, ey: 0, active: false };
+    const mouse = { x: 0, y: 0 };
 
-    const resize = () => {
+    const resizeCanvas = () => {
       const dpr = Math.min(2, window.devicePixelRatio || 1);
       const rect = canvas.getBoundingClientRect();
       width = rect.width;
@@ -73,93 +78,71 @@ export function SonicWaveform({
       canvas.width = Math.max(1, Math.round(width * dpr));
       canvas.height = Math.max(1, Math.round(height * dpr));
       ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
-      if (!pointer.active) {
-        pointer.x = pointer.ex = width * 0.72;
-        pointer.y = pointer.ey = height * 0.5;
-      }
+      mouse.x = width / 2;
+      mouse.y = height / 2;
     };
 
-    const draw = (time: number) => {
-      ctx.clearRect(0, 0, width, height);
-      ctx.globalCompositeOperation = "lighter";
+    const draw = () => {
+      // Translucent fill rather than clearRect — this is what leaves the
+      // motion trail behind each curve.
+      ctx.fillStyle = `rgba(${surface.r}, ${surface.g}, ${surface.b}, 0.1)`;
+      ctx.fillRect(0, 0, width, height);
 
-      // Ease the pointer so the field bends rather than jumps.
-      pointer.ex += (pointer.x - pointer.ex) * 0.06;
-      pointer.ey += (pointer.y - pointer.ey) * 0.06;
-
-      const t = time * 0.00016;
-      const midY = height * 0.5;
-      const step = Math.max(6, Math.round(width / 220));
+      const centre = height / 2;
 
       for (let i = 0; i < lineCount; i++) {
-        // -1 … 1 across the stack, 0 at the centre line.
-        const n = lineCount > 1 ? (i / (lineCount - 1)) * 2 - 1 : 0;
-        const baseY = midY + n * height * 0.36;
-
-        // Centre lines are brightest and carry the accent.
-        const centreness = 1 - Math.abs(n);
-        const heat = Math.pow(centreness, 2.4);
-        const alpha = 0.05 + heat * 0.42;
-        const mix = Math.pow(centreness, 3);
-
         ctx.beginPath();
-        ctx.lineWidth = 0.6 + heat * 1.1;
-        ctx.strokeStyle = `rgba(${Math.round(190 + (rgb.r - 190) * mix)},${Math.round(
-          195 + (rgb.g - 195) * mix,
-        )},${Math.round(205 + (rgb.b - 205) * mix)},${alpha.toFixed(3)})`;
+        const progress = i / lineCount;
+        const colorIntensity = Math.sin(progress * Math.PI);
+        ctx.strokeStyle = `rgba(${accent.r}, ${accent.g}, ${accent.b}, ${
+          colorIntensity * 0.5
+        })`;
+        ctx.lineWidth = 1.5;
 
-        for (let x = 0; x <= width + step; x += step) {
-          const u = x / Math.max(1, width);
+        for (let j = 0; j < segmentCount + 1; j++) {
+          const x = (j / segmentCount) * width;
 
-          // Three summed harmonics — enough to feel organic, cheap to run.
-          let y =
-            Math.sin(u * 7.5 + t * 2.1 + n * 1.9) * 26 +
-            Math.sin(u * 3.1 - t * 1.4 + n * 3.3) * 18 +
-            Math.sin(u * 15.7 + t * 3.2 + n * 0.7) * 7;
+          const distToMouse = Math.hypot(x - mouse.x, centre - mouse.y);
+          const mouseEffect = Math.max(0, 1 - distToMouse / 400);
 
-          // Envelope: energy concentrates through the middle of the stack.
-          y *= 0.35 + centreness * 0.95;
+          const noise = Math.sin(j * 0.1 + time + i * 0.2) * 20;
+          const spike =
+            Math.cos(j * 0.2 + time + i * 0.1) *
+            Math.sin(j * 0.05 + time) *
+            50;
+          const y = centre + noise + spike * (1 + mouseEffect * 2);
 
-          // Local displacement around the cursor, falling off with distance.
-          const dx = x - pointer.ex;
-          const dy = baseY - pointer.ey;
-          const dist = Math.sqrt(dx * dx + dy * dy);
-          const influence = Math.max(0, 1 - dist / (Math.max(width, height) * 0.32));
-          y -= influence * influence * 46;
-
-          const py = baseY + y;
-          if (x === 0) ctx.moveTo(x, py);
-          else ctx.lineTo(x, py);
+          if (j === 0) ctx.moveTo(x, y);
+          else ctx.lineTo(x, y);
         }
-
         ctx.stroke();
       }
 
-      ctx.globalCompositeOperation = "source-over";
+      time += 0.02;
     };
 
-    const loop = (time: number) => {
-      if (!running) return;
-      frame = requestAnimationFrame(loop);
-      if (visible) draw(time);
+    const loop = () => {
+      animationFrameId = requestAnimationFrame(loop);
+      if (visible) draw();
     };
 
-    const onPointerMove = (event: PointerEvent) => {
+    const handleMouseMove = (event: MouseEvent) => {
       const rect = canvas.getBoundingClientRect();
-      pointer.x = event.clientX - rect.left;
-      pointer.y = event.clientY - rect.top;
-      pointer.active = true;
+      mouse.x = event.clientX - rect.left;
+      mouse.y = event.clientY - rect.top;
     };
 
-    const onVisibility = () => {
+    const handleVisibility = () => {
       visible = document.visibilityState === "visible";
     };
 
-    resize();
+    resizeCanvas();
 
     if (reduced) {
-      // One static frame: the composition survives, the motion does not.
-      draw(0);
+      // The trail needs successive frames to build, so a single pass would
+      // render almost nothing. A short fixed run settles the composition,
+      // then it stops.
+      for (let i = 0; i < 60; i++) draw();
       return;
     }
 
@@ -171,37 +154,38 @@ export function SonicWaveform({
     );
     observer.observe(canvas);
 
-    const resizeObserver = new ResizeObserver(resize);
+    const resizeObserver = new ResizeObserver(resizeCanvas);
     resizeObserver.observe(canvas);
 
-    window.addEventListener("pointermove", onPointerMove, { passive: true });
-    document.addEventListener("visibilitychange", onVisibility);
-    frame = requestAnimationFrame(loop);
+    window.addEventListener("mousemove", handleMouseMove, { passive: true });
+    document.addEventListener("visibilitychange", handleVisibility);
+    loop();
 
     return () => {
-      running = false;
-      cancelAnimationFrame(frame);
+      cancelAnimationFrame(animationFrameId);
       observer.disconnect();
       resizeObserver.disconnect();
-      window.removeEventListener("pointermove", onPointerMove);
-      document.removeEventListener("visibilitychange", onVisibility);
+      window.removeEventListener("mousemove", handleMouseMove);
+      document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, [lineCount]);
+  }, [lineCount, segmentCount]);
 
   return (
     <canvas
       ref={canvasRef}
       aria-hidden="true"
       className={cn(
-        "pointer-events-none absolute inset-0 h-full w-full",
+        "pointer-events-none absolute inset-0 z-0 h-full w-full",
         className,
       )}
       style={{
-        // Dissolve the field into the page rather than ending on a hard edge.
+        // Dissolves the ribbon into the page instead of ending on a hard edge.
         maskImage:
-          "radial-gradient(ellipse 85% 75% at 62% 50%, #000 35%, transparent 78%)",
+          "linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent), radial-gradient(ellipse 90% 70% at 50% 50%, #000 40%, transparent 85%)",
         WebkitMaskImage:
-          "radial-gradient(ellipse 85% 75% at 62% 50%, #000 35%, transparent 78%)",
+          "linear-gradient(90deg, transparent, #000 18%, #000 82%, transparent), radial-gradient(ellipse 90% 70% at 50% 50%, #000 40%, transparent 85%)",
+        maskComposite: "intersect",
+        WebkitMaskComposite: "source-in",
       }}
     />
   );

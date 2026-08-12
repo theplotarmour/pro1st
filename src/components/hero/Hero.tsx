@@ -48,6 +48,17 @@ export function Hero() {
 
       <SonicWaveform />
 
+      {/* Scrim over the copy column only. The ribbon runs straight through the
+          lead paragraph, and text has to win that contest. */}
+      <div
+        aria-hidden="true"
+        className="pointer-events-none absolute inset-0 z-[1]"
+        style={{
+          background:
+            "linear-gradient(90deg, color-mix(in srgb, var(--surface-base) 92%, transparent) 0%, color-mix(in srgb, var(--surface-base) 74%, transparent) 34%, transparent 62%)",
+        }}
+      />
+
       <div className="p1-shell relative z-[2]">
         <div>
         <div className="p1-mono mb-8 flex items-center gap-2.5 text-muted">
