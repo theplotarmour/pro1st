@@ -200,6 +200,34 @@
     width: 100%;
   }
 
+  /*
+     Navigation pill labels. Shared by the visible items and by the hidden
+     sizers, so the measured width and the painted width can never drift —
+     any change to size, weight or tracking has to move both together.
+  */
+  .pill-label {
+    font-family: var(--f-b);
+    font-size: 14px;
+    font-weight: 510;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    color: var(--text-muted);
+    text-shadow: 0 1px 1px rgba(0, 0, 0, 0.45);
+    transition: color 200ms var(--ease-signal, ease);
+  }
+
+  .pill-label:hover {
+    color: var(--text-strong);
+  }
+
+  .pill-label--active {
+    font-weight: 680;
+    color: var(--text-strong);
+    text-shadow:
+      0 1px 1px rgba(0, 0, 0, 0.5),
+      0 0 12px rgba(255, 150, 70, 0.35);
+  }
+
   /* Mono micro-label — section eyebrows, meta, buttons. */
   .p1-mono {
     font-family: var(--f-m);

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
+import { PillBase } from "@/components/ui/3d-adaptive-navigation-bar";
 import { primaryNav } from "@/data/site";
 import { useCart } from "@/lib/cart/CartProvider";
 import type { CategorySummary } from "@/types/product";
@@ -50,10 +51,18 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
     (item) => !item.requiresCollection || available.has(item.requiresCollection),
   );
 
-  const isActive = (href: string) =>
-    href === "/"
-      ? pathname === "/"
-      : pathname.startsWith(href.split("?")[0] ?? href);
+  // The pill shows exactly one label while collapsed, so "active" has to
+  // resolve to a single item rather than a predicate several items can pass.
+  // Longest matching prefix wins; "/" only ever matches the home route.
+  const activeHref =
+    nav
+      .filter((item) => {
+        const path = item.href.split(/[?#]/)[0] ?? item.href;
+        return path === "/" ? pathname === "/" : pathname.startsWith(path);
+      })
+      .sort((a, b) => b.href.length - a.href.length)[0]?.href ??
+    nav[0]?.href ??
+    "/";
 
   return (
     <>
@@ -75,58 +84,20 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
       >
         <Logo collapsed={condensed} />
 
-        <nav
-          aria-label="Primary"
-          className="mx-auto hidden gap-7 font-body text-[13px] font-medium tracking-[0.02em] lg:flex"
-        >
-          {nav.map((item) =>
-            item.hasMegaMenu ? (
-              <div
-                key={item.href}
-                onMouseEnter={() => setMegaOpen(true)}
-                className="relative"
-              >
-                {/*
-                  The panel opens on hover for pointers and on focus for
-                  keyboards — hover alone made the whole category menu
-                  unreachable without a mouse.
-                */}
-                <Link
-                  href={item.href}
-                  aria-expanded={megaOpen}
-                  aria-haspopup="true"
-                  onFocus={() => setMegaOpen(true)}
-                  onKeyDown={(event) => {
-                    if (event.key === "Escape") setMegaOpen(false);
-                    if (event.key === "ArrowDown") {
-                      event.preventDefault();
-                      setMegaOpen(true);
-                    }
-                  }}
-                  className="block py-1.5 hover:text-strong"
-                  style={{
-                    color: isActive(item.href)
-                      ? "var(--p1-signal)"
-                      : undefined,
-                  }}
-                >
-                  {item.label}
-                </Link>
-              </div>
-            ) : (
-              <Link
-                key={item.href}
-                href={item.href}
-                className="py-1.5 hover:text-strong"
-                style={{
-                  color: isActive(item.href) ? "var(--p1-signal)" : undefined,
-                }}
-              >
-                {item.label}
-              </Link>
-            ),
-          )}
-        </nav>
+        {/*
+          The pill sits in the header's centre column. It carries its own
+          `nav` landmark and label, so the header must not wrap it in another.
+          The category panel still opens from the "Shop All" item, on hover for
+          pointers and on focus for keyboards — hover alone made the whole
+          category menu unreachable without a mouse.
+        */}
+        <div className="mx-auto hidden lg:block">
+          <PillBase
+            items={nav}
+            activeHref={activeHref}
+            onMegaMenuEnter={() => setMegaOpen(true)}
+          />
+        </div>
 
         <div className="ml-auto flex flex-none items-center gap-4 lg:ml-0 lg:gap-[18px]">
           <Link
