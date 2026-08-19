@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { ContactCTA } from "@/components/sections/ContactCTA";
+import { EventsSection } from "@/components/sections/EventsSection";
 import { Manifesto } from "@/components/sections/Manifesto";
 import { OriginSection } from "@/components/sections/OriginSection";
 import { QualityStandards } from "@/components/sections/QualityStandards";
@@ -45,6 +46,7 @@ export default async function OriginPage() {
       <OriginSection image={image} as="h2" showEyebrow={false} />
       <QualityStandards panels={panels} />
       <TrustBar />
+      <EventsSection />
       <Manifesto />
       <ShowroomSection />
       <ContactCTA />
