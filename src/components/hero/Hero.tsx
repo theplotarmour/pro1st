@@ -1,20 +1,24 @@
 "use client";
 
+import { HeroProductVideo } from "@/components/hero/HeroProductVideo";
 import { ButtonLink } from "@/components/ui/Button";
 import { Magnetic } from "@/components/ui/Magnetic";
 import { SonicWaveform } from "@/components/ui/sonic-waveform";
 import { heroContent } from "@/data/site";
 import { useGsapContext } from "@/lib/motion/gsap";
 
-
-
 /**
- * Hero: the waveform behind a dark blurred veil, with the headline, lead and
- * CTAs stacked in the centre of the viewport on top of it.
+ * Hero: copy in the left column, the AJ6 clip in the right, the waveform
+ * ribbon running behind both.
  *
- * Two layers sit between the ribbon and the copy: the ribbon is blurred on
- * its own layer (see below), and a masked gradient supplies the darkening,
- * strongest behind the text and clear at the frame edges.
+ * This is the approved split layout. The copy is set against the darkest part
+ * of the veil rather than floating in the middle of the ribbon, which is what
+ * lets the product hold the right half at full contrast — a centred headline
+ * has to darken the whole frame to stay readable, and that costs the product
+ * the light it is lit with.
+ *
+ * The trade line sits on the bottom rule, where it reads as a footer to the
+ * frame rather than a fourth thing competing for the middle.
  */
 export function Hero() {
   // The reveal is a CSS animation (`.p1-hero-line`), so the headline does not
@@ -24,10 +28,10 @@ export function Hero() {
   });
 
   /*
-    Depth on exit. Scrubbed against the first screen of scroll: the copy lifts
-    and fades while the ribbon behind it lifts at a third of the rate. Two
-    planes moving at different speeds is what separates them; without it the
-    hero is a flat card that slides off.
+    Depth on exit. Scrubbed against the first screen of scroll, with the three
+    planes leaving at different rates: copy fastest, product behind it, ribbon
+    slowest. Different speeds are what separate them; without it the hero is a
+    flat card that slides off.
 
     Scrubbed rather than triggered, so it is reversible and tracks the scroll
     position exactly — nothing plays at you, it only responds. `end` is one
@@ -55,17 +59,26 @@ export function Hero() {
         0,
       )
       .to(
+        scope.querySelector("[data-hero-product]"),
+        { y: -52, ease: "none" },
+        0,
+      )
+      .to(
         scope.querySelector("[data-hero-stage]"),
         { y: -26, ease: "none" },
         0,
       );
   });
 
+  // Rendered with the separators in signal orange, so the line reads as three
+  // facts rather than one string.
+  const trade = heroContent.meta.split("·").map((part) => part.trim());
+
   return (
     <section
       ref={sceneRef}
       aria-label="PRO1ST — professional audio equipment"
-      className="relative flex min-h-[680px] flex-col items-center justify-center overflow-hidden gutter-x pb-24 pt-[112px] h-svh"
+      className="relative flex min-h-svh flex-col justify-center overflow-hidden gutter-x pb-[104px] pt-[136px] lg:h-svh lg:pb-[92px]"
     >
       <div
         aria-hidden="true"
@@ -90,72 +103,132 @@ export function Hero() {
         long as the hero is on screen. Filtering the canvas layer instead is
         one already-composited surface, blurred once per repaint.
       */}
+      {/*
+        The ribbon is faded out before the product column.
+
+        Mid-explode the AJ6's chassis opens, and its interior is pure black
+        and connected to the frame edge, so the matte cuts through it — see
+        `HeroProductVideo`. Nothing recovers those pixels, so the rule is that
+        nothing bright may sit behind the product: against the page ground the
+        gap reads as a shadowed interior, against a lit ribbon it reads as a
+        hole. That also matches the approved layout, where the sweep builds
+        under the headline and runs out at the mixer's leading edge.
+      */}
       <div
         data-hero-stage=""
         className="pointer-events-none absolute inset-0 z-0"
-        style={{ filter: "blur(5px)" }}
+        style={{
+          filter: "blur(5px)",
+          maskImage:
+            "linear-gradient(to right, #000 0%, #000 38%, transparent 66%)",
+          WebkitMaskImage:
+            "linear-gradient(to right, #000 0%, #000 38%, transparent 66%)",
+        }}
       >
         <SonicWaveform />
       </div>
 
-      {/* The veil. Masked to fade out towards the frame edges. */}
+      {/*
+        The veil, now weighted to the copy side. The linear pass guarantees the
+        headline and lead sit on a dark ground whatever the ribbon is doing
+        underneath; the radial keeps the frame edges from going flat. Both are
+        masked out before the right column so the product keeps its contrast.
+      */}
       <div
         aria-hidden="true"
         className="pointer-events-none absolute inset-0 z-[1]"
         style={{
           background:
-            "radial-gradient(ellipse 78% 62% at 50% 48%, color-mix(in srgb, var(--surface-base) 74%, transparent) 0%, color-mix(in srgb, var(--surface-base) 48%, transparent) 55%, transparent 100%)",
-          maskImage:
-            "radial-gradient(ellipse 92% 78% at 50% 48%, #000 45%, transparent 100%)",
-          WebkitMaskImage:
-            "radial-gradient(ellipse 92% 78% at 50% 48%, #000 45%, transparent 100%)",
+            "linear-gradient(96deg, color-mix(in srgb, var(--surface-base) 90%, transparent) 0%, color-mix(in srgb, var(--surface-base) 66%, transparent) 32%, transparent 64%), radial-gradient(ellipse 84% 66% at 34% 50%, color-mix(in srgb, var(--surface-base) 58%, transparent) 0%, transparent 72%)",
         }}
       />
 
-      <div
-        data-hero-copy=""
-        className="p1-shell relative z-[2] flex flex-col items-center text-center"
-      >
+      <div className="p1-shell relative z-[2] grid w-full items-center gap-x-10 gap-y-12 lg:grid-cols-[minmax(0,1fr)_minmax(0,1.04fr)] xl:gap-x-16">
+        <div data-hero-copy="" className="flex flex-col items-start">
+          {/*
+            Each line is clipped so its reveal slides out of a hard edge. The
+            clip box is the line box, which at line-height 0.88 is far shorter
+            than Space Grotesk's ascender-to-descender extent — so it is padded
+            out on both sides and pulled back by an equal negative margin,
+            which buys the room without moving anything. Without it the display
+            face is sheared off above the baseline.
+
+            Three explicit lines rather than letting "Rhythm Operators" wrap:
+            a wrap inside the clip box would put two lines behind one mask and
+            reveal them as a block.
+          */}
+          <h1 className="p1-h1 p1-h1--split">
+            <span className="block overflow-hidden py-[0.24em] -my-[0.24em]">
+              <span
+                data-p1-hero-word=""
+                className="p1-hero-line"
+                style={line(0)}
+              >
+                {heroContent.headlineTop}
+              </span>
+            </span>
+            <span className="block overflow-hidden py-[0.24em] -my-[0.24em]">
+              <span
+                data-p1-hero-word=""
+                className="p1-hero-line text-signal"
+                style={line(1)}
+              >
+                {heroContent.headlineAccent}
+              </span>
+            </span>
+            <span className="block overflow-hidden py-[0.24em] -my-[0.24em]">
+              <span
+                data-p1-hero-word=""
+                className="p1-hero-line"
+                style={line(2)}
+              >
+                {heroContent.headlineRest}
+              </span>
+            </span>
+          </h1>
+
+          <p className="p1-lead mt-8 max-w-[46ch]">{heroContent.lead}</p>
+
+          <div className="mt-9 flex flex-wrap gap-3">
+            <Magnetic>
+              <ButtonLink href="/products" variant="primary">
+                Browse audio systems
+              </ButtonLink>
+            </Magnetic>
+            <Magnetic>
+              <ButtonLink href="/contact?enquiry=dealer" variant="outline">
+                Apply for dealer pricing
+              </ButtonLink>
+            </Magnetic>
+          </div>
+        </div>
+
         {/*
-          Each line is clipped so its reveal slides out of a hard edge. The
-          clip box is the line box, which at line-height 0.88 is far shorter
-          than Space Grotesk's ascender-to-descender extent — so it is padded
-          out on both sides and pulled back by an equal negative margin, which
-          buys the room without moving anything. Without it the display face is
-          sheared off above the baseline.
+          The product bleeds past the shell into the right gutter on wide
+          screens, which is what keeps it from reading as a card sitting in a
+          column. It stays inside the shell below `xl`, where there is no
+          gutter to spare.
         */}
-        <h1 className="p1-h1">
-          <span className="block overflow-hidden py-[0.24em] -my-[0.24em]">
-            <span data-p1-hero-word="" className="p1-hero-line" style={line(0)}>
-              {heroContent.headlineTop}
-            </span>
-          </span>
-          <span className="block overflow-hidden py-[0.24em] -my-[0.24em]">
-            <span data-p1-hero-word="" className="p1-hero-line" style={line(1)}>
-              <span className="text-signal">{heroContent.headlineAccent}</span>{" "}
-              {heroContent.headlineRest}
-            </span>
-          </span>
-        </h1>
-
-        <p className="p1-lead mt-8 max-w-[56ch]">{heroContent.lead}</p>
-
-        <div className="mt-9 flex flex-wrap justify-center gap-3">
-          <Magnetic>
-            <ButtonLink href="/products" variant="primary">
-              Browse audio systems
-            </ButtonLink>
-          </Magnetic>
-          <Magnetic>
-            <ButtonLink href="/contact?enquiry=dealer" variant="outline">
-              Apply for dealer pricing
-            </ButtonLink>
-          </Magnetic>
+        <div data-hero-product="" className="xl:-mr-[calc(var(--gutter)-24px)]">
+          <HeroProductVideo />
         </div>
       </div>
 
-      <div className="p1-mono absolute bottom-10 right-[var(--gutter)] z-[2] hidden text-right text-soft md:block">
-        {heroContent.meta}
+      <div className="p1-shell absolute inset-x-0 bottom-0 z-[2] mx-auto hidden md:block">
+        <div className="mx-[var(--gutter)] border-t border-hairline py-6">
+          <div className="p1-mono flex flex-wrap items-center gap-x-4 text-soft">
+            {trade.map((part, index) => (
+              <span key={part} className="flex items-center gap-x-4">
+                {index > 0 ? (
+                  <span aria-hidden="true" className="text-signal">
+                    ·
+                  </span>
+                ) : null}
+                {part}
+              </span>
+            ))}
+          </div>
+        </div>
       </div>
     </section>
   );

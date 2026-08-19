@@ -427,6 +427,16 @@
     margin: 0;
   }
 
+  /*
+     Hero headline in the split layout. `.p1-h1` is sized for a headline that
+     owns the full shell; in the hero the copy holds one column beside the
+     product, and at 104px "PROFESSIONAL" runs past the column edge. Same
+     face, weight and tracking — only the ceiling moves.
+  */
+  .p1-h1--split {
+    font-size: clamp(40px, 5vw, 78px);
+  }
+
   /* Display headline — manifesto, trade split, page titles. */
   .p1-h-xl {
     font-family: var(--f-d);

@@ -9,3 +9,18 @@ next-env.d.ts
 # Client source assets (catalogues, spec sheets). Large binaries do not
 # belong in git — keep them in shared storage and link them instead.
 *.pdf
+
+# Source video for the hero. The encoded, web-weight cut lives in
+# public/video/ — this 11MB original is the master, not a build input.
+/mixer.mp4
+
+# Event photographs as uploaded — full-resolution phone captures. The
+# optimised WebP the site actually serves lives in public/img/events/.
+/public/img/*.jpg
+/public/img/*.jpeg
+/public/img/*.png
+/public/img/*.heic
+
+# Python bytecode from the asset scripts.
+__pycache__/
+*.pyc
