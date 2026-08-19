@@ -62,12 +62,12 @@ export function NewsletterForm() {
           onChange={(event) => setEmail(event.target.value)}
           placeholder="you@company.in"
           autoComplete="email"
-          className="flex-1 border-0 bg-transparent py-1 text-[15px] text-strong outline-none placeholder:text-faint"
+          className="p1-tap-row flex-1 border-0 bg-transparent py-1 text-[15px] text-strong outline-none placeholder:text-faint"
         />
         <button
           type="submit"
           disabled={status === "sending"}
-          className="p1-mono cursor-pointer border-0 bg-transparent text-signal disabled:opacity-50"
+          className="p1-tap p1-mono cursor-pointer border-0 bg-transparent text-signal disabled:opacity-50"
         >
           {status === "sending" ? "Sending" : "Subscribe"}
         </button>

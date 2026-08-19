@@ -189,14 +189,29 @@ export function Hero() {
 
           <p className="p1-lead mt-8 max-w-[46ch]">{heroContent.lead}</p>
 
-          <div className="mt-9 flex flex-wrap gap-3">
+          {/*
+            Stacked and equal-width below `sm`. Side by side the two labels
+            need ~470px and the narrowest phone gives 342, so they wrap — and
+            wrapped at their intrinsic widths they land ragged, one noticeably
+            shorter than the other, which reads as a mistake rather than a
+            pair. Full-width is the only honest stacked form.
+          */}
+          <div className="mt-9 flex w-full flex-col gap-3 sm:w-auto sm:flex-row sm:flex-wrap">
             <Magnetic>
-              <ButtonLink href="/products" variant="primary">
+              <ButtonLink
+                href="/products"
+                variant="primary"
+                className="w-full justify-center sm:w-auto sm:justify-start"
+              >
                 Browse audio systems
               </ButtonLink>
             </Magnetic>
             <Magnetic>
-              <ButtonLink href="/contact?enquiry=dealer" variant="outline">
+              <ButtonLink
+                href="/contact?enquiry=dealer"
+                variant="outline"
+                className="w-full justify-center sm:w-auto sm:justify-start"
+              >
                 Apply for dealer pricing
               </ButtonLink>
             </Magnetic>
@@ -209,7 +224,10 @@ export function Hero() {
           column. It stays inside the shell below `xl`, where there is no
           gutter to spare.
         */}
-        <div data-hero-product="" className="xl:-mr-[calc(var(--gutter)-24px)]">
+        <div
+          data-hero-product=""
+          className="-mx-[var(--gutter)] sm:mx-0 xl:-mr-[calc(var(--gutter)-24px)]"
+        >
           <HeroProductVideo />
         </div>
       </div>

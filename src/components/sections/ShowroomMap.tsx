@@ -69,7 +69,7 @@ export function ShowroomMap() {
           href={directionsHref}
           target="_blank"
           rel="noopener noreferrer"
-          className="p1-mono pointer-events-auto whitespace-nowrap border border-hairline bg-ink px-3 py-2 text-ash transition-[border-color,color] duration-[120ms] ease-signal hover:border-signal hover:text-signal"
+          className="p1-mono pointer-events-auto inline-flex min-h-11 items-center whitespace-nowrap border border-hairline bg-ink px-3 text-ash transition-[border-color,color] duration-[120ms] ease-signal hover:border-signal hover:text-signal"
         >
           Directions →
         </a>

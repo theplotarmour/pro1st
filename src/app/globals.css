@@ -663,3 +663,92 @@
 .p1-prose hr { border: 0; border-top: 1px solid var(--hairline); margin: 2.5em 0; }
 .p1-prose table { width: 100%; border-collapse: collapse; margin-bottom: 1.5em; }
 .p1-prose th, .p1-prose td { border: 1px solid var(--hairline); padding: 10px 12px; text-align: left; }
+
+/* ------------------------------------------------------------------ *
+ * Touch
+ *
+ * The layout is fluid and never scrolls sideways, but it was sized for a
+ * cursor: icon buttons sat at 25px, carousel dots at 6px and facet rows at
+ * 18px, all well under the 44px a finger needs. These two primitives fix that
+ * for touch without coarsening the pointer experience, which is a real cost —
+ * padding every dense list to 44px adds several hundred pixels to the filter
+ * sidebar on a desktop where 18px rows are perfectly clickable.
+ * ------------------------------------------------------------------ */
+
+/*
+   Extends a control's pressable area to 44px without changing what it paints
+   or the space it occupies. The header icons are sized by their glyphs, and
+   growing the boxes to 44px would push the header's own spacing apart; a
+   centred pseudo-element takes the press instead, so the control looks
+   identical and the target is the size it always should have been.
+
+   Applied unconditionally rather than under `pointer: coarse` — a bigger
+   target for an imprecise mouse is not a regression, and hybrid laptops
+   report `fine` while being touched.
+*/
+.p1-tap {
+  position: relative;
+}
+
+.p1-tap::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: max(100%, 44px);
+  height: max(100%, 44px);
+  transform: translate(-50%, -50%);
+}
+
+/*
+   Touch devices, and any viewport narrow enough to probably be one.
+
+   `pointer: coarse` alone is the more precise signal and it is not
+   sufficient: it cannot be exercised in a desktop browser, so every rule
+   under it would ship unverified. The width clause carries phones and tablet
+   portrait on its own — which is what makes them testable — and the pointer
+   clause still catches touch laptops and landscape tablets above 1024.
+
+   The cost is that a desktop window dragged narrower than 1024 gets touch
+   sizing. Larger targets and 16px fields on a small window is not a
+   regression, so that trade is worth the verifiability.
+*/
+@media (pointer: coarse), (max-width: 1023px) {
+  /*
+     iOS Safari zooms the page in when a field under 16px takes focus, and
+     never zooms back out — so every tap on the dealer or contact form left
+     the visitor scrolled sideways on a magnified page. The design specified
+     15px, one pixel under the threshold and indistinguishable from 16.
+  */
+  input,
+  select,
+  textarea {
+    font-size: 16px;
+  }
+
+  /* Dense link rows: facet lists, footer columns, the newsletter field. */
+  .p1-tap-row {
+    min-height: 44px;
+  }
+
+  /*
+     The underlined mono link ("View all 32 products →") is ~26px tall and
+     appears on most pages. Its underline IS its bottom border, so growing the
+     box would leave the rule floating well under the text — the press area is
+     extended over the top instead, which is invisible and leaves the type
+     exactly where it was drawn.
+  */
+  .p1-link {
+    position: relative;
+  }
+
+  .p1-link::after {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 44px;
+    transform: translateY(-50%);
+  }
+}

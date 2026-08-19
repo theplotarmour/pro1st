@@ -490,7 +490,7 @@ export function CoverflowCarousel({
               type="button"
               aria-label="Previous slide"
               onClick={() => nudge(-1)}
-              className="absolute left-3 top-1/2 z-[200] grid size-9 -translate-y-1/2 cursor-pointer place-items-center border border-hairline bg-ink/70 text-ash backdrop-blur transition-colors hover:text-signal"
+              className="p1-tap absolute left-3 top-1/2 z-[200] grid size-9 -translate-y-1/2 cursor-pointer place-items-center border border-hairline bg-ink/70 text-ash backdrop-blur transition-colors hover:text-signal"
             >
               <Chevron direction="left" />
             </button>
@@ -498,7 +498,7 @@ export function CoverflowCarousel({
               type="button"
               aria-label="Next slide"
               onClick={() => nudge(1)}
-              className="absolute right-3 top-1/2 z-[200] grid size-9 -translate-y-1/2 cursor-pointer place-items-center border border-hairline bg-ink/70 text-ash backdrop-blur transition-colors hover:text-signal"
+              className="p1-tap absolute right-3 top-1/2 z-[200] grid size-9 -translate-y-1/2 cursor-pointer place-items-center border border-hairline bg-ink/70 text-ash backdrop-blur transition-colors hover:text-signal"
             >
               <Chevron direction="right" />
             </button>
@@ -528,7 +528,7 @@ export function CoverflowCarousel({
       )}
 
       {showPagination && (
-        <div className="mt-6 flex items-center justify-center gap-2">
+        <div className="mt-6 flex items-center justify-center">
           {slides.map((slide, index) => (
             <button
               key={slide.src}
@@ -536,11 +536,17 @@ export function CoverflowCarousel({
               aria-label={`Go to slide ${index + 1}`}
               aria-current={index === selected}
               onClick={() => goTo(index)}
-              className={cn(
-                "size-1.5 cursor-pointer rounded-full border-0 transition-colors",
-                index === selected ? "bg-signal" : "bg-[var(--hairline-strong)]",
-              )}
-            />
+              className="grid cursor-pointer place-items-center border-0 bg-transparent p-2"
+            >
+              <span
+                className={cn(
+                  "size-1.5 rounded-full transition-colors",
+                  index === selected
+                    ? "bg-signal"
+                    : "bg-[var(--hairline-strong)]",
+                )}
+              />
+            </button>
           ))}
         </div>
       )}

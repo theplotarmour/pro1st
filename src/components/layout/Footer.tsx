@@ -54,12 +54,12 @@ export async function Footer() {
             {columns.map((column) => (
               <div key={column.head}>
                 <div className="p1-mono mb-5 text-soft">{column.head}</div>
-                <div className="flex flex-col gap-3 text-sm text-body">
+                <div className="flex flex-col gap-3 text-sm text-body max-lg:gap-0">
                   {column.links.map((link) => (
                     <Link
                       key={`${column.head}-${link.label}`}
                       href={link.href}
-                      className="transition-colors duration-[160ms] ease-signal hover:text-signal"
+                      className="p1-tap-row flex items-center transition-colors duration-[160ms] ease-signal hover:text-signal"
                     >
                       {link.label}
                     </Link>
@@ -75,12 +75,15 @@ export async function Footer() {
             © {year} {site.name} · Desire Electronics, Delhi
           </span>
           <span className="flex flex-wrap items-center gap-6">
-            <a href={contact.phoneHref} className="hover:text-signal">
+            <a
+              href={contact.phoneHref}
+              className="p1-tap-row inline-flex items-center hover:text-signal"
+            >
               {contact.phone}
             </a>
             <a
               href={`mailto:${contact.email}`}
-              className="hover:text-signal"
+              className="p1-tap-row inline-flex items-center hover:text-signal"
             >
               {contact.email}
             </a>

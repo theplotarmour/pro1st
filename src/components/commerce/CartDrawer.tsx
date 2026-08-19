@@ -58,7 +58,7 @@ export function CartDrawer() {
           <button
             type="button"
             onClick={close}
-            className="p1-mono cursor-pointer border-0 bg-transparent text-ash hover:text-signal"
+            className="p1-tap p1-mono cursor-pointer border-0 bg-transparent text-ash hover:text-signal"
           >
             Close ✕
           </button>
@@ -109,7 +109,7 @@ export function CartDrawer() {
           <Link
             href={lines.length > 0 ? "/cart" : "/products"}
             onClick={close}
-            className="p1-mono mt-4 block text-center text-soft hover:text-signal"
+            className="p1-tap-row p1-mono mt-4 flex items-center justify-center text-soft hover:text-signal"
           >
             {lines.length > 0 ? "View full cart" : "Browse the catalogue"}
           </Link>

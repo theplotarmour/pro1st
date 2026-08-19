@@ -125,7 +125,14 @@ export default async function ProductPage({ params }: PageProps) {
       </Container>
 
       <Container as="section" className="py-12 lg:py-16">
-        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[7fr_5fr] lg:gap-20">
+        {/*
+          Splits at `md`, not `lg`. On a 768px tablet the single-column form
+          gave the gallery a full-width square — the whole first screen was
+          one photograph, with the price, variants and Add to cart pushed
+          below the fold. A tablet has the width for both; it just needed to
+          be asked for it.
+        */}
+        <div className="grid grid-cols-1 gap-12 md:grid-cols-[6fr_5fr] md:gap-10 lg:grid-cols-[7fr_5fr] lg:gap-20">
           <ProductGallery images={product.images} title={product.title} />
           <ProductInfo product={product} />
         </div>

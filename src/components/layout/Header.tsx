@@ -76,11 +76,11 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
           </div>
         </div>
 
-        <div className="ml-auto flex flex-none items-center gap-4 lg:gap-[18px]">
+        <div className="ml-auto flex flex-none items-center gap-5 lg:gap-[18px]">
           <Link
             href="/search"
             aria-label="Search products"
-            className="grid place-items-center p-1 hover:text-signal"
+            className="p1-tap grid place-items-center p-1 hover:text-signal"
           >
             <SearchIcon />
           </Link>
@@ -89,7 +89,7 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
             type="button"
             onClick={openCart}
             aria-label={`Cart, ${count} ${count === 1 ? "item" : "items"}`}
-            className="relative grid cursor-pointer place-items-center border-0 bg-transparent p-1 hover:text-signal"
+            className="p1-tap grid cursor-pointer place-items-center border-0 bg-transparent p-1 hover:text-signal"
           >
             <CartIcon />
             {count > 0 ? (
@@ -112,7 +112,7 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
             aria-label={mobileOpen ? "Close menu" : "Open menu"}
             aria-expanded={mobileOpen}
             aria-controls="mobile-nav"
-            className="grid cursor-pointer place-items-center border-0 bg-transparent p-1 hover:text-signal lg:hidden"
+            className="p1-tap grid cursor-pointer place-items-center border-0 bg-transparent p-1 hover:text-signal lg:hidden"
           >
             <MenuIcon open={mobileOpen} />
           </button>

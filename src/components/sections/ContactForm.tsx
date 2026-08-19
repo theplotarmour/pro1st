@@ -69,7 +69,7 @@ export function ContactForm() {
                 type="button"
                 onClick={() => setType(option.value)}
                 aria-pressed={isActive}
-                className={`p1-mono cursor-pointer border px-4 py-2.5 transition-[border-color,color,background-color] duration-[120ms] ease-signal ${
+                className={`p1-mono min-h-11 cursor-pointer border px-4 py-2.5 transition-[border-color,color,background-color] duration-[120ms] ease-signal ${
                   isActive
                     ? "border-signal bg-signal text-ink"
                     : "border-hairline text-body hover:border-signal hover:text-signal"

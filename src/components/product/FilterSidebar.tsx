@@ -58,17 +58,21 @@ export function FilterSidebar({
   const allFacets = tagFacet ? [...facets, tagFacet] : facets;
 
   const check = (active: boolean) =>
-    `mt-[3px] grid h-3.5 w-3.5 flex-none place-items-center border transition-colors duration-[160ms] ease-signal ${
+    `grid h-3.5 w-3.5 flex-none place-items-center border transition-colors duration-[160ms] ease-signal ${
       active ? "border-signal bg-signal" : "border-hairline"
     }`;
 
-  return (
-    <aside aria-label="Filters" className="lg:sticky lg:top-[104px]">
-      <div className="flex items-baseline justify-between gap-3 border-b border-hairline pb-4">
-        <h2 className="p1-mono text-muted">Filter</h2>
-        <span className="p1-mono text-faint">{resultCount} shown</span>
-      </div>
+  /*
+    Built once, rendered into whichever branch the viewport calls for.
 
+    On a phone this column stacks above the grid, and expanded it is seven
+    facet groups deep — the reader scrolled through the entire filter set
+    before reaching a single product. Collapsed behind a disclosure it costs
+    one row, and the count stays on the summary so it still reports what the
+    filters are doing while shut.
+  */
+  const body = (
+    <>
       {/* Category — always present, sourced from Shopify collections. */}
       <FilterGroup label="Category">
         <FilterLink href="/products" active={activeCategory === null}>
@@ -163,6 +167,37 @@ export function FilterSidebar({
           built from the catalogue.
         </p>
       ) : null}
+    </>
+  );
+
+  const heading = (
+    <>
+      <span className="p1-mono text-muted">Filter</span>
+      <span className="p1-mono text-faint">{resultCount} shown</span>
+    </>
+  );
+
+  return (
+    <aside aria-label="Filters" className="lg:sticky lg:top-[104px]">
+      <details className="group border-b border-hairline lg:hidden">
+        <summary className="p1-tap-row flex cursor-pointer list-none items-center justify-between gap-3 py-4 marker:hidden">
+          {heading}
+          <span
+            aria-hidden="true"
+            className="text-signal transition-transform duration-[240ms] ease-signal group-open:rotate-45"
+          >
+            +
+          </span>
+        </summary>
+        <div className="pb-2">{body}</div>
+      </details>
+
+      <div className="hidden lg:block">
+        <div className="flex items-baseline justify-between gap-3 border-b border-hairline pb-4">
+          {heading}
+        </div>
+        {body}
+      </div>
     </aside>
   );
 }
@@ -176,7 +211,7 @@ function FilterGroup({
 }) {
   return (
     <details open className="group border-b border-hairline py-4">
-      <summary className="p1-mono flex cursor-pointer list-none items-center justify-between text-muted marker:hidden">
+      <summary className="p1-tap-row p1-mono flex cursor-pointer list-none items-center justify-between text-muted marker:hidden">
         {label}
         <span
           aria-hidden="true"
@@ -185,7 +220,7 @@ function FilterGroup({
           +
         </span>
       </summary>
-      <div className="mt-4 flex flex-col gap-2.5">{children}</div>
+      <div className="mt-2 flex flex-col gap-2.5 max-lg:gap-0">{children}</div>
     </details>
   );
 }
@@ -203,7 +238,7 @@ function FilterLink({
     <Link
       href={href}
       aria-pressed={active}
-      className={`flex items-start gap-3 text-[13px] leading-snug transition-colors duration-[160ms] ease-signal ${
+      className={`p1-tap-row flex items-center gap-3 text-[13px] leading-snug transition-colors duration-[160ms] ease-signal ${
         active ? "text-strong" : "text-body hover:text-strong"
       }`}
     >

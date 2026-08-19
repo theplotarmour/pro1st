@@ -114,7 +114,7 @@ export function ProductInfo({ product }: { product: Product }) {
                       disabled={!match}
                       onClick={() => match && setSelectedId(match.id)}
                       aria-pressed={isActive}
-                      className={`p1-mono cursor-pointer border px-4 py-2.5 transition-[border-color,color,background-color] duration-[120ms] ease-signal disabled:cursor-not-allowed disabled:opacity-40 ${
+                      className={`p1-mono min-h-11 cursor-pointer border px-4 py-2.5 transition-[border-color,color,background-color] duration-[120ms] ease-signal disabled:cursor-not-allowed disabled:opacity-40 ${
                         isActive
                           ? "border-signal bg-signal text-ink"
                           : "border-hairline text-body hover:border-signal hover:text-signal"
