@@ -1,19 +1,14 @@
 import type { Metadata } from "next";
 import { Suspense } from "react";
-import { BulkOrderTable } from "@/components/commerce/BulkOrderTable";
 import { DealerForm } from "@/components/sections/DealerForm";
 import { Container } from "@/components/ui/Container";
 import { PageHeader } from "@/components/ui/PageHeader";
 import { contact } from "@/data/site";
-import { productRepository } from "@/lib/products";
-
-/** Bulk-order table reads the live catalogue; see the note on src/app/page.tsx. */
-export const revalidate = 300;
 
 export const metadata: Metadata = {
   title: "Wholesale",
   description:
-    "Dealer and trade accounts for PRO1ST professional audio. Bulk quick-order across the full catalogue, dealer registration and PAN-India dispatch.",
+    "Dealer and trade accounts for PRO1ST professional audio. Dealer registration, rate cards on request and PAN-India dispatch. Trade orders are placed over WhatsApp or email.",
   alternates: { canonical: "/wholesale" },
   openGraph: {
     title: "Wholesale · PRO1ST",
@@ -23,23 +18,40 @@ export const metadata: Metadata = {
   },
 };
 
+/** The routes a trade order can actually be placed through. */
+const channels = [
+  {
+    label: "WhatsApp",
+    value: contact.whatsappLabel,
+    href: contact.whatsappHref,
+    external: true,
+  },
+  {
+    label: "Email",
+    value: contact.email,
+    href: `mailto:${contact.email}?subject=${encodeURIComponent("Wholesale order — PRO1ST")}`,
+  },
+  { label: "Phone", value: contact.phone, href: contact.phoneHref },
+];
+
 /**
  * Wholesale portal.
  *
- * Two halves, and only one of them is blocked.
+ * Registration collects the details a rate card needs and hands them to a
+ * person. Tiered dealer pricing and automated GSTIN verification are NOT
+ * built and are not faked here — both need Shopify B2B (Plus) or a wholesale
+ * app plus the client's own commercial terms.
  *
- * The bulk quick-order table is real and works today: the whole catalogue as
- * an editable list, straight into the live Shopify cart. That is the piece
- * trade buyers actually use.
- *
- * Tiered dealer pricing and automated GSTIN verification are NOT built, and
- * are not faked here. Both need Shopify B2B (Plus) or a wholesale app plus the
- * client's own commercial terms. Registration therefore collects the details
- * and hands them to a person, which is honest and works from day one.
+ * There is deliberately no self-serve bulk order path. The quick-order table
+ * that used to sit at the foot of this page let a trade buyer push the whole
+ * catalogue into the retail cart at retail prices, which is not what a
+ * wholesale order is: the price depends on the account, the freight depends
+ * on the consignment, and both are settled by a person. Offering a checkout
+ * that cannot honour either was promising something the business does not do.
+ * Orders go through WhatsApp or email instead. It is removed rather than
+ * hidden, so nothing has to be kept working for a path nobody takes.
  */
-export default async function WholesalePage() {
-  const products = await productRepository.getAll();
-
+export default function WholesalePage() {
   return (
     <>
       <PageHeader
@@ -67,7 +79,7 @@ export default async function WholesalePage() {
               {[
                 "Send your GSTIN, firm name and expected monthly volume.",
                 "We verify the GSTIN and confirm your rate card, usually within one working day.",
-                "Order here or over WhatsApp. Bulk quantities ship by road transport with insurance available.",
+                "Send your order over WhatsApp or email. Bulk quantities ship by road transport with insurance available.",
               ].map((step, index) => (
                 <li key={step} className="flex gap-4">
                   <span className="p1-mono flex-none text-signal">
@@ -83,8 +95,8 @@ export default async function WholesalePage() {
             <div className="mt-7 border-t border-hairline pt-6">
               <p className="p1-mono normal-case leading-relaxed tracking-[0.04em] text-faint">
                 GSTIN verification and tiered dealer pricing are handled by our
-                team today, not automatically at checkout. Prices shown on this
-                page are retail.
+                team, not automatically at checkout. Prices shown elsewhere on
+                this site are retail.
               </p>
               <a href={contact.phoneHref} className="p1-link mt-5 inline-flex">
                 Or call {contact.phone}
@@ -94,18 +106,44 @@ export default async function WholesalePage() {
         </div>
       </Container>
 
-      <Container as="section" className="border-t border-hairline py-20 lg:py-28">
-        <div className="mb-10">
-          <div className="p1-eyebrow mb-5">[ Bulk quick order ]</div>
-          <h2 className="p1-h2">The whole catalogue, one list.</h2>
-          <p className="p1-body mt-5 max-w-[56ch]">
-            Enter quantities across as many models as you need and add them to
-            the cart in one action. Retail pricing shown; your dealer rate is
-            applied when we confirm the order.
-          </p>
-        </div>
+      {/*
+        Where the bulk table was. The page still has to answer "so how do I
+        place the order" — leaving it unanswered is what would send a dealer
+        to the retail cart, which is the thing being removed.
+      */}
+      <Container
+        as="section"
+        id="ordering"
+        className="border-t border-hairline py-20 lg:py-28"
+      >
+        <div className="grid grid-cols-1 gap-12 lg:grid-cols-[7fr_5fr] lg:gap-20">
+          <div>
+            <div className="p1-eyebrow mb-5">[ Placing an order ]</div>
+            <h2 className="p1-h2">Trade orders go through a person.</h2>
+            <p className="p1-body mt-5 max-w-[56ch]">
+              There is no wholesale checkout, by design. Your rate depends on
+              your account and your freight depends on the consignment, so send
+              the model numbers and quantities over WhatsApp or email and we
+              confirm pricing, stock and dispatch against them.
+            </p>
+          </div>
 
-        <BulkOrderTable products={products} />
+          <div className="flex flex-col self-start border-t border-hairline">
+            {channels.map((channel) => (
+              <a
+                key={channel.label}
+                href={channel.href}
+                {...(channel.external
+                  ? { target: "_blank", rel: "noopener noreferrer" }
+                  : {})}
+                className="p1-mono flex justify-between gap-4 border-b border-hairline py-[18px] transition-colors duration-[120ms] ease-signal hover:text-signal"
+              >
+                <span className="text-soft">{channel.label}</span>
+                <span>{channel.value}</span>
+              </a>
+            ))}
+          </div>
+        </div>
       </Container>
     </>
   );
