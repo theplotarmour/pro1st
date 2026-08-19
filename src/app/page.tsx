@@ -5,7 +5,7 @@ import { ChainSection } from "@/components/sections/ChainSection";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { OriginSection } from "@/components/sections/OriginSection";
 import { TrustBar } from "@/components/sections/TrustBar";
-import { getChainNodes, getOriginImage } from "@/lib/content/sections";
+import { getChainNodes } from "@/lib/content/sections";
 import { getFeaturedProducts, productRepository } from "@/lib/products";
 
 /**
@@ -38,14 +38,13 @@ export const revalidate = 300;
  * the FAQ and showroom on /contact. Nothing was deleted — it was filed.
  */
 export default async function HomePage() {
-  const [featured, all, categories, origin, chain] =
+  const [featured, all, categories, chain] =
     await Promise.all([
       // Four, not twelve. One clean row that reads as a selection rather than
       // an inventory dump; the catalogue itself is one click away.
       getFeaturedProducts(undefined, 4),
       productRepository.getAll(),
       productRepository.getCategories(),
-      getOriginImage(),
       getChainNodes(),
     ]);
 
@@ -73,7 +72,7 @@ export default async function HomePage() {
           no competitor surveyed has anything like it. */}
       {chain.length > 0 ? <ChainSection nodes={chain} /> : null}
 
-      <OriginSection image={origin} />
+      <OriginSection />
       <ContactCTA />
     </>
   );

@@ -71,9 +71,19 @@ export const originCopy = {
     "That split is deliberate. We buy the components nobody should improvise, and we build the parts that decide whether a cabinet survives a monsoon load-in. Every unit is bench-tested before it leaves the compound.",
   ],
   /**
-   * CONFIRM — no facility photography exists in Shopify Files yet, so this
-   * falls back to flagship product media. Upload a real workshop photograph
-   * and point this at it.
+   * A real photograph of the trade stand, held locally rather than resolved
+   * from Shopify.
+   *
+   * This slot used to borrow the MX-1600's product shot, because no facility
+   * photography existed — so the section illustrating "we build on our own
+   * floor" showed a studio render of an amplifier on a white brick wall. The
+   * supplied event photography is the first genuine image of the business,
+   * and it is deliberately not a Shopify product image: it belongs to the
+   * story, not the catalogue, and must not change when the merchant edits a
+   * product.
    */
-  imageHandle: "pro1st-mx-1600-professional-power-amplifier",
+  image: {
+    src: "/img/events/photo-2026-08-19-14-55-18-2.webp",
+    alt: "The PRO1ST stand at a trade show, the range on the shelves behind a lit counter",
+  },
 } as const;

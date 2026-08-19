@@ -1,10 +1,5 @@
 import { chainHandles } from "@/data/featured";
-import {
-  buildCopy,
-  chainRoles,
-  craftCopy,
-  originCopy,
-} from "@/data/editorial";
+import { buildCopy, chainRoles, craftCopy } from "@/data/editorial";
 import { formatPrice } from "@/lib/format";
 import { productRepository } from "@/lib/products";
 import type { CategorySummary, Product, ProductImage } from "@/types/product";
@@ -169,7 +164,4 @@ export async function getHeroUnit(): Promise<HeroUnit | null> {
  * this falls back to the flagship product image and flags the gap. Upload a
  * real facility photograph to Shopify and it will be used automatically.
  */
-export async function getOriginImage(): Promise<ProductImage | null> {
-  const product = await productRepository.getByHandle(originCopy.imageHandle);
-  return imageOf(product);
-}
+

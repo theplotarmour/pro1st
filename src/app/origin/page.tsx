@@ -7,7 +7,7 @@ import { QualityStandards } from "@/components/sections/QualityStandards";
 import { ShowroomSection } from "@/components/sections/ShowroomSection";
 import { TrustBar } from "@/components/sections/TrustBar";
 import { PageHeader } from "@/components/ui/PageHeader";
-import { getCraftPanels, getOriginImage } from "@/lib/content/sections";
+import { getCraftPanels } from "@/lib/content/sections";
 
 /** Imagery comes from Shopify products; see the note on src/app/page.tsx. */
 export const revalidate = 300;
@@ -31,10 +31,7 @@ export const metadata: Metadata = {
  * its own and split the brand narrative across two pages.
  */
 export default async function OriginPage() {
-  const [image, panels] = await Promise.all([
-    getOriginImage(),
-    getCraftPanels(),
-  ]);
+  const panels = await getCraftPanels();
 
   return (
     <>
@@ -43,7 +40,7 @@ export default async function OriginPage() {
         title="Built in Delhi-6."
         lead="Desire Electronics has traded in audio since 2004. PRO1ST is the professional line."
       />
-      <OriginSection image={image} as="h2" showEyebrow={false} />
+      <OriginSection as="h2" showEyebrow={false} />
       <QualityStandards panels={panels} />
       <TrustBar />
       <EventsSection />

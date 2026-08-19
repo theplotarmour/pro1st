@@ -4,11 +4,8 @@ import { ParallaxMedia } from "@/components/ui/ParallaxMedia";
 import { Reveal } from "@/components/ui/Reveal";
 import { originCopy } from "@/data/editorial";
 import { stats } from "@/data/site";
-import type { ProductImage } from "@/types/product";
 
 interface OriginSectionProps {
-  /** Facility imagery, resolved from Shopify. */
-  image: ProductImage | null;
   /** Homepage uses h2; the Origin page promotes it to h1. */
   as?: "h1" | "h2";
   showEyebrow?: boolean;
@@ -16,7 +13,6 @@ interface OriginSectionProps {
 
 /** Brand introduction — the story block plus the four trade figures. */
 export function OriginSection({
-  image,
   as: Heading = "h2",
   showEyebrow = true,
 }: OriginSectionProps) {
@@ -45,9 +41,10 @@ export function OriginSection({
             aria-hidden="true"
             className="absolute -bottom-4 -right-4 left-4 top-4 border border-sig-40"
           />
-          {image ? (
-            <ParallaxMedia src={image.src} alt={image.alt} />
-          ) : null}
+          <ParallaxMedia
+            src={originCopy.image.src}
+            alt={originCopy.image.alt}
+          />
         </Reveal>
       </div>
 
