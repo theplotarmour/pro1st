@@ -121,7 +121,7 @@ export const tradeContent = {
   dealer: {
     eyebrow: "[ 06 — Trade ]",
     heading: "Stock PRO1st.",
-    body: "Dealer margins, PAN-India dispatch and bulk pricing on the full line. GSTIN and a first order is all it takes to open an account.",
+    body: "Dealer margins, PAN-India dispatch and trade pricing on the full line. GSTIN and a first order is all it takes to open an account.",
     cta: "Dealer enquiry",
   },
   systems: {
@@ -153,7 +153,7 @@ export const faqs = [
     a: "Both. Drivers, transformers and DSP boards are imported from specialists. Housings, chassis and crossover networks are built and assembled on our floor in Delhi-6.",
   },
   {
-    q: "Do you offer bulk and dealer pricing?",
+    q: "Do you offer dealer and trade pricing?",
     a: "Yes. Share your GSTIN and expected monthly volume through the dealer form and we will send a rate card within one working day.",
   },
   {
@@ -183,7 +183,6 @@ export const footerColumns = [
     head: "Trade",
     links: [
       { label: "Dealer enquiry", href: "/contact?enquiry=dealer" },
-      { label: "Bulk pricing", href: "/contact?enquiry=dealer" },
       { label: "Spec a system", href: "/contact?enquiry=business" },
     ],
   },

@@ -57,7 +57,7 @@ export default function WholesalePage() {
       <PageHeader
         eyebrow="[ Trade ]"
         title="Stock PRO1ST."
-        lead="Dealer margins, PAN-India dispatch and bulk pricing across the full line. Share a GSTIN and a first order to open an account."
+        lead="Dealer margins, PAN-India dispatch and trade pricing across the full line. Share a GSTIN and a first order to open an account."
       />
 
       <Container as="section" className="pb-24">
@@ -79,7 +79,7 @@ export default function WholesalePage() {
               {[
                 "Send your GSTIN, firm name and expected monthly volume.",
                 "We verify the GSTIN and confirm your rate card, usually within one working day.",
-                "Send your order over WhatsApp or email. Bulk quantities ship by road transport with insurance available.",
+                "Send your order over WhatsApp or email. Large consignments ship by road transport, with insurance available.",
               ].map((step, index) => (
                 <li key={step} className="flex gap-4">
                   <span className="p1-mono flex-none text-signal">
