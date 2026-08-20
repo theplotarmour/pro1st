@@ -4,6 +4,7 @@ import { CategoryGrid } from "@/components/sections/CategoryGrid";
 import { ChainSection } from "@/components/sections/ChainSection";
 import { ContactCTA } from "@/components/sections/ContactCTA";
 import { OriginSection } from "@/components/sections/OriginSection";
+import { TestimonialsSection } from "@/components/sections/TestimonialsSection";
 import { TrustBar } from "@/components/sections/TrustBar";
 import { getChainNodes } from "@/lib/content/sections";
 import { getFeaturedProducts, productRepository } from "@/lib/products";
@@ -73,6 +74,9 @@ export default async function HomePage() {
       {chain.length > 0 ? <ChainSection nodes={chain} /> : null}
 
       <OriginSection />
+
+      {/* Proof, then the ask. */}
+      <TestimonialsSection />
       <ContactCTA />
     </>
   );

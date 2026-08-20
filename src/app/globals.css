@@ -193,6 +193,27 @@
     opacity: 1;
   }
 }
+/*
+   Vertical marquee for the testimonial columns.
+
+   The track holds the list twice, so translating it exactly -50% lands on a
+   pixel-identical frame and the loop has no seam. CSS rather than a JS
+   animation library: this runs for as long as the section is on screen, and
+   a `requestAnimationFrame` loop writing a transform every frame — three of
+   them, at three different speeds — is main-thread work to reproduce
+   something the compositor does on its own thread for free. Nothing here
+   needs to be interrupted, measured or driven by state, which is the only
+   thing that would justify taking it back off the compositor.
+*/
+@keyframes p1-marquee-y {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
+}
+
 @keyframes p1-bloom {
   0% {
     opacity: 0;
@@ -764,5 +785,37 @@
     top: 50%;
     height: 44px;
     transform: translateY(-50%);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Testimonial marquee
+ * ------------------------------------------------------------------ */
+
+.p1-marquee-track {
+  animation: p1-marquee-y var(--p1-marquee-duration, 30s) linear infinite;
+  will-change: transform;
+}
+
+/*
+   Paused while the reader is engaging with it. A column that keeps moving
+   under the cursor makes the reader chase the line they were halfway
+   through, and the same applies to a keyboard user who has tabbed into a
+   card — hence `focus-within`, not hover alone.
+*/
+.p1-marquee:hover .p1-marquee-track,
+.p1-marquee:focus-within .p1-marquee-track {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  /*
+     Stopped, not hidden. The duplicate half of the track is already
+     `aria-hidden` and simply sits below the fold of the masked box, so the
+     section still reads as a column of reviews with no motion at all.
+  */
+  .p1-marquee-track {
+    animation: none;
+    will-change: auto;
   }
 }
