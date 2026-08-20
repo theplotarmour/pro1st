@@ -266,6 +266,63 @@ export function CoverflowCarousel({
   );
 
   /*
+    Horizontal wheel — a two-finger trackpad swipe, or shift + mouse wheel.
+
+    Bound natively rather than through `onWheel`, because React attaches its
+    wheel listener at the root as passive and `preventDefault` is a no-op
+    inside it. Without that call macOS reads the same gesture as a history
+    back-swipe, so the page navigates away mid-scroll.
+
+    Only a gesture whose horizontal component dominates is claimed. Vertical
+    intent belongs to the page: a carousel that swallows an ordinary scroll
+    is a trap the reader has to escape by aiming around it.
+
+    The cards move continuously with the gesture, exactly as they do under a
+    drag, and snap to the nearest one once the wheel goes quiet. There is no
+    end event for a wheel, so "quiet" is the only signal available; 110ms is
+    longer than the gap between events inside a single trackpad flick and
+    shorter than a deliberate second one.
+  */
+  React.useEffect(() => {
+    const frame = frameRef.current;
+    if (!frame) return;
+
+    let idle: number | null = null;
+
+    const onWheel = (event: WheelEvent) => {
+      // A mouse wheel has no horizontal axis; the convention is shift+wheel.
+      const dx = event.shiftKey && event.deltaX === 0 ? event.deltaY : event.deltaX;
+      const dy = event.shiftKey ? 0 : event.deltaY;
+      if (Math.abs(dx) <= Math.abs(dy)) return;
+
+      event.preventDefault();
+
+      const pitch = widthRef.current * (1 + gap);
+      if (!pitch) return;
+
+      if (rafRef.current !== null) {
+        cancelAnimationFrame(rafRef.current);
+        rafRef.current = null;
+      }
+      setPromotion(true);
+      posRef.current = clamp(posRef.current + dx / pitch);
+      paint();
+
+      if (idle !== null) window.clearTimeout(idle);
+      idle = window.setTimeout(() => {
+        idle = null;
+        settle(clamp(Math.round(posRef.current)));
+      }, 110);
+    };
+
+    frame.addEventListener("wheel", onWheel, { passive: false });
+    return () => {
+      frame.removeEventListener("wheel", onWheel);
+      if (idle !== null) window.clearTimeout(idle);
+    };
+  }, [clamp, gap, paint, setPromotion, settle]);
+
+  /*
     Dragging is tracked on `window`, and `setPointerCapture` is never used.
 
     Capture is the obvious tool here and it is the wrong one: it retargets
@@ -410,8 +467,12 @@ export function CoverflowCarousel({
           className="cursor-grab overflow-hidden py-14 outline-none focus-visible:ring-2 focus-visible:ring-signal active:cursor-grabbing"
           style={{
             perspective: `calc(var(--cf-card) * ${perspective})`,
-            // Horizontal drag is ours; the page keeps vertical scrolling.
+            // Horizontal movement is ours — drag, swipe and wheel alike; the
+            // page keeps vertical scrolling.
             touchAction: "pan-y",
+            // Stops the gesture continuing into the page as an overscroll
+            // once the carousel has taken it.
+            overscrollBehaviorX: "contain",
           }}
         >
           <div
