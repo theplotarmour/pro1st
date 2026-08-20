@@ -686,18 +686,28 @@
    target for an imprecise mouse is not a regression, and hybrid laptops
    report `fine` while being touched.
 */
-.p1-tap {
-  position: relative;
-}
+@layer components {
+  /*
+     Layered, and that is load-bearing. An unlayered rule beats every Tailwind
+     utility, so declaring `position: relative` out here silently overrode
+     `absolute` on anything that carried both — the carousel's arrows lost
+     their positioning and dropped out of the frame into normal flow. Inside
+     the components layer a utility still wins, which is the whole contract
+     the rest of this file is written against.
+  */
+  .p1-tap {
+    position: relative;
+  }
 
-.p1-tap::after {
-  content: "";
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  width: max(100%, 44px);
-  height: max(100%, 44px);
-  transform: translate(-50%, -50%);
+  .p1-tap::after {
+    content: "";
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: max(100%, 44px);
+    height: max(100%, 44px);
+    transform: translate(-50%, -50%);
+  }
 }
 
 /*
@@ -727,8 +737,10 @@
   }
 
   /* Dense link rows: facet lists, footer columns, the newsletter field. */
-  .p1-tap-row {
-    min-height: 44px;
+  @layer components {
+    .p1-tap-row {
+      min-height: 44px;
+    }
   }
 
   /*
@@ -738,8 +750,10 @@
      extended over the top instead, which is invisible and leaves the type
      exactly where it was drawn.
   */
-  .p1-link {
-    position: relative;
+  @layer components {
+    .p1-link {
+      position: relative;
+    }
   }
 
   .p1-link::after {
