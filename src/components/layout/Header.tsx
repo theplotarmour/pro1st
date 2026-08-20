@@ -9,16 +9,19 @@ import { useCart } from "@/lib/cart/CartProvider";
 import type { CategorySummary } from "@/types/product";
 import { Logo } from "./Logo";
 import { MobileNav } from "./MobileNav";
+import { SearchPanel } from "./SearchPanel";
 import { CartIcon, MenuIcon, SearchIcon } from "./icons";
 
 export function Header({ categories }: { categories: CategorySummary[] }) {
   const pathname = usePathname();
   const { count, open: openCart } = useCart();
   const [mobileOpen, setMobileOpen] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
 
   // Route changes close every transient surface.
   useEffect(() => {
     setMobileOpen(false);
+    setSearchOpen(false);
   }, [pathname]);
 
   // A nav item tied to a collection only appears when that collection exists
@@ -77,13 +80,22 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
         </div>
 
         <div className="ml-auto flex flex-none items-center gap-5 lg:gap-[18px]">
-          <Link
-            href="/search"
+          {/*
+            A button, not a link to /search. The answer to "do you stock an
+            AJ6" is a few hundred bytes and the catalogue is already cached
+            server-side, so it opens in place rather than costing a
+            navigation, a page render and a back press. /search is still
+            there behind the submit, and still renders without JavaScript.
+          */}
+          <button
+            type="button"
+            onClick={() => setSearchOpen(true)}
             aria-label="Search products"
-            className="p1-tap grid place-items-center p-1 hover:text-signal"
+            aria-expanded={searchOpen}
+            className="p1-tap grid cursor-pointer place-items-center border-0 bg-transparent p-1 hover:text-signal"
           >
             <SearchIcon />
-          </Link>
+          </button>
 
           <button
             type="button"
@@ -118,6 +130,8 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
           </button>
         </div>
       </header>
+
+      <SearchPanel open={searchOpen} onClose={() => setSearchOpen(false)} />
 
       <MobileNav
         open={mobileOpen}

@@ -11,6 +11,7 @@ import {
 } from "@/lib/shopify/queries";
 import type { CategorySummary, Product } from "@/types/product";
 import type { GalleryShot, ProductRepository } from "./repository";
+import { searchProducts } from "./search";
 
 /**
  * Shopify Storefront implementation of the product repository.
@@ -40,11 +41,6 @@ const CATEGORY_ORDER = [
 function orderIndex(handle: string): number {
   const index = CATEGORY_ORDER.indexOf(handle);
   return index === -1 ? CATEGORY_ORDER.length : index;
-}
-
-/** Escape a user-supplied term before embedding it in a Shopify query string. */
-function escapeQueryTerm(term: string): string {
-  return term.replace(/["\\]/g, "\\$&");
 }
 
 async function fetchAllProducts(): Promise<Product[]> {
@@ -158,25 +154,20 @@ export const shopifyProductRepository: ProductRepository = {
   },
 
   async search(term) {
-    const trimmed = term.trim();
-    if (!trimmed) return [];
+    /*
+      Ranked locally against the cached catalogue rather than by a Shopify
+      query. `searchProducts` carries the reasoning; the short version is
+      that Shopify's default product search reads the body copy, so
+      "amplifier" matched every microphone whose description mentions
+      plugging into one, and an `OR` across clauses gave it no way to rank a
+      title hit above a tag hit. Both faults were visible on the first real
+      search.
 
-    // Shopify's product query syntax searches title, vendor, tag, sku and
-    // product_type. The bare term covers the default fields; the explicit
-    // sku/tag clauses catch matches the default index misses.
-    const escaped = escapeQueryTerm(trimmed);
-    const query = `${escaped} OR sku:*${escaped}* OR tag:${escaped}`;
-
-    const data = await storefront<{ products: { nodes: RawProduct[] } }>(
-      PRODUCTS_QUERY,
-      {
-        variables: { first: 50, query, sortKey: "RELEVANCE" },
-        revalidate: 60,
-        tags: ["shopify-products"],
-      },
-    );
-
-    return data.products.nodes.map(mapProduct);
+      `fetchAllProducts` is served from the in-process cache, so this costs
+      no round trip — which is also what lets the header search return
+      results at typing speed without a request per keystroke.
+    */
+    return searchProducts(await fetchAllProducts(), term);
   },
 
   async getRelated(handle, limit = 4) {
