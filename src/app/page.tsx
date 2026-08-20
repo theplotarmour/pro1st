@@ -73,10 +73,11 @@ export default async function HomePage() {
           no competitor surveyed has anything like it. */}
       {chain.length > 0 ? <ChainSection nodes={chain} /> : null}
 
-      <OriginSection />
-
-      {/* Proof, then the ask. */}
+      {/* Proof before the origin story: the reader has just seen the range,
+          so what other buyers found is the question in front of them. */}
       <TestimonialsSection />
+
+      <OriginSection />
       <ContactCTA />
     </>
   );

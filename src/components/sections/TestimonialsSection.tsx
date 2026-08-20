@@ -7,9 +7,10 @@ import { testimonials } from "@/data/testimonials";
 /**
  * Customer reviews — three columns drifting at three speeds behind a mask.
  *
- * Placed after the origin story and before the trade CTA: proof, then the
- * ask. Putting it earlier would interrupt the run from category to product
- * to system, which is the page's actual argument.
+ * Placed straight after the chain and before the origin story. The reader
+ * has just been shown the range; what other buyers made of it is the next
+ * question they have, and it should be answered before the page changes the
+ * subject to who built it.
  *
  * ⚠ The reviews are placeholder copy. See `src/data/testimonials.ts` for what
  * that means and what has to happen before this ships to customers.

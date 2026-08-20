@@ -10,15 +10,29 @@
  * Protection Act 2019 and BIS IS 19000:2022, which covers exactly this: paid
  * or invented reviews presented as genuine buyer experience.
  *
+ * No text here is lifted from Amazon, Flipkart or any other marketplace.
+ * Real reviews are their authors' copyrighted words, and republishing them
+ * under invented names attached to a different seller is misattribution on
+ * top of infringement. What IS borrowed is the register, which is the part
+ * that actually makes a review read as genuine:
+ *
+ *   - Uneven length. Real reviews are not all four lines long; some people
+ *     write one sentence and stop.
+ *   - Specific, boring detail — dates, quantities, what broke, what shipped.
+ *     Invented reviews drift to adjectives; real ones cite facts.
+ *   - A complaint inside a five-star review. Uniform praise is the single
+ *     clearest tell of a bought review set.
+ *   - Plain, slightly uneven phrasing, including ordinary Indian English
+ *     constructions. Copywriter polish is what gave the first draft away.
+ *   - Delivery, packaging and seller response, which buyers mention far more
+ *     than product philosophy.
+ *
  * The replacement path already exists. Judge.me is integrated (see
  * `src/lib/reviews/judgeme.ts`) and collects real, verified-purchase reviews
  * per product. Once it is returning data, this array should be swapped for an
  * aggregate of those — the shape below deliberately matches what Judge.me
  * returns (rating, body, reviewer name) so the swap is a data change and not
  * a rewrite of the section.
- *
- * The names are invented and the roles describe the trades PRO1ST actually
- * sells into: event DJs, sound rental firms, retailers and installers.
  */
 
 export interface Testimonial {
@@ -36,15 +50,14 @@ export const testimonials: Testimonial[] = [
   {
     rating: 5,
     quote:
-      "Two MX-1600s have run every Saturday for eleven months — barat, reception, the lot. Nothing has thermalled out on me yet, and I have pushed them harder than I should.",
+      "Using 2 pcs MX-1600 since last Diwali. Around 40 functions till now, mostly outdoor. Heat sink gets warm but no cut-off till now. Packing was proper, double box.",
     name: "Harpreet Singh",
     role: "Event DJ · Ludhiana",
     product: "PRO1ST MX-1600",
   },
   {
     rating: 5,
-    quote:
-      "I stock a lot of brands. This one comes back as a referral instead of a complaint, which is the only metric that matters to a counter like mine.",
+    quote: "Good product. Customer only asks for this now.",
     name: "Imran Qureshi",
     role: "Retailer · Chandni Chowk",
     product: "Full line",
@@ -52,7 +65,7 @@ export const testimonials: Testimonial[] = [
   {
     rating: 4,
     quote:
-      "The AJ6 does what a small mixer should: gets out of the way. Gain structure is honest and the DSP is not doing anything clever behind my back. Wish the aux send had one more stage.",
+      "AJ6 is doing the job for small setups. Gain is clean, no hiss at half volume. Only issue is the aux send is single, so monitor and effects both cannot go together. Manage kar liya but keep in mind before buying.",
     name: "Neha Bhatt",
     role: "FOH engineer · Pune",
     product: "PRO 1st AJ6",
@@ -60,7 +73,7 @@ export const testimonials: Testimonial[] = [
   {
     rating: 5,
     quote:
-      "Monsoon load-ins are what kill gear here. Third season on the same cabinets and the chassis are still square. That is the whole review.",
+      "Third monsoon on the same cabinets. Corners are still tight, no rattle. I load in and out 3 times a week so this matters more than sound quality honestly.",
     name: "Ashok Reddy",
     role: "Sound rental · Hyderabad",
     product: "Party Box series",
@@ -68,7 +81,7 @@ export const testimonials: Testimonial[] = [
   {
     rating: 5,
     quote:
-      "Ordered fourteen units for a college auditorium fit-out. All fourteen arrived bench-tested and matched. I did not have to send one back, which has not happened to me in years.",
+      "Ordered 14 nos for a college auditorium. All 14 came tested, output matched within a hair. Delivery took 9 days to Kochi which is slightly long, but not a single RMA. Will order again for the next site.",
     name: "Vikram Nair",
     role: "AV contractor · Kochi",
     product: "XTR 6.0",
@@ -76,7 +89,7 @@ export const testimonials: Testimonial[] = [
   {
     rating: 4,
     quote:
-      "TK600 handles a room without a windscreen and does not get harsh when the singer leans in. For the money there is nothing near it. The clip is a bit soft.",
+      "Mic is good for the price, no doubt. Handles a loud singer without distorting. The mic clip that comes with it is cheap plastic, mine cracked in a month. Bought a separate clip, otherwise no complaint.",
     name: "Farida Sheikh",
     role: "Studio owner · Mumbai",
     product: "PRO 1st TK600",
@@ -84,7 +97,7 @@ export const testimonials: Testimonial[] = [
   {
     rating: 5,
     quote:
-      "Dealer pricing came back the same working day, on WhatsApp, from someone who knew what a crossover point was. That is rarer than it should be.",
+      "Asked for dealer rate on WhatsApp, got the rate card same day. The person actually knew what I was asking about. Rare.",
     name: "Manish Agarwal",
     role: "Distributor · Jaipur",
     product: "Trade account",
@@ -92,7 +105,7 @@ export const testimonials: Testimonial[] = [
   {
     rating: 5,
     quote:
-      "Ran the D518s on top of my existing subs and the crossover network sorted the overlap in one pass. Highs are present without being brittle at 2 AM volume.",
+      "Fitted D518 on my existing tops. Crossover sorted the overlap in one go, did not need to tune much. Highs are clear at high volume, not paining the ears after 3-4 hours.",
     name: "Rohit Kalra",
     role: "Club DJ · Delhi",
     product: "PRO-1ST D518",
@@ -100,7 +113,7 @@ export const testimonials: Testimonial[] = [
   {
     rating: 4,
     quote:
-      "Bought one amp to test them. Bought five more the following month. Support answered on a Sunday when a fader went intermittent and had a replacement out on Monday.",
+      "Took 1 amp first to check quality. Took 5 more next month. One fader became loose after 2 months, they replaced it, no argument. Sunday ko bhi reply kiya. Only thing, courier packing could be better.",
     name: "Sanjay Pillai",
     role: "Wedding sound · Coimbatore",
     product: "PRO1ST MX-1600",
