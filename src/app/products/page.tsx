@@ -39,11 +39,8 @@ export async function generateMetadata({
 }: PageProps): Promise<Metadata> {
   const { category } = await searchParams;
   const slug = Array.isArray(category) ? category[0] : category;
-  const [categories, brands] = await Promise.all([
-    productRepository.getCategories(),
-    productRepository.getBrands(),
-  ]);
-  const match = [...categories, ...brands].find((c) => c.slug === slug);
+  const categories = await productRepository.getCategories();
+  const match = categories.find((c) => c.slug === slug);
 
   const title = match ? match.name : "Product Gallery";
   const description = match
@@ -66,16 +63,12 @@ export default async function ProductsPage({ searchParams }: PageProps) {
     ? params.category[0]
     : params.category;
 
-  const [categories, brands, all] = await Promise.all([
+  const [categories, all] = await Promise.all([
     productRepository.getCategories(),
-    productRepository.getBrands(),
     productRepository.getAll(),
   ]);
 
-  // A brand card routes here too, and isn't in `categories` — it's kept out
-  // of the sidebar taxonomy on purpose — so validity is checked against both.
-  const taxonomy = [...categories, ...brands];
-  const active = taxonomy.some((c) => c.slug === rawCategory)
+  const active = categories.some((c) => c.slug === rawCategory)
     ? (rawCategory as string)
     : null;
 
@@ -90,7 +83,7 @@ export default async function ProductsPage({ searchParams }: PageProps) {
   const filters = parseFilters(params, facets);
   const products = applyFilters(inCategory, filters);
 
-  const activeName = taxonomy.find((c) => c.slug === active)?.name;
+  const activeName = categories.find((c) => c.slug === active)?.name;
   const filtered = hasActiveFilters(filters);
   const gallery = active ? [] : await productRepository.getGalleryMedia(18);
 
