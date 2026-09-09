@@ -1,4 +1,5 @@
 import type { Metadata, Viewport } from "next";
+import { Archivo, DM_Sans, IBM_Plex_Sans, Manrope, Sora } from "next/font/google";
 import { CartDrawer } from "@/components/commerce/CartDrawer";
 import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
@@ -19,6 +20,28 @@ const preloadedFonts = [
   "/fonts/inter-latin.woff2",
   "/fonts/jetbrains-mono-latin.woff2",
 ];
+
+/*
+ * Sora, Archivo, Manrope, DM Sans and IBM Plex Sans, added to round out the
+ * type system beyond the original three (Space Grotesk / Inter / JetBrains
+ * Mono, still self-hosted in fonts.css). `next/font/google` downloads and
+ * self-hosts these the same way — no runtime dependency on
+ * fonts.gstatic.com, same reasoning fonts.css already documents — without
+ * hand-subsetting five more variable fonts to match that manual pipeline.
+ * Each becomes a CSS custom property (`--font-sora`, etc.), referenced from
+ * globals.css so the mapping stays in one place with the original three.
+ */
+const sora = Sora({ subsets: ["latin"], variable: "--font-sora", display: "swap" });
+const archivo = Archivo({ subsets: ["latin"], variable: "--font-archivo", display: "swap" });
+const manrope = Manrope({ subsets: ["latin"], variable: "--font-manrope", display: "swap" });
+const dmSans = DM_Sans({ subsets: ["latin"], variable: "--font-dm-sans", display: "swap" });
+const ibmPlexSans = IBM_Plex_Sans({
+  subsets: ["latin"],
+  weight: ["400", "500", "600", "700"],
+  variable: "--font-ibm-plex-sans",
+  display: "swap",
+});
+const fontVariables = `${sora.variable} ${archivo.variable} ${manrope.variable} ${dmSans.variable} ${ibmPlexSans.variable}`;
 
 export const metadata: Metadata = {
   metadataBase: new URL(site.url),
@@ -58,7 +81,7 @@ export default async function RootLayout({
   const categories = await productRepository.getCategories();
 
   return (
-    <html lang="en-IN">
+    <html lang="en-IN" className={fontVariables}>
       <head>
         {preloadedFonts.map((href) => (
           <link

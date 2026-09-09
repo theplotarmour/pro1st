@@ -22,6 +22,11 @@
   --font-display: var(--f-d);
   --font-body: var(--f-b);
   --font-mono: var(--f-m);
+  --font-hero: var(--f-hero);
+  --font-heading: var(--f-heading);
+  --font-subheading: var(--f-subheading);
+  --font-body-alt: var(--f-body-alt);
+  --font-technical: var(--f-technical);
 
   --ease-signal: cubic-bezier(0.16, 1, 0.3, 1);
   --ease-cut: cubic-bezier(0.7, 0, 0.84, 0);
@@ -48,6 +53,22 @@
   --f-d: "Space Grotesk", system-ui, sans-serif;
   --f-b: "Inter", system-ui, sans-serif;
   --f-m: "JetBrains Mono", ui-monospace, SFMono-Regular, Menlo, monospace;
+
+  /*
+     Five more roles, each pinned to the "Best use" a specific font was
+     picked for rather than left to overlap with Space Grotesk/Inter:
+       --f-hero        Sora           the single largest headline on a page
+       --f-heading     Archivo        section headings (h2)
+       --f-subheading  Manrope        sub-headings (h3)
+       --f-body-alt    DM Sans        lead paragraphs
+       --f-technical   IBM Plex Sans  merchant/technical prose (specs, policies)
+     `--font-*` custom properties come from next/font/google in layout.tsx.
+  */
+  --f-hero: var(--font-sora), "Sora", system-ui, sans-serif;
+  --f-heading: var(--font-archivo), "Archivo", system-ui, sans-serif;
+  --f-subheading: var(--font-manrope), "Manrope", system-ui, sans-serif;
+  --f-body-alt: var(--font-dm-sans), "DM Sans", system-ui, sans-serif;
+  --f-technical: var(--font-ibm-plex-sans), "IBM Plex Sans", system-ui, sans-serif;
 
   /* Brand constants — identical in both themes. */
   --p1-signal: #ff6a00;
@@ -274,8 +295,8 @@
      links, and margins that belong to no other part of the page.
   */
   .p1-prose {
-    font-family: var(--f-b);
-    font-size: 15px;
+    font-family: var(--f-technical);
+    font-size: 16px;
     line-height: 1.7;
     color: var(--text-body);
   }
@@ -438,7 +459,7 @@
   }
 
   .p1-h1 {
-    font-family: var(--f-d);
+    font-family: var(--f-hero);
     font-weight: 700;
     font-size: clamp(42px, 6.6vw, 104px);
     letter-spacing: -0.04em;
@@ -460,7 +481,7 @@
 
   /* Display headline — manifesto, trade split, page titles. */
   .p1-h-xl {
-    font-family: var(--f-d);
+    font-family: var(--f-hero);
     font-weight: 700;
     font-size: clamp(36px, 6vw, 88px);
     letter-spacing: -0.03em;
@@ -469,7 +490,7 @@
   }
 
   .p1-h2 {
-    font-family: var(--f-d);
+    font-family: var(--f-heading);
     font-weight: 500;
     font-size: clamp(30px, 4vw, 56px);
     letter-spacing: -0.02em;
@@ -479,7 +500,7 @@
   }
 
   .p1-h3 {
-    font-family: var(--f-d);
+    font-family: var(--f-subheading);
     font-weight: 500;
     font-size: clamp(26px, 3vw, 44px);
     letter-spacing: -0.02em;
@@ -488,6 +509,10 @@
     margin: 0;
   }
 
+  /* Smallest heading tier — card/subsection titles. Space Grotesk stays here
+     rather than getting folded into the h1/h2/h3 reassignment above: this is
+     the "headings" role at its narrowest, matching a font that reads well at
+     small sizes without competing with the larger tiers' now-bigger voice. */
   .p1-h4 {
     font-family: var(--f-d);
     font-weight: 500;
@@ -499,6 +524,7 @@
   }
 
   .p1-lead {
+    font-family: var(--f-body-alt);
     font-size: clamp(16px, 1.4vw, 18px);
     line-height: 1.55;
     color: rgba(230, 230, 230, 0.72);
