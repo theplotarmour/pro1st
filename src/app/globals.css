@@ -819,3 +819,32 @@
     will-change: auto;
   }
 }
+
+/* Horizontal counterpart — the brand ribbon drifting left. Same mechanism:
+   the track holds the row twice, translating to exactly -50% loops with no
+   seam. */
+@keyframes p1-marquee-x {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+.p1-marquee-track-x {
+  animation: p1-marquee-x var(--p1-marquee-duration, 30s) linear infinite;
+  will-change: transform;
+}
+
+.p1-marquee:hover .p1-marquee-track-x,
+.p1-marquee:focus-within .p1-marquee-track-x {
+  animation-play-state: paused;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .p1-marquee-track-x {
+    animation: none;
+    will-change: auto;
+  }
+}
