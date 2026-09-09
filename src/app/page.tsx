@@ -1,5 +1,6 @@
 import { Hero } from "@/components/hero/Hero";
 import { ArsenalSection } from "@/components/sections/ArsenalSection";
+import { BrandCarousel } from "@/components/sections/BrandCarousel";
 import { CategoryGrid } from "@/components/sections/CategoryGrid";
 import { ChainSection } from "@/components/sections/ChainSection";
 import { ContactCTA } from "@/components/sections/ContactCTA";
@@ -39,13 +40,14 @@ export const revalidate = 300;
  * the FAQ and showroom on /contact. Nothing was deleted — it was filed.
  */
 export default async function HomePage() {
-  const [featured, all, categories, chain] =
+  const [featured, all, categories, brands, chain] =
     await Promise.all([
       // Four, not twelve. One clean row that reads as a selection rather than
       // an inventory dump; the catalogue itself is one click away.
       getFeaturedProducts(undefined, 4),
       productRepository.getAll(),
       productRepository.getCategories(),
+      productRepository.getBrands(),
       getChainNodes(),
     ]);
 
@@ -68,6 +70,8 @@ export default async function HomePage() {
         title="What professionals reorder."
         tilt={false}
       />
+
+      <BrandCarousel brands={brands} />
 
       {/* One editorial moment, not four. The chain is the differentiator —
           no competitor surveyed has anything like it. */}

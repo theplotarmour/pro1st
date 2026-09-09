@@ -13,6 +13,8 @@ export interface ProductRepository {
   getByHandles(handles: readonly string[]): Promise<Product[]>;
   getByCategory(categorySlug: string): Promise<Product[]>;
   getCategories(): Promise<CategorySummary[]>;
+  /** Shopify collections flagged `custom.brand` — a separate taxonomy from category. */
+  getBrands(): Promise<CategorySummary[]>;
   search(query: string): Promise<Product[]>;
   getRelated(handle: string, limit?: number): Promise<Product[]>;
   /** Flattened product photography for editorial galleries. */
