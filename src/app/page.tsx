@@ -54,8 +54,8 @@ export default async function HomePage() {
   return (
     <>
       <Hero />
-      <BrandCarousel brands={brands} />
       <TrustBar />
+      <BrandCarousel brands={brands} />
 
       {/* The primary browse path, and the first thing after the fold. */}
       <CategoryGrid

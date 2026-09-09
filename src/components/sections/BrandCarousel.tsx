@@ -22,7 +22,7 @@ export function BrandCarousel({ brands }: { brands: CategorySummary[] }) {
   const duration = Math.max(18, brands.length * 3);
 
   return (
-    <section aria-label="Brand collections" className="overflow-hidden bg-signal py-3.5">
+    <section aria-label="Brand collections" className="overflow-hidden bg-signal py-7 lg:py-10">
       <div className="p1-marquee">
         <div
           className="p1-marquee-track-x flex w-max items-center"
@@ -41,11 +41,11 @@ export function BrandCarousel({ brands }: { brands: CategorySummary[] }) {
                   <Link
                     href={`/products?category=${brand.slug}`}
                     tabIndex={copy === 1 ? -1 : 0}
-                    className="px-6 font-display text-lg font-bold uppercase tracking-wide text-[#0d0d0f] transition-opacity hover:opacity-70"
+                    className="px-8 font-display text-2xl font-black uppercase tracking-wide text-[#0d0d0f] transition-transform duration-200 ease-signal hover:scale-105 hover:opacity-70 lg:text-3xl"
                   >
                     {brand.name}
                   </Link>
-                  <span aria-hidden="true" className="h-[6px] w-[6px] flex-none rounded-full bg-[#0d0d0f]" />
+                  <span aria-hidden="true" className="h-2.5 w-2.5 flex-none rounded-full bg-[#0d0d0f]" />
                 </span>
               ))}
             </div>
