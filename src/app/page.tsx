@@ -54,6 +54,7 @@ export default async function HomePage() {
   return (
     <>
       <Hero />
+      <BrandCarousel brands={brands} />
       <TrustBar />
 
       {/* The primary browse path, and the first thing after the fold. */}
@@ -70,8 +71,6 @@ export default async function HomePage() {
         title="What professionals reorder."
         tilt={false}
       />
-
-      <BrandCarousel brands={brands} />
 
       {/* One editorial moment, not four. The chain is the differentiator —
           no competitor surveyed has anything like it. */}
