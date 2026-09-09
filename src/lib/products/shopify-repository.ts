@@ -43,6 +43,43 @@ function orderIndex(handle: string): number {
   return index === -1 ? CATEGORY_ORDER.length : index;
 }
 
+interface CollectionNode {
+  handle: string;
+  title: string;
+  image?: { url: string; altText: string | null } | null;
+  isBrand?: { value: string } | null;
+  products: { nodes: { id: string }[] };
+}
+
+/** Shared by `getCategories` and `getBrands` — one collection list, two views. */
+async function fetchCollectionNodes(): Promise<CollectionNode[]> {
+  const data = await storefront<{ collections: { nodes: CollectionNode[] } }>(
+    COLLECTIONS_QUERY,
+    { variables: { first: 100 }, tags: ["shopify-collections"] },
+  );
+  return data.collections.nodes;
+}
+
+function isBrandNode(node: CollectionNode): boolean {
+  return node.isBrand?.value === "true";
+}
+
+function toCategorySummary(node: CollectionNode): CategorySummary {
+  return {
+    name: node.title,
+    slug: node.handle,
+    count: node.products.nodes.length,
+    ...(node.image?.url
+      ? {
+          image: {
+            src: node.image.url,
+            alt: node.image.altText?.trim() || node.title,
+          },
+        }
+      : {}),
+  };
+}
+
 async function fetchAllProducts(): Promise<Product[]> {
   const products: Product[] = [];
   let after: string | undefined;
@@ -114,43 +151,29 @@ export const shopifyProductRepository: ProductRepository = {
   },
 
   async getCategories() {
-    const data = await storefront<{
-      collections: {
-        nodes: {
-          handle: string;
-          title: string;
-          image?: { url: string; altText: string | null } | null;
-          products: { nodes: { id: string }[] };
-        }[];
-      };
-    }>(COLLECTIONS_QUERY, {
-      variables: { first: 100 },
-      tags: ["shopify-collections"],
-    });
+    const nodes = await fetchCollectionNodes();
 
-    return data.collections.nodes
+    return nodes
       .filter(
         (node) =>
           !NON_TAXONOMY_HANDLES.has(node.handle) &&
+          !isBrandNode(node) &&
           node.products.nodes.length > 0,
       )
-      .map<CategorySummary>((node) => ({
-        name: node.title,
-        slug: node.handle,
-        count: node.products.nodes.length,
-        ...(node.image?.url
-          ? {
-              image: {
-                src: node.image.url,
-                alt: node.image.altText?.trim() || node.title,
-              },
-            }
-          : {}),
-      }))
+      .map(toCategorySummary)
       .sort((a, b) => {
         const delta = orderIndex(a.slug) - orderIndex(b.slug);
         return delta !== 0 ? delta : a.name.localeCompare(b.name);
       });
+  },
+
+  async getBrands() {
+    const nodes = await fetchCollectionNodes();
+
+    return nodes
+      .filter((node) => isBrandNode(node) && node.products.nodes.length > 0)
+      .map(toCategorySummary)
+      .sort((a, b) => a.name.localeCompare(b.name));
   },
 
   async search(term) {
