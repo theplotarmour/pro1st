@@ -168,10 +168,13 @@ export const shopifyProductRepository: ProductRepository = {
   },
 
   async getBrands() {
+    // Unlike getCategories, not gated on product count: a brand is an
+    // identity, not a stock level. Zero products still routes to a real
+    // collection page, which already renders its own empty state.
     const nodes = await fetchCollectionNodes();
 
     return nodes
-      .filter((node) => isBrandNode(node) && node.products.nodes.length > 0)
+      .filter((node) => isBrandNode(node))
       .map(toCategorySummary)
       .sort((a, b) => a.name.localeCompare(b.name));
   },
