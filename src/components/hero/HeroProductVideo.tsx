@@ -11,8 +11,9 @@ type Phase = "explode" | "rebuild";
  *
  * The clip revolves the mixer, then explodes it into its boards, chassis and
  * front panel. That is the argument the hero is making — engineered, not
- * assembled — shown rather than claimed, so it is worth a click. It is not
- * worth playing at someone unasked, so nothing autoplays.
+ * assembled — shown rather than claimed. The explode runs once on its own
+ * when the page loads (see the autoplay effect below), muted and skipped
+ * under reduced motion; every click after that is the reader's own.
  *
  * ## Forward and back, without ever playing backwards
  *
@@ -222,6 +223,50 @@ export function HeroProductVideo({ className = "" }: { className?: string }) {
   }, [clearWatch]);
 
   useEffect(() => clearWatch, [clearWatch]);
+
+  /*
+    Auto-run the explode once on load, then leave it to the click toggle from
+    there — a deliberate exception to the "nothing autoplays" rule above,
+    requested for the first impression specifically. `warm()` is called
+    directly rather than waiting on `preload="metadata"` alone, since that
+    tag only fetches the header; without it the first play would stall on
+    data that a pointer-driven visit would already have started downloading
+    on hover.
+
+    Skipped under reduced motion, matching every other auto-playing effect
+    in this codebase (the chain wash, the marquees) — an explosion nobody
+    asked to see is exactly the kind of motion that setting exists to opt
+    out of.
+  */
+  useEffect(() => {
+    const video = videoRef.current;
+    if (!video) return;
+    if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+
+    let cancelled = false;
+    const run = () => {
+      if (cancelled) return;
+      warm();
+      setPhase("rebuild");
+      void video.play();
+      watchMidpoint();
+    };
+
+    // `canplay` if the source is already resolved by the time this effect
+    // fires; otherwise wait for the source-selection effect above to set
+    // `video.src`, since playing before that exists is a no-op.
+    if (video.currentSrc) {
+      run();
+    } else {
+      video.addEventListener("canplay", run, { once: true });
+    }
+
+    return () => {
+      cancelled = true;
+      video.removeEventListener("canplay", run);
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   const toggle = useCallback(() => {
     const video = videoRef.current;
