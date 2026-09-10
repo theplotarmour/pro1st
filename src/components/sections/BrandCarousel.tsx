@@ -22,7 +22,7 @@ export function BrandCarousel({ brands }: { brands: CategorySummary[] }) {
   const duration = Math.max(18, brands.length * 3);
 
   return (
-    <section aria-label="Brand collections" className="overflow-hidden bg-signal py-7 lg:py-10">
+    <section aria-label="Brand collections" className="overflow-hidden bg-signal py-7 mt-6 lg:mt-10 lg:py-10">
       <div className="p1-marquee">
         <div
           className="p1-marquee-track-x flex w-max items-center"
