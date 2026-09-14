@@ -55,59 +55,34 @@ export default async function HomePage() {
     <>
       <Hero />
 
-      {/* Everything below the hero is one contiguous light block — only the
-          hero stays on the dark brand surface. The seam is a soft vertical
-          fade (brand black to light ground) with a faint signal-coloured
-          glow bleeding through the middle — the same warm radial glow the
-          hero already paints behind its own headline, carried across the
-          seam instead of stopping dead at it. */}
-      <div className="theme-light bg-ink">
-        <div aria-hidden="true" className="relative h-[140px] overflow-hidden lg:h-[220px]">
-          <div
-            className="absolute inset-0"
-            style={{
-              background:
-                "linear-gradient(to bottom, var(--p1-black) 0%, var(--p1-black) 20%, var(--surface-base) 92%)",
-            }}
-          />
-          <div
-            className="absolute inset-x-0 top-0 h-full opacity-[0.16]"
-            style={{
-              background:
-                "radial-gradient(60% 100% at 50% 0%, var(--signal) 0%, transparent 70%)",
-            }}
-          />
-        </div>
+      <TrustBar />
+      <BrandMarquee brands={brands} />
 
-        <TrustBar />
-        <BrandMarquee brands={brands} />
+      {/* The primary browse path, and the first thing after the fold. */}
+      <CategoryGrid
+        categories={categories}
+        eyebrow="[ Shop the range ]"
+        title="Start with the category."
+      />
 
-        {/* The primary browse path, and the first thing after the fold. */}
-        <CategoryGrid
-          categories={categories}
-          eyebrow="[ Shop the range ]"
-          title="Start with the category."
-        />
+      <ArsenalSection
+        products={featured}
+        totalCount={all.length}
+        eyebrow="[ Flagships ]"
+        title="What professionals reorder."
+        tilt={false}
+      />
 
-        <ArsenalSection
-          products={featured}
-          totalCount={all.length}
-          eyebrow="[ Flagships ]"
-          title="What professionals reorder."
-          tilt={false}
-        />
+      {/* One editorial moment, not four. The chain is the differentiator —
+          no competitor surveyed has anything like it. */}
+      {chain.length > 0 ? <ChainSection nodes={chain} /> : null}
 
-        {/* One editorial moment, not four. The chain is the differentiator —
-            no competitor surveyed has anything like it. */}
-        {chain.length > 0 ? <ChainSection nodes={chain} /> : null}
+      {/* Proof before the origin story: the reader has just seen the range,
+          so what other buyers found is the question in front of them. */}
+      <TestimonialsSection />
 
-        {/* Proof before the origin story: the reader has just seen the range,
-            so what other buyers found is the question in front of them. */}
-        <TestimonialsSection />
-
-        <OriginSection />
-        <ContactCTA />
-      </div>
+      <OriginSection />
+      <ContactCTA />
     </>
   );
 }
