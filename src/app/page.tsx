@@ -55,21 +55,31 @@ export default async function HomePage() {
       <Hero />
 
       {/* Everything below the hero is one contiguous light block — only the
-          hero stays on the dark brand surface. The seam is a hard-edged
-          diagonal rather than a soft fade: it reuses the same rake/shear
-          language already on the page (ContactCTA's hover shear, the
-          coverflow cards' 3D rake) instead of introducing a new motif. */}
+          hero stays on the dark brand surface. The seam is a soft vertical
+          fade (brand black to light ground) with a faint signal-coloured
+          glow bleeding through the middle — the same warm radial glow the
+          hero already paints behind its own headline, carried across the
+          seam instead of stopping dead at it. */}
       <div className="theme-light bg-ink">
-        <div
-          aria-hidden="true"
-          className="h-16 lg:h-24"
-          style={{
-            background:
-              "linear-gradient(100deg, var(--p1-black) 0%, var(--p1-black) calc(50% - 1px), var(--signal) calc(50% - 1px), var(--signal) calc(50% + 1px), var(--surface-base) calc(50% + 1px), var(--surface-base) 100%)",
-          }}
-        />
+        <div aria-hidden="true" className="relative h-[140px] overflow-hidden lg:h-[220px]">
+          <div
+            className="absolute inset-0"
+            style={{
+              background:
+                "linear-gradient(to bottom, var(--p1-black) 0%, var(--p1-black) 20%, var(--surface-base) 92%)",
+            }}
+          />
+          <div
+            className="absolute inset-x-0 top-0 h-full opacity-[0.16]"
+            style={{
+              background:
+                "radial-gradient(60% 100% at 50% 0%, var(--signal) 0%, transparent 70%)",
+            }}
+          />
+        </div>
 
         <TrustBar />
+        <BrandMarquee />
 
         {/* The primary browse path, and the first thing after the fold. */}
         <CategoryGrid
@@ -85,8 +95,6 @@ export default async function HomePage() {
           title="What professionals reorder."
           tilt={false}
         />
-
-        <BrandMarquee />
 
         {/* One editorial moment, not four. The chain is the differentiator —
             no competitor surveyed has anything like it. */}

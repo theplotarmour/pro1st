@@ -66,7 +66,7 @@ export function BrandMarquee() {
   return (
     <section
       aria-label="Brands we carry"
-      className="theme-light flex h-28 items-center overflow-x-auto border-y border-hairline bg-white motion-reduce:overflow-x-auto"
+      className="theme-light flex h-28 items-center overflow-hidden border-y border-hairline bg-white"
     >
       <div
         ref={trackRef}
