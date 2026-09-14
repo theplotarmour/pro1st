@@ -24,7 +24,7 @@ import { imagePalette, paletteWash } from "@/lib/motion/imagePalette";
  * `nodes` carries only the editorial role for each link in the chain; name,
  * price and image are resolved from Shopify at request time.
  */
-/** Fades the wash out at every edge so it never meets the black on a line. */
+/** Fades the wash out at every edge so it never meets the section boundary on a line. */
 const EDGE_FEATHER = [
   "linear-gradient(to bottom, transparent 0%, #000 26%, #000 74%, transparent 100%)",
   "linear-gradient(to right, transparent 0%, #000 16%, #000 84%, transparent 100%)",
@@ -100,7 +100,8 @@ export function ChainSection({ nodes }: { nodes: ChainNode[] }) {
         Masked to nothing at all four edges. Without it the wash stops dead on
         the section boundary and the colour reads as a lit rectangle sitting
         on the page rather than as light coming off the product — the sections
-        above and below are flat black, so any hard edge is obvious.
+        above and below share this section's own ground colour, so any hard
+        edge is obvious.
       */}
       {washRefs.map((ref, index) => (
         <div

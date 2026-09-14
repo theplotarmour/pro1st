@@ -41,7 +41,7 @@ export function CategoryGrid({
               href={`/products?category=${category.slug}`}
               className="group flex flex-col"
             >
-              <div className="relative mb-6 aspect-square overflow-hidden border border-hairline bg-panel">
+              <div className="relative mb-6 aspect-square overflow-hidden border border-hairline bg-panel shadow-[var(--shadow-card)]">
                 {category.image ? (
                   <div className="absolute inset-0 transition-transform duration-[420ms] ease-signal group-hover:scale-[1.04] motion-reduce:transform-none">
                     <Media

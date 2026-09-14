@@ -38,7 +38,7 @@ export function ProductCard({
     <article className="group relative flex h-full flex-col">
       <div
         data-p1-media
-        className="relative mb-5 aspect-square overflow-hidden border border-hairline bg-panel"
+        className="relative mb-5 aspect-square overflow-hidden border border-hairline bg-panel shadow-[var(--shadow-card)]"
       >
         <div className="absolute inset-0 transition-transform duration-[520ms] ease-signal group-hover:scale-[1.04] motion-reduce:transform-none">
           {image ? (

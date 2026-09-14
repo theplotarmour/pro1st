@@ -631,6 +631,11 @@ function CardImage({
       src={slide.src}
       alt={slide.alt}
       sizes="(max-width: 760px) 60vw, 320px"
+      // The card stack is CSS-transformed inside a perspective container, so
+      // native lazy loading's intersection check on the centred card is
+      // unreliable — it can sit visually front-and-centre and still never
+      // fire. `eager` (see Media) forces it to fetch regardless.
+      eager={interactive}
     />
   );
 

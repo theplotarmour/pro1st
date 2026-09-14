@@ -1,6 +1,5 @@
 import { Hero } from "@/components/hero/Hero";
 import { ArsenalSection } from "@/components/sections/ArsenalSection";
-import { BrandCarousel } from "@/components/sections/BrandCarousel";
 import { BrandMarquee } from "@/components/sections/BrandMarquee";
 import { CategoryGrid } from "@/components/sections/CategoryGrid";
 import { ChainSection } from "@/components/sections/ChainSection";
@@ -41,14 +40,13 @@ export const revalidate = 300;
  * the FAQ and showroom on /contact. Nothing was deleted — it was filed.
  */
 export default async function HomePage() {
-  const [featured, all, categories, brands, chain] =
+  const [featured, all, categories, chain] =
     await Promise.all([
       // Four, not twelve. One clean row that reads as a selection rather than
       // an inventory dump; the catalogue itself is one click away.
       getFeaturedProducts(undefined, 4),
       productRepository.getAll(),
       productRepository.getCategories(),
-      productRepository.getBrands(),
       getChainNodes(),
     ]);
 
@@ -56,13 +54,22 @@ export default async function HomePage() {
     <>
       <Hero />
 
-      {/* Commerce content — trust, browse, catalogue, brands — reads better
-          on a light ground than the dark brand surface the editorial
-          sections use. One contiguous light block, one flip back to dark.
-          BrandCarousel keeps its own solid-orange band regardless of scope. */}
+      {/* Everything below the hero is one contiguous light block — only the
+          hero stays on the dark brand surface. The seam is a hard-edged
+          diagonal rather than a soft fade: it reuses the same rake/shear
+          language already on the page (ContactCTA's hover shear, the
+          coverflow cards' 3D rake) instead of introducing a new motif. */}
       <div className="theme-light bg-ink">
+        <div
+          aria-hidden="true"
+          className="h-16 lg:h-24"
+          style={{
+            background:
+              "linear-gradient(100deg, var(--p1-black) 0%, var(--p1-black) calc(50% - 1px), var(--signal) calc(50% - 1px), var(--signal) calc(50% + 1px), var(--surface-base) calc(50% + 1px), var(--surface-base) 100%)",
+          }}
+        />
+
         <TrustBar />
-        <BrandCarousel brands={brands} />
 
         {/* The primary browse path, and the first thing after the fold. */}
         <CategoryGrid
@@ -80,20 +87,18 @@ export default async function HomePage() {
         />
 
         <BrandMarquee />
-      </div>
 
-      {/* One editorial moment, not four. The chain is the differentiator —
-          no competitor surveyed has anything like it. */}
-      {chain.length > 0 ? <ChainSection nodes={chain} /> : null}
+        {/* One editorial moment, not four. The chain is the differentiator —
+            no competitor surveyed has anything like it. */}
+        {chain.length > 0 ? <ChainSection nodes={chain} /> : null}
 
-      {/* Proof before the origin story: the reader has just seen the range,
-          so what other buyers found is the question in front of them. */}
-      <div className="theme-light bg-ink">
+        {/* Proof before the origin story: the reader has just seen the range,
+            so what other buyers found is the question in front of them. */}
         <TestimonialsSection />
-      </div>
 
-      <OriginSection />
-      <ContactCTA />
+        <OriginSection />
+        <ContactCTA />
+      </div>
     </>
   );
 }
