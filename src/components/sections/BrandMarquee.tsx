@@ -87,7 +87,7 @@ export function BrandMarquee() {
                 width={128}
                 height={56}
                 loading="lazy"
-                className="max-h-11 w-auto object-contain opacity-70 grayscale transition duration-[200ms] ease-signal hover:opacity-100 hover:grayscale-0"
+                className="max-h-11 w-auto object-contain"
               />
             </div>
           );

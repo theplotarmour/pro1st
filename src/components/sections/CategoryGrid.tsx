@@ -51,10 +51,6 @@ export function CategoryGrid({
                     />
                   </div>
                 ) : null}
-                <span
-                  aria-hidden="true"
-                  className="absolute inset-0 bg-ink/35 transition-opacity duration-[300ms] ease-signal group-hover:opacity-0"
-                />
               </div>
               <div className="flex items-baseline justify-between gap-3 border-t border-hairline pt-4">
                 <h3 className="m-0 font-display text-[19px] font-medium tracking-[-0.01em] text-strong transition-colors duration-[200ms] ease-signal group-hover:text-signal">
