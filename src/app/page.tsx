@@ -1,5 +1,6 @@
 import { Hero } from "@/components/hero/Hero";
 import { ArsenalSection } from "@/components/sections/ArsenalSection";
+import { BrandMarquee } from "@/components/sections/BrandMarquee";
 import { CategoryGrid } from "@/components/sections/CategoryGrid";
 import { ChainSection } from "@/components/sections/ChainSection";
 import { ContactCTA } from "@/components/sections/ContactCTA";
@@ -52,22 +53,30 @@ export default async function HomePage() {
   return (
     <>
       <Hero />
-      <TrustBar />
 
-      {/* The primary browse path, and the first thing after the fold. */}
-      <CategoryGrid
-        categories={categories}
-        eyebrow="[ Shop the range ]"
-        title="Start with the category."
-      />
+      {/* Commerce content — trust, browse, catalogue, brands — reads better
+          on a light ground than the dark brand surface the editorial
+          sections use. One contiguous light block, one flip back to dark. */}
+      <div className="theme-light bg-ink">
+        <TrustBar />
 
-      <ArsenalSection
-        products={featured}
-        totalCount={all.length}
-        eyebrow="[ Flagships ]"
-        title="What professionals reorder."
-        tilt={false}
-      />
+        {/* The primary browse path, and the first thing after the fold. */}
+        <CategoryGrid
+          categories={categories}
+          eyebrow="[ Shop the range ]"
+          title="Start with the category."
+        />
+
+        <ArsenalSection
+          products={featured}
+          totalCount={all.length}
+          eyebrow="[ Flagships ]"
+          title="What professionals reorder."
+          tilt={false}
+        />
+
+        <BrandMarquee />
+      </div>
 
       {/* One editorial moment, not four. The chain is the differentiator —
           no competitor surveyed has anything like it. */}
@@ -75,7 +84,9 @@ export default async function HomePage() {
 
       {/* Proof before the origin story: the reader has just seen the range,
           so what other buyers found is the question in front of them. */}
-      <TestimonialsSection />
+      <div className="theme-light bg-ink">
+        <TestimonialsSection />
+      </div>
 
       <OriginSection />
       <ContactCTA />

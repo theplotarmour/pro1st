@@ -109,6 +109,36 @@
   }
 }
 
+/*
+   Light-mode scope for the sections that don't suit the dark surface —
+   product-forward, proof-forward content (categories, the featured grid,
+   testimonials, the brand marquee). Applied to a wrapper, not :root: every
+   token below is a plain CSS var, so any existing bg-ink / text-body /
+   border-hairline utility already inside these sections picks up the light
+   value for free. --p1-signal is darkened for AA contrast on a light ground
+   — #ff6a00 on white fails the 4.5:1 minimum that it clears easily on the
+   dark surface.
+*/
+.theme-light {
+  --surface-base: #f6f6f4;
+  --surface-panel: #ffffff;
+  --surface-raised: #ececea;
+  --text-strong: #0d0d0f;
+  --text-body: rgba(13, 13, 15, 0.72);
+  --text-muted: rgba(13, 13, 15, 0.58);
+  --text-soft: rgba(13, 13, 15, 0.46);
+  --text-faint: rgba(13, 13, 15, 0.34);
+  --hairline: rgba(13, 13, 15, 0.12);
+  --hairline-strong: rgba(13, 13, 15, 0.22);
+  --shadow-card: 0 1px 0 rgba(13, 13, 15, 0.04);
+  --p1-signal: #c2410c;
+  --signal: #c2410c;
+  --signal-text: #c2410c;
+  --sig-12: rgba(194, 65, 12, 0.12);
+  --sig-24: rgba(194, 65, 12, 0.24);
+  --sig-40: rgba(194, 65, 12, 0.4);
+}
+
 @layer base {
   * {
     box-sizing: border-box;
