@@ -54,30 +54,22 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
       </a>
 
       {/*
-        Absolute, not fixed: the header belongs to the top of the page and
-        scrolls away with it. It keeps no scroll state — the condense-on-scroll
-        height, background and blur existed only to keep a pinned bar legible
-        over the content passing beneath it, and there is no pinned bar now.
+        Only the pill nav below is meant to persist while scrolling — it
+        already carries its own self-contained glass treatment (see
+        `PillBase`), so it is rendered as an independent `fixed` element, not
+        nested in this bar.
+
+        This bar (logo, search, cart, dealer link, menu) stays fixed on
+        mobile, where the menu button is the only way to reach the nav and
+        must stay reachable at any scroll position — so it keeps its glass
+        scrim there. From `lg` up the pill nav covers primary navigation, so
+        this bar switches to `absolute`: it sits at the top of the document
+        over the dark hero and scrolls away with it, and the glass scrim
+        drops with it since it would otherwise have nothing to stay legible
+        against.
       */}
-      <header className="absolute inset-x-0 top-0 z-[120] flex h-[72px] items-center gap-6 gutter-x">
+      <header className="fixed inset-x-0 top-0 z-[110] flex h-[72px] items-center gap-6 gutter-x bg-ink/55 backdrop-blur-md lg:absolute lg:bg-transparent lg:backdrop-blur-none">
         <Logo collapsed={false} />
-
-        {/*
-          Centred on the viewport, not on the space left between the logo and
-          the actions — those two flank it at different widths, so `mx-auto`
-          in the flex row put it visibly off-centre. Absolute positioning also
-          keeps the pill from shifting sideways when the cart badge appears.
-
-          It carries its own `nav` landmark and label, so the header must not
-          wrap it in another. It navigates and nothing more — no category panel
-          opens from it, so hovering the bar never covers the page. "Shop All"
-          goes to the gallery, where categories are browsable with filters.
-        */}
-        <div className="pointer-events-none absolute inset-x-0 bottom-0 top-0 hidden items-center justify-center lg:flex">
-          <div className="pointer-events-auto">
-            <PillBase items={nav} activeHref={activeHref} />
-          </div>
-        </div>
 
         <div className="ml-auto flex flex-none items-center gap-5 lg:gap-[18px]">
           {/*
@@ -130,6 +122,28 @@ export function Header({ categories }: { categories: CategorySummary[] }) {
           </button>
         </div>
       </header>
+
+      {/*
+        The glass pill — the one thing that stays pinned at every scroll
+        position. Independently `fixed`, not nested in `<header>`, so its own
+        position is never affected by the bar's `lg:absolute` switch above.
+        Desktop-only (`lg:flex`): below that width the header's menu button
+        opens the full nav instead.
+
+        Centred on the viewport, not on the space left between the logo and
+        the actions — those two flank it at different widths, so `mx-auto`
+        in a flex row would put it visibly off-centre.
+
+        It carries its own `nav` landmark and label, so nothing here wraps it
+        in another. It navigates and nothing more — no category panel opens
+        from it, so hovering the bar never covers the page. "Shop All" goes
+        to the gallery, where categories are browsable with filters.
+      */}
+      <div className="pointer-events-none fixed inset-x-0 top-0 z-[120] hidden h-[72px] items-center justify-center lg:flex">
+        <div className="pointer-events-auto">
+          <PillBase items={nav} activeHref={activeHref} />
+        </div>
+      </div>
 
       <SearchPanel open={searchOpen} onClose={() => setSearchOpen(false)} />
 

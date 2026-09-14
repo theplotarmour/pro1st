@@ -40,13 +40,14 @@ export const revalidate = 300;
  * the FAQ and showroom on /contact. Nothing was deleted — it was filed.
  */
 export default async function HomePage() {
-  const [featured, all, categories, chain] =
+  const [featured, all, categories, brands, chain] =
     await Promise.all([
       // Four, not twelve. One clean row that reads as a selection rather than
       // an inventory dump; the catalogue itself is one click away.
       getFeaturedProducts(undefined, 4),
       productRepository.getAll(),
       productRepository.getCategories(),
+      productRepository.getBrands(),
       getChainNodes(),
     ]);
 
@@ -79,7 +80,7 @@ export default async function HomePage() {
         </div>
 
         <TrustBar />
-        <BrandMarquee />
+        <BrandMarquee brands={brands} />
 
         {/* The primary browse path, and the first thing after the fold. */}
         <CategoryGrid

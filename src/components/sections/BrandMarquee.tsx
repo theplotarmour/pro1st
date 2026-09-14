@@ -1,13 +1,20 @@
 "use client";
 
 import Image from "next/image";
+import Link from "next/link";
 import { useRef } from "react";
 import { useAnimationFrame } from "@/lib/motion";
+import type { CategorySummary } from "@/types/product";
 
 /**
  * Brand logos, served straight from `public/Pro1ST Brand Carousel`. No CMS
  * or Shopify metafield holds this list — it's the client's own logo pack,
  * so the filenames are the source of truth and double as the alt text.
+ *
+ * Each file is matched against `brands` (the live Shopify brand collections)
+ * by a normalized name so the logo can link to `/products?category=<slug>`
+ * — the same target the removed text carousel used. A file with no matching
+ * collection still renders, just without a link.
  */
 const BRAND_DIR = "/Pro1ST Brand Carousel";
 const BRAND_FILES = [
@@ -26,15 +33,21 @@ const BRAND_FILES = [
   "S.L.V.png",
 ];
 
+function normalize(name: string) {
+  return name.toLowerCase().replace(/[^a-z0-9]/g, "");
+}
+
 /**
  * Same scroll-momentum drift as CategoryMarquee, on a white band. Kept a
  * separate component rather than reusing CategoryMarquee: that one renders
- * text labels with category links, this one renders only logo marks with no
- * link target — different content shape, not a themed variant of the same
- * thing.
+ * text labels, this one renders logo marks — different content shape, not a
+ * themed variant of the same thing.
  */
-export function BrandMarquee() {
+export function BrandMarquee({ brands = [] }: { brands?: CategorySummary[] }) {
   const trackRef = useRef<HTMLDivElement>(null);
+  const brandBySlug = new Map(
+    brands.map((brand) => [normalize(brand.name), brand.slug]),
+  );
   const state = useRef({ offset: 0, direction: 1, velocity: 0, lastY: 0 });
 
   useAnimationFrame(() => {
@@ -75,20 +88,36 @@ export function BrandMarquee() {
       >
         {loop.map((file, index) => {
           const isDuplicate = index >= BRAND_FILES.length;
+          const name = file.replace(/\.png$/i, "");
+          const slug = brandBySlug.get(normalize(name));
+          const logo = (
+            <Image
+              src={`${BRAND_DIR}/${encodeURIComponent(file)}`}
+              alt={isDuplicate ? "" : name}
+              width={128}
+              height={56}
+              loading="lazy"
+              className="max-h-11 w-auto object-contain"
+            />
+          );
+
           return (
             <div
               key={`${file}-${index}`}
               aria-hidden={isDuplicate}
               className="inline-flex h-28 w-[168px] flex-none items-center justify-center px-8"
             >
-              <Image
-                src={`${BRAND_DIR}/${encodeURIComponent(file)}`}
-                alt={isDuplicate ? "" : file.replace(/\.png$/i, "")}
-                width={128}
-                height={56}
-                loading="lazy"
-                className="max-h-11 w-auto object-contain"
-              />
+              {slug ? (
+                <Link
+                  href={`/products?category=${slug}`}
+                  tabIndex={isDuplicate ? -1 : 0}
+                  className="transition-opacity hover:opacity-80"
+                >
+                  {logo}
+                </Link>
+              ) : (
+                logo
+              )}
             </div>
           );
         })}
