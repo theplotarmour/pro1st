@@ -125,6 +125,7 @@ export const COLLECTIONS_QUERY = `
         title
         description
         image { ${IMAGE} }
+        isBrand: metafield(namespace: "custom", key: "brand") { value }
         products(first: 250) { nodes { id } }
       }
     }
