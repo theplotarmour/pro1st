@@ -79,7 +79,7 @@ export function BrandMarquee({ brands = [] }: { brands?: CategorySummary[] }) {
   return (
     <section
       aria-label="Brands we carry"
-      className="theme-light flex h-28 items-center overflow-hidden border-y border-hairline bg-white"
+      className="flex h-28 items-center overflow-hidden border-y border-hairline bg-[var(--p1-black)]"
     >
       <div
         ref={trackRef}
