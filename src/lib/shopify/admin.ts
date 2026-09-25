@@ -1,18 +1,30 @@
 import "server-only";
 
 /**
- * Shopify Admin GraphQL API — the ONLY file in this app allowed to hold an
- * Admin token. Separate config and endpoint from `client.ts` (the public
- * Storefront client) on purpose: mixing the two tokens in one module is how
- * an Admin token ends up leaking into a Storefront request path.
+ * Shopify Admin GraphQL API — the ONLY file in this app allowed to hold
+ * Admin credentials. Separate config and endpoint from `client.ts` (the
+ * public Storefront client) on purpose: mixing the two tokens in one module
+ * is how an Admin credential ends up leaking into a Storefront request path.
  *
  * Used exclusively by the Razorpay checkout flow (`src/lib/checkout/service.ts`)
  * to turn a verified payment into a real Shopify order via draft orders —
  * see that file for why draft orders, not `orderCreate`, are the mechanism.
+ *
+ * Auth: this app (created via the Shopify Dev Dashboard, not the legacy
+ * "Develop apps" screen) has no static Admin API access token — that token
+ * type doesn't exist for this app model. Instead it uses the Client
+ * Credentials Grant: exchange SHOPIFY_ADMIN_CLIENT_ID +
+ * SHOPIFY_ADMIN_CLIENT_SECRET for a real access token good for 24h
+ * (https://shopify.dev/docs/apps/build/authentication-authorization/client-credentials-grant).
+ * `getAccessToken` caches that token and refreshes it a minute before
+ * expiry, so callers never see the exchange.
  */
 
 const DEFAULT_API_VERSION = "2026-07";
 const REQUEST_TIMEOUT_MS = 15_000;
+// Refresh this long before Shopify's stated 24h expiry — cheap insurance
+// against clock skew and a mid-request expiry.
+const REFRESH_MARGIN_MS = 60_000;
 
 export class ShopifyAdminError extends Error {
   constructor(
@@ -26,8 +38,10 @@ export class ShopifyAdminError extends Error {
 }
 
 interface AdminConfig {
+  domain: string;
   endpoint: string;
-  token: string;
+  clientId: string;
+  clientSecret: string;
 }
 
 let cachedConfig: AdminConfig | null = null;
@@ -38,20 +52,80 @@ function getConfig(): AdminConfig {
   const domain = process.env.SHOPIFY_STORE_DOMAIN?.trim()
     .replace(/^https?:\/\//, "")
     .replace(/\/$/, "");
-  const token = process.env.SHOPIFY_ADMIN_ACCESS_TOKEN?.trim();
+  const clientId = process.env.SHOPIFY_ADMIN_CLIENT_ID?.trim();
+  const clientSecret = process.env.SHOPIFY_ADMIN_CLIENT_SECRET?.trim();
   const version = process.env.SHOPIFY_API_VERSION?.trim() || DEFAULT_API_VERSION;
 
-  if (!domain || !token) {
+  if (!domain || !clientId || !clientSecret) {
     throw new ShopifyAdminError(
-      "Shopify Admin API is not configured. Set SHOPIFY_ADMIN_ACCESS_TOKEN — see .env.example.",
+      "Shopify Admin API is not configured. Set SHOPIFY_ADMIN_CLIENT_ID and SHOPIFY_ADMIN_CLIENT_SECRET — see .env.example.",
     );
   }
 
   cachedConfig = {
+    domain,
     endpoint: `https://${domain}/admin/api/${version}/graphql.json`,
-    token,
+    clientId,
+    clientSecret,
   };
   return cachedConfig;
+}
+
+interface CachedToken {
+  accessToken: string;
+  expiresAt: number;
+}
+
+let cachedToken: CachedToken | null = null;
+let inFlightExchange: Promise<string> | null = null;
+
+interface AccessTokenResponse {
+  access_token: string;
+  scope: string;
+  expires_in: number;
+}
+
+async function exchangeClientCredentials(config: AdminConfig): Promise<string> {
+  const response = await fetch(`https://${config.domain}/admin/oauth/access_token`, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "client_credentials",
+      client_id: config.clientId,
+      client_secret: config.clientSecret,
+    }),
+    cache: "no-store",
+    signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
+  });
+
+  if (!response.ok) {
+    throw new ShopifyAdminError(
+      `Shopify OAuth token exchange returned ${response.status}.`,
+      response.status,
+    );
+  }
+
+  const json = (await response.json()) as AccessTokenResponse;
+  cachedToken = {
+    accessToken: json.access_token,
+    expiresAt: Date.now() + json.expires_in * 1000 - REFRESH_MARGIN_MS,
+  };
+  return cachedToken.accessToken;
+}
+
+/** Returns a live Admin API access token, exchanging or refreshing as needed. */
+async function getAccessToken(): Promise<string> {
+  if (cachedToken && cachedToken.expiresAt > Date.now()) {
+    return cachedToken.accessToken;
+  }
+  // Concurrent callers during a cold cache share one exchange instead of
+  // each firing their own token request.
+  if (!inFlightExchange) {
+    inFlightExchange = exchangeClientCredentials(getConfig()).finally(() => {
+      inFlightExchange = null;
+    });
+  }
+  return inFlightExchange;
 }
 
 interface GraphQLResponse<T> {
@@ -67,13 +141,14 @@ async function adminRequest<T>(
   query: string,
   variables?: Record<string, unknown>,
 ): Promise<T> {
-  const { endpoint, token } = getConfig();
+  const { endpoint } = getConfig();
+  const accessToken = await getAccessToken();
 
   const response = await fetch(endpoint, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      "X-Shopify-Access-Token": token,
+      "X-Shopify-Access-Token": accessToken,
     },
     body: JSON.stringify({ query, variables }),
     signal: AbortSignal.timeout(REQUEST_TIMEOUT_MS),
