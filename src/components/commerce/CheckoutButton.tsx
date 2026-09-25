@@ -10,7 +10,7 @@ import { useCart } from "@/lib/cart/CartProvider";
  * data passes through this application.
  */
 export function CheckoutButton({ className = "" }: { className?: string }) {
-  const { count, isPending } = useCart();
+  const { count, isPending, close } = useCart();
 
   if (count === 0) {
     return (
@@ -27,6 +27,10 @@ export function CheckoutButton({ className = "" }: { className?: string }) {
   return (
     <Link
       href="/checkout"
+      // The drawer's own open state doesn't know the route changed under
+      // it — without this, navigating to /checkout leaves the drawer
+      // sitting open (and its focus trap active) over the new page.
+      onClick={close}
       aria-disabled={isPending}
       className={`p1-btn p1-btn--primary w-full justify-center ${className}`.trim()}
     >
