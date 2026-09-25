@@ -1,18 +1,18 @@
 "use client";
 
+import Link from "next/link";
 import { useCart } from "@/lib/cart/CartProvider";
 
 /**
- * Hands the buyer to Shopify.
- *
- * `checkoutUrl` comes straight from the Shopify cart, so payment, taxes,
- * shipping and the order all happen on Shopify's infrastructure. This
- * application never sees a card number.
+ * Routes the buyer to /checkout, where Razorpay Standard Checkout collects
+ * payment and the order is created in Shopify server-side once that payment
+ * is verified. See src/lib/checkout/service.ts for the full flow — no card
+ * data passes through this application.
  */
 export function CheckoutButton({ className = "" }: { className?: string }) {
-  const { count, checkoutUrl, isPending } = useCart();
+  const { count, isPending } = useCart();
 
-  if (count === 0 || !checkoutUrl) {
+  if (count === 0) {
     return (
       <button
         type="button"
@@ -25,12 +25,12 @@ export function CheckoutButton({ className = "" }: { className?: string }) {
   }
 
   return (
-    <a
-      href={checkoutUrl}
+    <Link
+      href="/checkout"
       aria-disabled={isPending}
       className={`p1-btn p1-btn--primary w-full justify-center ${className}`.trim()}
     >
       {isPending ? "Updating…" : "Checkout"}
-    </a>
+    </Link>
   );
 }
