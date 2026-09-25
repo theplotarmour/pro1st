@@ -71,7 +71,7 @@ export function WriteReviewForm({
           {[1, 2, 3, 4, 5].map((value) => (
             <label
               key={value}
-              className="cursor-pointer p-1"
+              className="p1-tap cursor-pointer p-1"
               title={`${value} out of 5`}
             >
               <input

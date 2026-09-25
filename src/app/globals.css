@@ -81,12 +81,19 @@
   --surface-raised: #2a2d33;
   --surface-inverse: #f6f6f4;
 
-  /* Text roles, strongest to faintest */
+  /*
+     Text roles, strongest to faintest. --text-muted was already the AA
+     floor (5.7:1 on this surface); --text-soft and --text-faint sat below
+     it (3.98:1 and 2.7:1) and were failing WCAG 1.4.3 for any real
+     informational copy rendered at those opacities, not just decoration.
+     Raised both to clear 4.5:1 with real margin while staying under
+     --text-muted, so the strongest→faintest ordering still holds.
+  */
   --text-strong: #ffffff;
   --text-body: rgba(230, 230, 230, 0.72);
   --text-muted: rgba(230, 230, 230, 0.58);
-  --text-soft: rgba(230, 230, 230, 0.46);
-  --text-faint: rgba(230, 230, 230, 0.34);
+  --text-soft: rgba(230, 230, 230, 0.55);
+  --text-faint: rgba(230, 230, 230, 0.52);
   --text-on-signal: #0d0d0f;
 
   /* Lines */
@@ -146,9 +153,18 @@
   --surface-raised: #ececea;
   --text-strong: #0d0d0f;
   --text-body: rgba(13, 13, 15, 0.72);
-  --text-muted: rgba(13, 13, 15, 0.58);
-  --text-soft: rgba(13, 13, 15, 0.46);
-  --text-faint: rgba(13, 13, 15, 0.34);
+  /*
+     On this bright a ground (#f6f6f4), the dark-theme opacities all failed
+     AA outright — even --text-muted at 0.58 was a razor-thin 4.66:1, and
+     --text-soft/--text-faint were 3.16:1 and 2.24:1. A light surface this
+     bright genuinely can't support three distinct opacity-faded tiers below
+     4.5:1 with headroom to spare; these three are raised together so each
+     clears 4.5:1 on its own while --text-faint < --text-soft < --text-muted
+     still holds.
+  */
+  --text-muted: rgba(13, 13, 15, 0.66);
+  --text-soft: rgba(13, 13, 15, 0.61);
+  --text-faint: rgba(13, 13, 15, 0.58);
   --hairline: rgba(13, 13, 15, 0.12);
   --hairline-strong: rgba(13, 13, 15, 0.22);
   /*

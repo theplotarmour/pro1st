@@ -89,7 +89,7 @@ export function CartItem({ line, layout = "drawer" }: CartItemProps) {
                   ? `Remove ${line.title} from cart`
                   : `Decrease quantity of ${line.title}`
               }
-              className={`grid ${step} cursor-pointer place-items-center border-0 bg-transparent text-ash hover:text-signal disabled:opacity-40`}
+              className={`p1-tap grid ${step} cursor-pointer place-items-center border-0 bg-transparent text-ash hover:text-signal disabled:opacity-40`}
             >
               −
             </button>
@@ -104,7 +104,7 @@ export function CartItem({ line, layout = "drawer" }: CartItemProps) {
               disabled={isPending || atMax}
               onClick={() => setQuantity(line.id, line.quantity + 1)}
               aria-label={`Increase quantity of ${line.title}`}
-              className={`grid ${step} cursor-pointer place-items-center border-0 bg-transparent text-ash hover:text-signal disabled:opacity-40`}
+              className={`p1-tap grid ${step} cursor-pointer place-items-center border-0 bg-transparent text-ash hover:text-signal disabled:opacity-40`}
             >
               +
             </button>
@@ -114,7 +114,7 @@ export function CartItem({ line, layout = "drawer" }: CartItemProps) {
             disabled={isPending}
             onClick={() => remove(line.id)}
             aria-label={`Remove ${line.title} from cart`}
-            className={`p1-mono cursor-pointer border-0 bg-transparent text-soft hover:text-signal disabled:opacity-40 ${
+            className={`p1-tap p1-mono cursor-pointer border-0 bg-transparent text-soft hover:text-signal disabled:opacity-40 ${
               compact ? "text-[10px]" : ""
             }`}
           >
