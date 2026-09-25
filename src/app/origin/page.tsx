@@ -4,6 +4,7 @@ import { EventsSection } from "@/components/sections/EventsSection";
 import { Manifesto } from "@/components/sections/Manifesto";
 import { OriginSection } from "@/components/sections/OriginSection";
 import { QualityStandards } from "@/components/sections/QualityStandards";
+import { ShowroomReveal } from "@/components/sections/ShowroomReveal";
 import { ShowroomSection } from "@/components/sections/ShowroomSection";
 import { TrustBar } from "@/components/sections/TrustBar";
 import { PageHeader } from "@/components/ui/PageHeader";
@@ -41,6 +42,7 @@ export default async function OriginPage() {
         lead="Desire Electronics has traded in audio since 2004. PRO1ST is the professional line."
       />
       <OriginSection as="h2" showEyebrow={false} />
+      <ShowroomReveal />
       <QualityStandards panels={panels} />
       <TrustBar />
       <EventsSection />
