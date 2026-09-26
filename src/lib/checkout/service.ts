@@ -157,12 +157,12 @@ export interface ShippingQuoteResult {
  * Shopify cart ids now include a signed `?key=...` suffix that blows past
  * Razorpay's receipt length limit, so this always needed the real order.)
  *
- * Known simplification: Razorpay's documented request shape for this
- * endpoint only shows zipcode/state/country, no street address, which may
- * be an earlier, coarser call before the buyer finishes the form. When
- * `address1`/`city` are missing, Shopify's delivery calculation can't run
- * (both are required), so that address is reported not serviceable rather
- * than guessing — real rates return once the fuller address arrives.
+ * Razorpay's documented request shape for this endpoint only shows
+ * zipcode/state/country, no street address — that's the normal shape of
+ * Magic Checkout's earliest quote call, right after the buyer types a
+ * pincode. Verified directly against Shopify that zip/province/country
+ * alone is enough to get real rates back, so this no longer waits for
+ * address1/city before attempting the call.
  */
 export async function getShippingQuote(
   razorpayOrderId: string,
@@ -176,10 +176,6 @@ export async function getShippingQuote(
 
   return Promise.all(
     addresses.map(async (address): Promise<ShippingQuoteResult> => {
-      if (!address.address1 || !address.city) {
-        return { id: address.id, shippingMethods: [] };
-      }
-
       const input: DeliveryAddressInput = {
         address1: address.address1,
         city: address.city,

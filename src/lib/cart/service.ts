@@ -151,10 +151,17 @@ export async function clearCart(): Promise<Cart | null> {
   return unwrap(data.cartLinesRemove, "clearCart");
 }
 
+/**
+ * Only `zip`/`country` are truly required — verified directly against
+ * Shopify: cartDeliveryAddressesAdd returns real rates given just
+ * zip/province/country, no street address needed. That's the normal shape
+ * of Magic Checkout's earliest shipping-quote call, made the moment the
+ * buyer finishes typing a pincode, well before the rest of the form.
+ */
 export interface DeliveryAddressInput {
-  address1: string;
+  address1?: string;
   address2?: string;
-  city: string;
+  city?: string;
   province?: string;
   zip: string;
   country: string;
