@@ -72,18 +72,22 @@ export default async function ProductPage({ params }: PageProps) {
   const related = await productRepository.getRelated(handle, 4);
   const enquiryHref = `/contact?enquiry=product&product=${product.handle}`;
 
+  const productUrl = `${site.url}/products/${product.handle}`;
+
   const jsonLd = {
     "@context": "https://schema.org",
     "@type": "Product",
     name: product.title,
     category: product.category,
     image: product.images.map((image) => image.src),
+    brand: { "@type": "Brand", name: site.name },
     ...(product.sku ? { sku: product.sku } : {}),
     ...(product.description ? { description: product.description } : {}),
     ...(typeof product.price === "number"
       ? {
           offers: {
             "@type": "Offer",
+            url: productUrl,
             price: product.price,
             priceCurrency: product.currency ?? "INR",
             availability:
@@ -97,11 +101,32 @@ export default async function ProductPage({ params }: PageProps) {
       : {}),
   };
 
+  // Mirrors the visible <ol> breadcrumb nav rendered just below — same
+  // chain, same labels, just as structured data.
+  const breadcrumbJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "BreadcrumbList",
+    itemListElement: [
+      { "@type": "ListItem", position: 1, name: "Products", item: `${site.url}/products` },
+      {
+        "@type": "ListItem",
+        position: 2,
+        name: product.category,
+        item: `${site.url}/products?category=${product.categoryHandle ?? categorySlug(product.category)}`,
+      },
+      { "@type": "ListItem", position: 3, name: product.title, item: productUrl },
+    ],
+  };
+
   return (
     <>
       <script
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+      />
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(breadcrumbJsonLd) }}
       />
 
       <Container as="nav" className="pt-[112px] lg:pt-[136px]">

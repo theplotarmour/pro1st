@@ -5,7 +5,7 @@ import { Footer } from "@/components/layout/Footer";
 import { Header } from "@/components/layout/Header";
 import { AnchorScroll } from "@/components/motion/AnchorScroll";
 import { WhatsAppFab } from "@/components/layout/WhatsAppFab";
-import { site } from "@/data/site";
+import { contact, site } from "@/data/site";
 import { CartProvider } from "@/lib/cart/CartProvider";
 import { productRepository } from "@/lib/products";
 import "./globals.css";
@@ -72,6 +72,35 @@ export const viewport: Viewport = {
   colorScheme: "dark",
 };
 
+/**
+ * Sitewide Organization + WebSite JSON-LD. Every field traces to
+ * src/data/site.ts and `contact` — nothing invented for this. Product pages
+ * carry their own Product/BreadcrumbList schema on top of this.
+ */
+const organizationJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "Organization",
+  name: site.name,
+  url: site.url,
+  logo: `${site.url}/opengraph-image`,
+  description: site.description,
+  telephone: contact.phone,
+  email: contact.email,
+  address: {
+    "@type": "PostalAddress",
+    streetAddress: contact.addressLines.join(", "),
+    addressLocality: "Delhi",
+    addressCountry: "IN",
+  },
+};
+
+const websiteJsonLd = {
+  "@context": "https://schema.org",
+  "@type": "WebSite",
+  name: site.name,
+  url: site.url,
+};
+
 export default async function RootLayout({
   children,
 }: {
@@ -83,6 +112,14 @@ export default async function RootLayout({
   return (
     <html lang="en-IN" className={fontVariables}>
       <head>
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(organizationJsonLd) }}
+        />
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(websiteJsonLd) }}
+        />
         {preloadedFonts.map((href) => (
           <link
             key={href}
