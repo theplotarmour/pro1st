@@ -126,6 +126,7 @@ export interface CartLine {
   quantity: number;
   availableForSale: boolean;
   quantityAvailable?: number;
+  sku?: string;
 }
 
 export interface Cart {

@@ -235,6 +235,32 @@ export const CART_LINES_REMOVE_MUTATION = `
 `;
 
 /**
+ * Real Shopify-computed shipping rates for a given address, for Magic
+ * Checkout's shipping-info endpoint (src/lib/checkout/service.ts). Reuses
+ * the existing cart rather than inventing a shipping-cost table — this is
+ * the same delivery calculation Shopify's own checkout would run.
+ */
+export const CART_DELIVERY_ADDRESSES_ADD_MUTATION = `
+  mutation CartDeliveryAddressesAdd($cartId: ID!, $addresses: [CartSelectableAddressInput!]!) {
+    cartDeliveryAddressesAdd(cartId: $cartId, addresses: $addresses) {
+      cart {
+        id
+        deliveryGroups(first: 5) {
+          nodes {
+            deliveryOptions {
+              handle
+              title
+              estimatedCost { ${MONEY} }
+            }
+          }
+        }
+      }
+      userErrors { field message }
+    }
+  }
+`;
+
+/**
  * Lightweight media query for the editorial gallery band.
  *
  * The catalogue carries ~5 images per product and the card fragment only ever

@@ -324,6 +324,7 @@ export function mapCart(raw: RawCart): Cart {
       productId: product.id,
       handle: product.handle,
       title: product.title,
+      ...(variant.sku ? { sku: variant.sku } : {}),
       category:
         product.collections?.nodes.find((c) => c.handle !== "frontpage")
           ?.title ??

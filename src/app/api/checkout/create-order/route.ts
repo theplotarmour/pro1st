@@ -1,86 +1,19 @@
-import { NextResponse, type NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 import { CheckoutError, startCheckout } from "@/lib/checkout/service";
 
 /**
- * Step 1 of Razorpay Standard Checkout: turn the visitor's server-side cart
- * into a Shopify draft order (authoritative pricing) and a matching
- * Razorpay order the checkout modal opens against. See
- * `src/lib/checkout/service.ts` for why a draft order comes first.
+ * Creates the Magic Checkout order directly from the server-side cart — no
+ * request body needed, the cart is already tracked in a cookie. See
+ * src/lib/checkout/service.ts for why address collection happens inside
+ * Razorpay's own UI now, not here.
  */
 
 export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
-interface CreateOrderBody {
-  customer?: {
-    email?: string;
-    firstName?: string;
-    lastName?: string;
-    phone?: string;
-  };
-  shippingAddress?: {
-    address1?: string;
-    address2?: string;
-    city?: string;
-    province?: string;
-    zip?: string;
-    country?: string;
-  };
-}
-
-function missingField(value: unknown): value is undefined | "" {
-  return typeof value !== "string" || value.trim().length === 0;
-}
-
-export async function POST(request: NextRequest) {
-  let body: CreateOrderBody;
+export async function POST() {
   try {
-    body = await request.json();
-  } catch {
-    return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
-  }
-
-  const { customer, shippingAddress } = body;
-  const requiredCustomerFields = [
-    customer?.email,
-    customer?.firstName,
-    customer?.lastName,
-  ];
-  const requiredAddressFields = [
-    shippingAddress?.address1,
-    shippingAddress?.city,
-    shippingAddress?.zip,
-    shippingAddress?.country,
-  ];
-
-  if (
-    requiredCustomerFields.some(missingField) ||
-    requiredAddressFields.some(missingField)
-  ) {
-    return NextResponse.json(
-      { error: "Missing required customer or address fields." },
-      { status: 400 },
-    );
-  }
-
-  try {
-    const result = await startCheckout(
-      {
-        email: customer!.email!.trim(),
-        firstName: customer!.firstName!.trim(),
-        lastName: customer!.lastName!.trim(),
-        phone: customer!.phone?.trim(),
-      },
-      {
-        address1: shippingAddress!.address1!.trim(),
-        address2: shippingAddress!.address2?.trim(),
-        city: shippingAddress!.city!.trim(),
-        province: shippingAddress!.province?.trim(),
-        zip: shippingAddress!.zip!.trim(),
-        country: shippingAddress!.country!.trim(),
-      },
-    );
-
+    const result = await startCheckout();
     return NextResponse.json({
       orderId: result.razorpayOrderId,
       amount: result.amountPaise,

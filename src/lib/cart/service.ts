@@ -5,6 +5,7 @@ import { storefront } from "@/lib/shopify/client";
 import { mapCart, type RawCart } from "@/lib/shopify/map";
 import {
   CART_CREATE_MUTATION,
+  CART_DELIVERY_ADDRESSES_ADD_MUTATION,
   CART_LINES_ADD_MUTATION,
   CART_LINES_REMOVE_MUTATION,
   CART_LINES_UPDATE_MUTATION,
@@ -148,4 +149,88 @@ export async function clearCart(): Promise<Cart | null> {
     },
   );
   return unwrap(data.cartLinesRemove, "clearCart");
+}
+
+export interface DeliveryAddressInput {
+  address1: string;
+  address2?: string;
+  city: string;
+  province?: string;
+  zip: string;
+  country: string;
+}
+
+export interface DeliveryOption {
+  handle: string;
+  title: string;
+  amount: number;
+  currency: string;
+}
+
+interface CartDeliveryAddressesAddPayload {
+  cart: {
+    deliveryGroups: {
+      nodes: {
+        deliveryOptions: {
+          handle: string;
+          title: string;
+          estimatedCost: { amount: string; currencyCode: string };
+        }[];
+      }[];
+    };
+  } | null;
+  userErrors: { field?: string[]; message: string }[];
+}
+
+/**
+ * Real Shopify-computed shipping rates for Magic Checkout's shipping-info
+ * endpoint (src/app/api/checkout/magic/shipping/route.ts) — not an invented
+ * flat-rate table. Attaches the address as a one-off delivery address on the
+ * existing cart and reads back whatever Shopify's own shipping profiles
+ * would charge for it.
+ */
+export async function getDeliveryOptions(
+  cartId: string,
+  address: DeliveryAddressInput,
+): Promise<DeliveryOption[]> {
+  const data = await storefront<{
+    cartDeliveryAddressesAdd: CartDeliveryAddressesAddPayload;
+  }>(CART_DELIVERY_ADDRESSES_ADD_MUTATION, {
+    variables: {
+      cartId,
+      addresses: [
+        {
+          address: {
+            deliveryAddress: {
+              address1: address.address1,
+              address2: address.address2,
+              city: address.city,
+              provinceCode: address.province,
+              zip: address.zip,
+              countryCode: address.country,
+            },
+          },
+          oneTimeUse: true,
+          selected: true,
+        },
+      ],
+    },
+    ...LIVE,
+  });
+
+  if (data.cartDeliveryAddressesAdd.userErrors.length > 0) {
+    throw new Error(
+      data.cartDeliveryAddressesAdd.userErrors.map((e) => e.message).join("; "),
+    );
+  }
+
+  const groups = data.cartDeliveryAddressesAdd.cart?.deliveryGroups.nodes ?? [];
+  return groups.flatMap((group) =>
+    group.deliveryOptions.map((option) => ({
+      handle: option.handle,
+      title: option.title,
+      amount: Number(option.estimatedCost.amount),
+      currency: option.estimatedCost.currencyCode,
+    })),
+  );
 }
