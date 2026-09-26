@@ -10,8 +10,9 @@ import { getShippingQuote } from "@/lib/checkout/service";
  *
  * Request shape per Razorpay's docs:
  * { order_id, razorpay_order_id, email, contact, addresses: [{id, zipcode, state_code, country, ...}] }
- * `order_id` here is the receipt this app set at order-creation — the
- * cart's own token — which is what resolves the cart, not razorpay_order_id.
+ * `razorpay_order_id` is what resolves the cart (fetched, notes.cartId read
+ * from the trusted order record) — `order_id`/receipt isn't used, since
+ * Shopify cart ids now carry a signed suffix too long to fit a receipt.
  */
 
 export const runtime = "nodejs";
@@ -27,7 +28,7 @@ interface ShippingRequestAddress {
 }
 
 interface ShippingRequestBody {
-  order_id?: string;
+  razorpay_order_id?: string;
   addresses?: ShippingRequestAddress[];
 }
 
@@ -39,13 +40,16 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
-  if (!body.order_id || !Array.isArray(body.addresses)) {
-    return NextResponse.json({ error: "Missing order_id or addresses." }, { status: 400 });
+  if (!body.razorpay_order_id || !Array.isArray(body.addresses)) {
+    return NextResponse.json(
+      { error: "Missing razorpay_order_id or addresses." },
+      { status: 400 },
+    );
   }
 
   try {
     const results = await getShippingQuote(
-      body.order_id,
+      body.razorpay_order_id,
       body.addresses.map((address) => ({
         id: address.id,
         address1: address.address1,

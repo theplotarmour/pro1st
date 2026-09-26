@@ -12,7 +12,7 @@ export const runtime = "nodejs";
 export const dynamic = "force-dynamic";
 
 interface ApplyPromotionBody {
-  order_id?: string;
+  razorpay_order_id?: string;
   code?: string;
 }
 
@@ -24,12 +24,12 @@ export async function POST(request: NextRequest) {
     return NextResponse.json({ error: "Invalid JSON body." }, { status: 400 });
   }
 
-  if (!body.order_id || !body.code) {
-    return NextResponse.json({ error: "Missing order_id or code." }, { status: 400 });
+  if (!body.razorpay_order_id || !body.code) {
+    return NextResponse.json({ error: "Missing razorpay_order_id or code." }, { status: 400 });
   }
 
   try {
-    const result = await validateDiscountCode(body.code, body.order_id);
+    const result = await validateDiscountCode(body.code, body.razorpay_order_id);
     return NextResponse.json({
       promotion: {
         reference_id: result.code,

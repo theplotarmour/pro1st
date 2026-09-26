@@ -56,14 +56,6 @@ export class CheckoutError extends Error {
 
 const MIN_AMOUNT_PAISE = 100; // Razorpay's own floor: ₹1.
 
-/** Strips the `gid://shopify/Cart/` prefix so the token fits Razorpay's 40-char receipt limit. */
-function cartToken(cartId: string): string {
-  return cartId.replace(/^gid:\/\/shopify\/Cart\//, "");
-}
-function cartIdFromToken(token: string): string {
-  return `gid://shopify/Cart/${token}`;
-}
-
 async function loadCartOrThrow(): Promise<Cart> {
   const cart = await getCart();
   if (!cart || cart.lines.length === 0) {
@@ -115,10 +107,14 @@ export async function startCheckout(): Promise<StartCheckoutResult> {
     );
   }
 
+  // No `receipt`: Shopify cart ids now carry a signed `?key=...` suffix
+  // (a newer Storefront API security feature) that blows well past
+  // Razorpay's receipt length limit. `notes.cartId` is the actual lookup
+  // path everywhere this needs resolving — receipt was only ever a
+  // dashboard label, never load-bearing.
   const razorpayOrder = await createRazorpayOrder({
     amountPaise,
     currency: cart.currency,
-    receipt: cartToken(cart.id),
     notes: { cartId: cart.id },
     lineItems: toRazorpayLineItems(cart),
   });
@@ -155,10 +151,11 @@ export interface ShippingQuoteResult {
 }
 
 /**
- * Resolves the cart directly from the request's `order_id` (= the receipt
- * this app set at order-creation, the cart's own token) rather than fetching
- * the Razorpay order — this endpoint is read-only and unauthenticated by
- * Razorpay's own design, so the extra round trip buys nothing.
+ * Resolves the cart by fetching the Razorpay order and reading
+ * `notes.cartId` — the trusted side, not anything in the request body.
+ * (An earlier version tried to carry the cart id in the receipt field;
+ * Shopify cart ids now include a signed `?key=...` suffix that blows past
+ * Razorpay's receipt length limit, so this always needed the real order.)
  *
  * Known simplification: Razorpay's documented request shape for this
  * endpoint only shows zipcode/state/country, no street address, which may
@@ -168,10 +165,14 @@ export interface ShippingQuoteResult {
  * than guessing — real rates return once the fuller address arrives.
  */
 export async function getShippingQuote(
-  cartToken_: string,
+  razorpayOrderId: string,
   addresses: ShippingQuoteAddress[],
 ): Promise<ShippingQuoteResult[]> {
-  const cartId = cartIdFromToken(cartToken_);
+  const razorpayOrder = await fetchRazorpayOrder(razorpayOrderId);
+  const cartId = razorpayOrder.notes.cartId;
+  if (!cartId) {
+    return addresses.map((address) => ({ id: address.id, shippingMethods: [] }));
+  }
 
   return Promise.all(
     addresses.map(async (address): Promise<ShippingQuoteResult> => {
@@ -228,11 +229,14 @@ export interface PromotionResult {
  */
 export async function validateDiscountCode(
   code: string,
-  cartToken_: string,
+  razorpayOrderId: string,
 ): Promise<PromotionResult> {
+  const razorpayOrder = await fetchRazorpayOrder(razorpayOrderId);
+  const cartId = razorpayOrder.notes.cartId;
+
   const cart = await getCart();
   if (!cart) throw new CheckoutError("Cart no longer exists.", 400);
-  if (cartToken(cart.id) !== cartToken_) {
+  if (!cartId || cart.id !== cartId) {
     throw new CheckoutError("Code does not apply to this cart.", 400);
   }
 

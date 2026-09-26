@@ -52,8 +52,8 @@ export interface CreateRazorpayOrderInput {
   /** Minor units — paise for INR. Razorpay requires >= 100 (₹1). */
   amountPaise: number;
   currency: string;
-  /** Shown in the Razorpay dashboard; ties the order back to our own record. */
-  receipt: string;
+  /** Shown in the Razorpay dashboard. Max ~56 chars — optional, never load-bearing for lookups. */
+  receipt?: string;
   /** Small key/value strings Razorpay stores alongside the order and echoes back. */
   notes: Record<string, string>;
   /**
